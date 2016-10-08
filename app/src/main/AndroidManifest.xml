@@ -3,8 +3,23 @@
 <manifest package="skean.yzsm.com.hzevent"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -12,21 +27,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <uses-permission android:name="android.permission.INTERNET" />
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-        <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-        <uses-permission android:name="android.permission.READ_LOGS" />
-
-        <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-        <uses-permission android:name="android.permission.GET_TASKS" />
-        <uses-permission android:name="android.permission.WAKE_LOCK" />
-        <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-        <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
         <!-- fixme 替换为对应的百度定位key-->
         <meta-data
