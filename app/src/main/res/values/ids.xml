@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="keyDownX" type="id"/>
+    <item name="keyDownY" type="id"/>
+    <item name="keyPackedPosition" type="id"/>
+    <item name="keyHolder" type="id"/>
+
+</resources>

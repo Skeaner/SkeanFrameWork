@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        //fixme 修改签名文件
+        config {
+            keyAlias 'hzevent'
+            keyPassword '123456'
+            storeFile file('hzevent.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 24
+    buildToolsVersion "24.0.1"
+    defaultConfig {
+        //fixme 修改程序ID
+        applicationId "skean.yzsm.com.hzevent"
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    String appId = android.defaultConfig.applicationId;
+                    String appName = appId.substring(appId.lastIndexOf(".")+1)
+                    String versionName = android.defaultConfig.versionName
+                    def newName = output.outputFile.name
+                    newName = newName.replace("app", appName )
+                    newName = newName.replace("-release", "-v" + versionName + "-b" + android.defaultConfig
+                            .versionCode)
+                    output.outputFile = new File(output.outputFile.parent, newName)
+                }
+            }
+        }
+        debug {
+            signingConfig signingConfigs.config
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    maven { url "https://jitpack.io" }
+    maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
+}
+
+
+
+dependencies {
+    annotationProcessor "org.androidannotations:androidannotations:4.0.0"
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //谷歌库
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    //retrofit2
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    //RxJava的库
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-support-v4:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-design:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0'
+    //DBFlow
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:3.1.1"
+    compile 'com.github.Raizlabs.DBFlow:dbflow-core:3.1.1'
+    compile 'com.github.Raizlabs.DBFlow:dbflow:3.1.1'
+    //三方工具
+    compile 'org.androidannotations:androidannotations-api:4.0.0'
+    compile 'com.badoo.mobile:android-weak-handler:1.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.pgyersdk:sdk:2.4.0'
+    compile 'commons-net:commons-net:3.5'
+}
