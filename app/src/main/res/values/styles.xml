@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--弹出DialogFragment时候的动画-->
-    <style name="FullScreenDialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
-        <item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
+    <!-- 基础样式-->
+    <style name="AppEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawablePadding">@dimen/preferDrawablePadding</item>
     </style>
+
+    <style name="AppButton" parent="Widget.AppCompat.Button">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minWidth">@dimen/preferButtonMinWidth</item>
+        <item name="android:layout_height">@dimen/preferButtonHeight</item>
+        <item name="android:background">@drawable/bg_primary_color</item>
+    </style>
+
 
 </resources>

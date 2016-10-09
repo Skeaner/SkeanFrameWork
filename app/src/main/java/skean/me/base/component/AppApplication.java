@@ -18,7 +18,7 @@ import skean.me.base.utils.FileUtil;
 /**
  * App的Application
  */
-public class AppApplication extends MultiDexApplication {
+public final class AppApplication extends MultiDexApplication {
 
     private Object tempObject = null;
 

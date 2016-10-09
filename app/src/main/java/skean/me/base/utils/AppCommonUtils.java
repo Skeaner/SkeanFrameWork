@@ -1,10 +1,16 @@
 package skean.me.base.utils;
 
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.webkit.URLUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.androidannotations.api.sharedpreferences.EditorHelper;
+
+import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -48,6 +54,18 @@ public class AppCommonUtils {
                                      .addConverterFactory(GsonConverterFactory.create())
                                      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                      .build();
+    }
+
+    public static boolean commitEditorHelper(EditorHelper helper) {
+        try {
+            Field editorField = EditorHelper.class.getDeclaredField("editor");
+            editorField.setAccessible(true);
+            SharedPreferences.Editor editor = (SharedPreferences.Editor) editorField.get(helper);
+            editor.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

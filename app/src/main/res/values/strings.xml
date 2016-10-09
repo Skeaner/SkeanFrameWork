@@ -1,4 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!--fixme 替换应用名, 公司名-->
     <string name="app_name">HZEvent</string>
     <string name="company_name">广东誉洲数码科技有限公司</string>
     <!--常用字符-->

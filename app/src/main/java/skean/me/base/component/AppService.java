@@ -41,7 +41,7 @@ import skean.yzsm.com.hzevent.R;
 /**
  * App的后台基础服务
  */
-public class AppService extends Service {
+public final class AppService extends Service {
 
     public static final String TAG = "AppService";
     protected Context context;
@@ -140,7 +140,6 @@ public class AppService extends Service {
         return new AppVersion("", "");
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
     // 便利启动方法
     ///////////////////////////////////////////////////////////////////////////
@@ -223,7 +222,10 @@ public class AppService extends Service {
         if ((apkFile = createTempApk()) == null) return;
         helper = new DownloadHelper();
         helper.setProgressHandler(ProgressHandler.newInstance(getProgressCallback(apkFile)));
-        AppCommonUtils.progressRetrofit(url, helper).create(CommonService.class).downLoad().enqueue(getResponseCallBack(apkFile));
+        AppCommonUtils.progressRetrofit(CommonService.BASE_URL, helper)
+                      .create(CommonService.class)
+                      .downLoad(url)
+                      .enqueue(getResponseCallBack(apkFile));
     }
 
     protected void downloadApp(String appid, String apiKey) {

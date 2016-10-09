@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import skean.me.base.component.AppBaseService;
+import skean.me.base.component.AppService;
 import skean.yzsm.com.hzevent.R;
 
 public class UpdateDialog extends Activity implements View.OnClickListener {
@@ -46,7 +46,7 @@ public class UpdateDialog extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v == btnPositive) AppBaseService.startDownloadApp(this, url);
+        if (v == btnPositive) AppService.startDownloadApp(this, url);
         finish();
     }
 }
