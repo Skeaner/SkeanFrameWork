@@ -41,7 +41,7 @@ import skean.yzsm.com.hzevent.R;
 /**
  * App的后台基础服务
  */
-public class AppBaseService extends Service {
+public class AppService extends Service {
 
     public static final String TAG = "AppService";
     protected Context context;
@@ -79,8 +79,8 @@ public class AppBaseService extends Service {
     ///////////////////////////////////////////////////////////////////////////
 
     public class AppServiceBinder extends Binder {
-        public AppBaseService getService() {
-            return AppBaseService.this;
+        public AppService getService() {
+            return AppService.this;
         }
     }
 
@@ -140,19 +140,20 @@ public class AppBaseService extends Service {
         return new AppVersion("", "");
     }
 
+
     ///////////////////////////////////////////////////////////////////////////
     // 便利启动方法
     ///////////////////////////////////////////////////////////////////////////
 
     public static void startCheckUpdateInPGYER(Context context, boolean showTips) {
-        Intent intent = new Intent(context, AppBaseService.class);
+        Intent intent = new Intent(context, AppService.class);
         intent.setAction(IntentKey.ACTION_CHECK_UPDATE_IN_PGYER);
         intent.putExtra(IntentKey.EXTRA_SHOW_TIPS, showTips);
         context.startService(intent);
     }
 
     public static void startDownloadApp(Context context, String url) {
-        Intent intent = new Intent(context, AppBaseService.class);
+        Intent intent = new Intent(context, AppService.class);
         intent.setAction(IntentKey.ACTION_DOWNLOAD_APP);
         intent.putExtra(IntentKey.EXTRA_DOWNLOAD_URL, url);
         context.startService(intent);
@@ -210,7 +211,7 @@ public class AppBaseService extends Service {
     }
 
     private void showUpdateDialog(String v, String changeLog, String url) {
-        Context c = AppBaseService.this;
+        Context c = AppService.this;
         c.startActivity(new Intent(c, UpdateDialog.class).putExtra(UpdateDialog.EXTRA_VERSION, v)
                                                          .putExtra(UpdateDialog.EXTRA_CHANGELOG, changeLog)
                                                          .putExtra(UpdateDialog.EXTRA_URL, url)
@@ -275,7 +276,7 @@ public class AppBaseService extends Service {
             protected void onDone() {
                 Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                                               .setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
-                PendingIntent pi = PendingIntent.getActivity(AppBaseService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
                 nManager.notify(DOWNLOAD_NOTICE_ID,
                                 new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                  .setContentText(getString(R.string.downloadFinishClickInstall))
@@ -305,8 +306,8 @@ public class AppBaseService extends Service {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Intent intent = new Intent(AppBaseService.this, AppBaseService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP);
-                PendingIntent pi = PendingIntent.getService(AppBaseService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP);
+                PendingIntent pi = PendingIntent.getService(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
                 nManager.notify(DOWNLOAD_NOTICE_ID,
                                 new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                  .setContentText(getString(R.string.downloadFailClickRetry))
