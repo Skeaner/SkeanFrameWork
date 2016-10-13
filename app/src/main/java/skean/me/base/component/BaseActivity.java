@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +39,7 @@ public class BaseActivity extends AppCompatActivity {
 
 
     protected boolean useHomeAsBack = true;
+    protected boolean isMenuCreated  = false;
 
     public static final int RESULT_MODIFIED = -2;
     public static final int RESULT_DELETE = -3;
@@ -72,6 +74,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result =  super.onCreateOptionsMenu(menu);
+        isMenuCreated  = true;
+        return result;
+    }
 
     /**
      * 初始化Actionbar
@@ -142,7 +150,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void setLoaded() {
-        getLoadingDialog().setFinished(true);
+        getLoadingDialog().setFinished(true).setLoadingText("");
+    }
+
+    public void setLoaded(String text) {
+        getLoadingDialog().setFinished(true).setLoadingText(text);
     }
 
     public void setLoadingText(String text) {
@@ -196,6 +208,10 @@ public class BaseActivity extends AppCompatActivity {
 
     public Handler getMainHandler() {
         return mainHandler;
+    }
+
+    public boolean isMenuCreated() {
+        return isMenuCreated;
     }
 
     public boolean isActiveNetworkAvailable() {

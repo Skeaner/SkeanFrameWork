@@ -26,11 +26,11 @@ public class AppCommonUtils {
 
     public static final int TIME_OUT = 10 * 1000;
 
-    public static Gson gsonGenerator() {
+    public static Gson gsonSerializer() {
         return new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setDateFormat("yyyy-MM-dd HH:mm").setPrettyPrinting().create();
     }
 
-    public static Gson gsonParser() {
+    public static Gson gsonDeserializer() {
         return new GsonBuilder().enableComplexMapKeySerialization().create();
     }
 

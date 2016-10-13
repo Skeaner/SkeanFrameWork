@@ -9,8 +9,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.CoordinateConverter;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -39,7 +37,7 @@ public class ContentUtil {
      * @param objs 需要连接的对象
      * @return 连接完成字符
      */
-    public static String concatRaw(Object... objs) {
+    public static String concatObjects(Object... objs) {
         StringBuilder sb = new StringBuilder();
         for (Object obj : objs) {
             sb.append(obj);
@@ -313,7 +311,7 @@ public class ContentUtil {
      * @return 描述字符
      */
     public static String latlon(BDLocation location) {
-        return concatRaw(location.getLatitude(), "/", location.getLongitude());
+        return concatObjects(location.getLatitude(), "/", location.getLongitude());
     }
 
 

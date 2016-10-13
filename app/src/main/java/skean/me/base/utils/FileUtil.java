@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import retrofit2.http.Url;
+
 /**
  * 文件的便利工具类
  */
@@ -145,8 +147,7 @@ public class FileUtil {
                 if (isDirectory) {
                     file = file.mkdirs() ? file : null;
                 } else {
-                    file.getParentFile()
-                        .mkdirs();
+                    file.getParentFile().mkdirs();
                     file = file.createNewFile() ? file : null;
                 }
             } catch (Exception e) {
@@ -157,15 +158,14 @@ public class FileUtil {
         return file;
     }
 
-
     public static String getPathFromUri(Context context, Uri uri) {
 
         if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
+            String[] projection = {"_data"};
             Cursor cursor = null;
 
             try {
-                cursor = context.getContentResolver().query(uri, projection,null, null, null);
+                cursor = context.getContentResolver().query(uri, projection, null, null, null);
                 int column_index = cursor.getColumnIndexOrThrow("_data");
                 if (cursor.moveToFirst()) {
                     return cursor.getString(column_index);
@@ -173,15 +173,12 @@ public class FileUtil {
             } catch (Exception e) {
                 // Eat it
             }
-        }
-
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
 
         return null;
     }
-
 
     public static void storeFile(File file, InputStream is) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
@@ -194,6 +191,26 @@ public class FileUtil {
         }
         fos.close();
         bis.close();
+    }
+
+    public static Uri uri(String path) {
+        File f = new File(path);
+        return getFileUri(f);
+    }
+
+    public static Uri uri(String dir, String fileName) {
+        File f = new File(dir, fileName);
+        return getFileUri(f);
+    }
+
+    public static Uri uri(File dir, String fileName) {
+        File f = new File(dir, fileName);
+        return getFileUri(f);
+    }
+
+    private static Uri getFileUri(File file) {
+        if (file == null || !file.exists()) return Uri.EMPTY;
+        else return Uri.fromFile(file);
     }
 
 }

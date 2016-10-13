@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -30,6 +32,8 @@ public abstract class BaseFragment extends Fragment {
     protected LoadingDialog loadingDialog;
 
     protected float fragmentIndex;
+
+    protected boolean isMenuCreated;
 
     protected static final int MAX_INTERVAL_FOR_CLICK = 250;
     protected static final int MAX_DISTANCE_FOR_CLICK = 100;
@@ -69,6 +73,12 @@ public abstract class BaseFragment extends Fragment {
         getHostActivity().currentFragment = this;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        isMenuCreated = true;
+    }
+
     /**
      * 自定义ActionBar的操作
      */
@@ -88,6 +98,10 @@ public abstract class BaseFragment extends Fragment {
     ///////////////////////////////////////////////////////////////////////////
     // 状态获取/上下文相关
     ///////////////////////////////////////////////////////////////////////////
+
+    public boolean isMenuCreated() {
+        return isMenuCreated;
+    }
 
     public AppApplication getAppApplication() {
         return app;
@@ -144,6 +158,11 @@ public abstract class BaseFragment extends Fragment {
     public void setLoaded() {
         hostActivity.setLoaded();
     }
+
+    public void setLoaded(String text) {
+        hostActivity.setLoaded(text);
+    }
+
 
     public void setLoadingText(String text) {
         hostActivity.setLoadingText(text);

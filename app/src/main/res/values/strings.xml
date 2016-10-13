@@ -18,8 +18,11 @@
     <string name="delete">删除</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="save">保存</string>
+    <string name="temporarilyNot">暂不</string>
     <string name="loading">加载中&#8230;</string>-->
     <string name="refreshing">刷新中&#8230;</string>
+    <string name="uploading">上传中&#8230;</string>
     <string name="posting">提交中&#8230;</string>
     <string name="postSuccess">提交成功</string>
     <string name="downloading">正在下载&#8230;</string>
