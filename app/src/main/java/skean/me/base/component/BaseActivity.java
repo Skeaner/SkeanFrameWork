@@ -52,6 +52,8 @@ public class BaseActivity extends AppCompatActivity {
     protected static final int MAX_DISTANCE_FOR_CLICK = 100;
     protected static final int FILTER_FOR_CLICK = 300;
 
+    Toast toast;
+
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
     ///////////////////////////////////////////////////////////////////////////
@@ -63,6 +65,7 @@ public class BaseActivity extends AppCompatActivity {
         initActionBar();
         mainHandler = new Handler();
         alertTheme = new ContextThemeWrapper(context, R.style.Theme_AppCompat_Light_Dialog_Alert);
+        toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -258,28 +261,44 @@ public class BaseActivity extends AppCompatActivity {
     // toast的便捷方法
     ///////////////////////////////////////////////////////////////////////////
 
+    public Toast getToast() {
+        return toast;
+    }
+
     public void toast(int stringId, int toastLength) {
-        Toast.makeText(context, stringId, toastLength).show();
+        toast.setText(stringId);
+        toast.setDuration(toastLength);
+        toast.show();
     }
 
     public void toast(String text, int toastLength) {
-        Toast.makeText(context, text, toastLength).show();
+        toast.setText(text);
+        toast.setDuration(toastLength);
+        toast.show();
+
     }
 
     public void toast(int stringId) {
-        Toast.makeText(context, stringId, Toast.LENGTH_SHORT).show();
+        toast.setText(stringId);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
+
     }
 
     public void toast(String text) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        toast.setText(text);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     public void toastFormat(String text, Object... args) {
-        Toast.makeText(context, String.format(text, args), Toast.LENGTH_SHORT).show();
+        String content = String.format(text, args);
+        toast(content);
     }
 
     public void toastFormat(@StringRes int resId, Object... args) {
-        Toast.makeText(context, getString(resId, args), Toast.LENGTH_SHORT).show();
+        String content = getString(resId, args);
+        toast(content);
     }
 
     ///////////////////////////////////////////////////////////////////////////

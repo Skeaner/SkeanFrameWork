@@ -43,6 +43,8 @@ public abstract class BaseFragment extends Fragment {
 
     protected ContextThemeWrapper alertTheme;
 
+    Toast toast;
+
     ///////////////////////////////////////////////////////////////////////////
     // 设置/生命周期/初始化
     ///////////////////////////////////////////////////////////////////////////
@@ -58,6 +60,7 @@ public abstract class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         app = hostActivity.getAppApplication();
         alertTheme = new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat_Light_Dialog_Alert);
+        toast = hostActivity.getToast();
     }
 
     @Override
@@ -185,27 +188,39 @@ public abstract class BaseFragment extends Fragment {
     ///////////////////////////////////////////////////////////////////////////
 
     public void toast(int stringId, int toastLength) {
-        Toast.makeText(context, stringId, toastLength).show();
+        toast.setText(stringId);
+        toast.setDuration(toastLength);
+        toast.show();
     }
 
     public void toast(String text, int toastLength) {
-        Toast.makeText(context, text, toastLength).show();
+        toast.setText(text);
+        toast.setDuration(toastLength);
+        toast.show();
+
     }
 
     public void toast(int stringId) {
-        Toast.makeText(context, stringId, Toast.LENGTH_SHORT).show();
+        toast.setText(stringId);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
+
     }
 
     public void toast(String text) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+        toast.setText(text);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     public void toastFormat(String text, Object... args) {
-        Toast.makeText(context, String.format(text, args), Toast.LENGTH_SHORT).show();
+        String content = String.format(text, args);
+        toast(content);
     }
 
     public void toastFormat(@StringRes int resId, Object... args) {
-        Toast.makeText(context, getString(resId, args), Toast.LENGTH_SHORT).show();
+        String content = getString(resId, args);
+        toast(content);
     }
 
     ///////////////////////////////////////////////////////////////////////////

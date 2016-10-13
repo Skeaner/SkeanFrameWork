@@ -36,7 +36,7 @@
             android:value="" />
 
         <!--主页-->
-        <activity android:name="">
+        <activity android:name="skean.me.base.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
