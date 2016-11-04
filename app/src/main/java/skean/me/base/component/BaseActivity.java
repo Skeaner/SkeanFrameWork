@@ -23,7 +23,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import skean.me.base.widget.LoadingDialog;
-import skean.yzsm.com.hzevent.R;
+import skean.yzsm.com.framework.R;
 
 /**
  * App的Activity基类 <p/>

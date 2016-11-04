@@ -36,7 +36,7 @@ import skean.me.base.utils.AppCommonUtils;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.PackageUtils;
 import skean.me.base.widget.UpdateDialog;
-import skean.yzsm.com.hzevent.R;
+import skean.yzsm.com.framework.R;
 
 /**
  * App的后台基础服务

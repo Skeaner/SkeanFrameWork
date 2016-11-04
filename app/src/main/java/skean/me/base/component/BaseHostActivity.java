@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import skean.yzsm.com.hzevent.R;
+import skean.yzsm.com.framework.R;
 
 /**
  * Fragment容器的Activity基类 <p/>

@@ -8,11 +8,12 @@
     android:paddingBottom="@dimen/appMainMargin"
     android:paddingLeft="@dimen/appMainMargin"
     android:paddingRight="@dimen/appMainMargin"
-    android:paddingTop="@dimen/appMainMargin"
-    tools:context="skean.yzsm.com.hzevent.component.MainActivity">
+    android:paddingTop="@dimen/appMainMargin">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:id="@+id/txvSelect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="点击选择图片" />
 </RelativeLayout>

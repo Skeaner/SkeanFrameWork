@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import skean.yzsm.com.hzevent.R;
+import skean.yzsm.com.framework.R;
 
 /**
  * App的DialogFragment基类

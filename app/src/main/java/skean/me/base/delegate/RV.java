@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import skean.yzsm.com.hzevent.R;
+import skean.yzsm.com.framework.R;
 
 /**
  * 一些RecycleView的类合集

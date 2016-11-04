@@ -13,5 +13,8 @@
     <dimen name="preferButtonHeight">36dp</dimen>
     <dimen name="preferButtonMinWidth">88dp</dimen>
     <dimen name="preferImageButtonSize">48dp</dimen>
+    <dimen name="titleHorizontalMargin">12dp</dimen>
+    <dimen name="titleVerticalMargin">4dp</dimen>
+
 
 </resources>

@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import skean.me.base.component.AppService;
-import skean.yzsm.com.hzevent.R;
+import skean.yzsm.com.framework.R;
 
 public class UpdateDialog extends Activity implements View.OnClickListener {
     Button btnPositive;

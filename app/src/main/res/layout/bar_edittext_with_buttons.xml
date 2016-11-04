@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/titlePanel"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        style="?attr/actionButtonStyle"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_action_back"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/panelDesc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/titleVerticalMargin"
+        android:paddingTop="@dimen/titleVerticalMargin">
+        <EditText
+            android:id="@+id/edtTitle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:lines="1"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
+
+        <ImageButton
+            android:id="@+id/btnEdit"
+            style="?attr/actionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_edit" />
+
+        <ImageButton
+            android:id="@+id/btnSave"
+            style="?attr/actionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_save"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>

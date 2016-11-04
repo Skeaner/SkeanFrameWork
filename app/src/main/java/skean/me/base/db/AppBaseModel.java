@@ -5,7 +5,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 /**
  * 为BaseModel添加了一些特性
  */
-public class AppBaseModel extends BaseModel {
+public class AppBaseModel extends BaseModel implements IBaseModel {
 
     /**
      * 是否准备从数据库删除
@@ -42,7 +42,7 @@ public class AppBaseModel extends BaseModel {
     /**
      * 初始化的一些操作
      */
-    protected void init() {
+    public void init() {
     }
 
     @Override
