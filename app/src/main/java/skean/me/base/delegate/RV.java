@@ -183,7 +183,8 @@ public class RV {
         public void replace(List<T> newItems) {
             synchronized (mLock) {
                 if (inFiltering) originItems = newItems;
-                else if (autoNotifyChange) notifyDataSetChangedAuto();
+                else items = newItems;
+                if (autoNotifyChange) notifyDataSetChangedAuto();
             }
         }
 

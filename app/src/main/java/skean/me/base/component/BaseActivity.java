@@ -328,6 +328,18 @@ public class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+
+    /**
+     * 展示软键盘
+     * <p/>
+     * * @return 是否有执行展示软键盘的操作
+     */
+    public boolean showSoftKeyboard(EditText target) {
+        InputMethodManager kbManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        target.requestFocus();
+        return kbManager.showSoftInput(target, 0);
+    }
+
     protected void hideViews(View... views) {
         for (View view : views) {
             view.post(new WeakReferenceViewRunnable(view) {

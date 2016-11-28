@@ -15,5 +15,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="点击选择图片" />
+        android:text="点击一下看看" />
 </RelativeLayout>

@@ -2,7 +2,6 @@ package skean.me.base.delegate;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
@@ -18,14 +17,13 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import skean.me.base.component.BaseActivity;
-import skean.me.base.db.IPhoto;
+import skean.me.base.db.Photo;
 import skean.yzsm.com.framework.R;
 
-public class GalleryAdapter extends RV.ArrayAdapter<IPhoto, GalleryAdapter.ViewHolder> {
+public class GalleryAdapter extends RV.ArrayAdapter<Photo, GalleryAdapter.ViewHolder> {
 
     private int maxItemSize;
 
@@ -51,13 +49,13 @@ public class GalleryAdapter extends RV.ArrayAdapter<IPhoto, GalleryAdapter.ViewH
         this.targetId = targetId;
     }
 
-    public GalleryAdapter(Context context, List<IPhoto> list, int maxItemSize, long targetId) {
+    public GalleryAdapter(Context context, List<Photo> list, int maxItemSize, long targetId) {
         super(context, list);
         this.maxItemSize = maxItemSize;
         this.targetId = targetId;
     }
 
-    public GalleryAdapter(Context context, List<IPhoto> items, boolean notifyOnChange, int maxItemSize, long targetId) {
+    public GalleryAdapter(Context context, List<Photo> items, boolean notifyOnChange, int maxItemSize, long targetId) {
         super(context, items, notifyOnChange);
         this.maxItemSize = maxItemSize;
         this.targetId = targetId;
@@ -70,7 +68,7 @@ public class GalleryAdapter extends RV.ArrayAdapter<IPhoto, GalleryAdapter.ViewH
     }
 
     @Override
-    protected boolean doFiltering(IPhoto item, String constraintStr) {
+    protected boolean doFiltering(Photo item, String constraintStr) {
         return !item.isDelete();
     }
 
@@ -108,18 +106,18 @@ public class GalleryAdapter extends RV.ArrayAdapter<IPhoto, GalleryAdapter.ViewH
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (!inEdit) {
             holder.imbRemove.setVisibility(View.GONE);
-            Picasso.with(getContext()).load(getItem(position).getPictureFile()).resize(100, 100).into(holder.icon);
+            Picasso.with(getContext()).load(getItem(position).getFile()).resize(100, 100).into(holder.icon);
         } else if (items.size() < maxItemSize) {
             if (position == 0) {
                 holder.imbRemove.setVisibility(View.GONE);
                 holder.icon.setImageResource(R.drawable.ic_add_image);
             } else {
                 holder.imbRemove.setVisibility(View.VISIBLE);
-                Picasso.with(getContext()).load(getItem(position - 1).getPictureFile()).resize(100, 100).into(holder.icon);
+                Picasso.with(getContext()).load(getItem(position - 1).getFile()).resize(100, 100).into(holder.icon);
             }
         } else {
             holder.imbRemove.setVisibility(View.VISIBLE);
-            Picasso.with(getContext()).load(getItem(position).getPictureFile()).resize(100, 100).into(holder.icon);
+            Picasso.with(getContext()).load(getItem(position).getFile()).resize(100, 100).into(holder.icon);
         }
     }
 
@@ -188,7 +186,7 @@ public class GalleryAdapter extends RV.ArrayAdapter<IPhoto, GalleryAdapter.ViewH
                               @Override
                               public void onClick(DialogInterface dialog, int which) {
                                   int realPosition = items.size() < maxItemSize ? position - 1 : position;
-                                  IPhoto photo = items.get(realPosition);
+                                  Photo photo = items.get(realPosition);
                                   photo.setDelete(true);
                                   notifyDataSetChangedAuto();
                               }

@@ -1,15 +1,18 @@
 package skean.me.base;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import java.util.List;
+import java.io.File;
+import java.util.ArrayList;
 
-import me.nereo.multi_image_selector.MultiImageSelector;
-import me.nereo.multi_image_selector.MultiImageSelectorActivity;
+import skean.me.base.component.ImagePagerActivity_;
+import skean.me.base.db.AppBaseModel;
+import skean.me.base.db.Photo;
 import skean.yzsm.com.framework.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,25 +24,17 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.txvSelect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MultiImageSelector.create(getApplicationContext()).showCamera(false) // 是否显示相机. 默认为显示
-                                  .count(9) // 最大选择图片数量, 默认为9. 只有在选择模式为多选时有效
-                                  .multi() // 单选模式
-//                          .multi() // 多选模式, 默认模式;
-//                          .origin(ArrayList<String>) // 默认已选择图片. 只有在选择模式为多选时有效
-                                  .start(MainActivity.this, 99);
+                File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/DCIM/Camera");
+                ArrayList<Photo> list = new ArrayList<>();
+                for (File file : dir.listFiles()) {
+                    Photo p = new Photo();
+                    p.setDesc("desc:" + file.getName());
+                    p.setFile(file);
+                    list.add(p);
+                }
+                ImagePagerActivity_.intent(MainActivity.this).showDescription(true).defaultPosition(3).photoList(list).start();
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 99) {
-            if (resultCode == RESULT_OK) {
-                // 获取返回的图片列表
-                List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
-                // 处理你自己的逻辑 ....
-            }
-        }
-    }
 }

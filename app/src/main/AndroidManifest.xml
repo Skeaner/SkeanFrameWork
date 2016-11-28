@@ -64,8 +64,18 @@
             android:name="skean.me.base.component.ImagePagerActivity_"
             android:label="照片预览"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ActionBarOverlay"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+
+        <!--地图预览-->
+        <activity
+            android:name="skean.me.base.component.MapActivity_"
+            android:label="地图预览"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
 
         <!--主页-->
         <activity android:name="skean.me.base.MainActivity">

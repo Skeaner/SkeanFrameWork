@@ -12,4 +12,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.ActionBarOverlay" parent="AppTheme">
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+
 </resources>

@@ -24,7 +24,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
-import skean.me.base.db.IPhoto;
+import skean.me.base.db.Photo;
 import skean.me.base.utils.ContentUtil;
 import skean.yzsm.com.framework.R;
 import uk.co.senab.photoview.PhotoView;
@@ -55,14 +55,14 @@ public class PicturePagerActivity extends BaseActivity {
     @Extra
     boolean showDescription;
     @Extra
-    ArrayList<IPhoto> photoList;
+    ArrayList<Photo> photoList;
 
     boolean inEditDesc = false;
 
     PagerAdapter adapter;
 
 
-    IPhoto currentPhoto;
+    Photo currentPhoto;
 
 
     @AfterViews
@@ -152,7 +152,7 @@ public class PicturePagerActivity extends BaseActivity {
             photoView.setAdjustViewBounds(true);
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
-            Picasso.with(getContext()).load(photoList.get(position).getPictureFile()).into(photoView);
+            Picasso.with(getContext()).load(photoList.get(position).getFile()).into(photoView);
             return photoView;
         }
 

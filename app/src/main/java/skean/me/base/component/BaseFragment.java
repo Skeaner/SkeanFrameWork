@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -166,7 +167,6 @@ public abstract class BaseFragment extends Fragment {
         hostActivity.setLoaded(text);
     }
 
-
     public void setLoadingText(String text) {
         hostActivity.setLoadingText(text);
     }
@@ -242,6 +242,15 @@ public abstract class BaseFragment extends Fragment {
      */
     public boolean hideSoftInput() {
         return hostActivity.hideSoftKeyboard();
+    }
+
+    /**
+     * 展示软键盘
+     * <p/>
+     * * @return 是否有执行展示软键盘的操作
+     */
+    public boolean showSoftKeyboard(EditText target) {
+        return hostActivity.showSoftKeyboard(target);
     }
 
     protected void hideViews(View... views) {

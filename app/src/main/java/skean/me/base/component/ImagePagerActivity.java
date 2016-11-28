@@ -1,41 +1,41 @@
 package skean.me.base.component;
 
 import android.content.DialogInterface;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.view.Menu;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.squareup.picasso.Picasso;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
 import java.util.ArrayList;
 
-import skean.me.base.db.IPhoto;
+import skean.me.base.db.Photo;
 import skean.me.base.utils.ContentUtil;
 import skean.yzsm.com.framework.R;
-import uk.co.senab.photoview.PhotoView;
 
 /**
  * 预览图片
  */
 @EActivity(R.layout.activity_image_pager)
-@OptionsMenu(R.menu.menu_form)
 public class ImagePagerActivity extends BaseActivity {
 
     @ViewById
@@ -54,26 +54,52 @@ public class ImagePagerActivity extends BaseActivity {
     @Extra
     boolean showDescription;
     @Extra
-    ArrayList<IPhoto> photoList;
+    ArrayList<Photo> photoList;
 
     boolean inEditDesc = false;
 
     PagerAdapter adapter;
 
-    IPhoto currentPhoto;
+    Photo currentPhoto;
 
     @AfterViews
     protected void init() {
-        getSupportActionBar().setCustomView(R.layout.bar_edittext_with_buttons);
-        panelDesc = (LinearLayout) findViewById(R.id.panelDesc);
-        edtTitle = (EditText) findViewById(R.id.edtTitle);
-        btnSave = (ImageButton) findViewById(R.id.btnSave);
-        btnEdit = (ImageButton) findViewById(R.id.btnEdit);
-        // FIXME: 2016/11/4 
-//        if (!showDescription) panelDesc.setVisibility(View.GONE);
-        adapter = new PicturePagerAdapter();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#66000000")));
+        getSupportActionBar().setCustomView(R.layout.bar_custom_image_pager);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        panelDesc = (LinearLayout) getSupportActionBar().getCustomView().findViewById(R.id.panelDesc);
+        edtTitle = (EditText) getSupportActionBar().getCustomView().findViewById(R.id.edtTitle);
+        btnSave = (ImageButton) getSupportActionBar().getCustomView().findViewById(R.id.btnSave);
+        btnEdit = (ImageButton) getSupportActionBar().getCustomView().findViewById(R.id.btnEdit);
+        if (!inEdit) {
+            btnEdit.setVisibility(View.GONE);
+        }
+        edtTitle.setEnabled(false);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentPhoto.setDesc(ContentUtil.nullIfEmpty(edtTitle));
+                getAppApplication().setTempObject(photoList);
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inEditDesc = true;
+                btnEdit.setVisibility(View.GONE);
+                btnSave.setVisibility(View.VISIBLE);
+                edtTitle.setEnabled(true);
+                showSoftKeyboard(edtTitle);
+            }
+        });
+        adapter = new ImagesPagerAdapter();
         vpgGallery.setAdapter(adapter);
-        vpgGallery.addOnPageChangeListener(pageLsn);
+        vpgGallery.setOffscreenPageLimit(2);
+        indicator.setViewPager(vpgGallery);
+        indicator.setOnPageChangeListener(pageLsn);
         vpgGallery.post(new Runnable() {
             @Override
             public void run() {
@@ -86,6 +112,7 @@ public class ImagePagerActivity extends BaseActivity {
     @Override
     public boolean onBack() {
         if (!super.onBack() && inEditDesc) {
+            if (!getSupportActionBar().isShowing()) toggle();
             new AlertDialog.Builder(alertTheme).setTitle(R.string.tips)
                                                .setMessage(getString(R.string.abortDataConfirm))
                                                .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
@@ -101,40 +128,34 @@ public class ImagePagerActivity extends BaseActivity {
         return false;
     }
 
-    @Click
-    protected void btnEdit() {
-        inEditDesc = true;
-        btnEdit.setVisibility(View.GONE);
-        edtTitle.setEnabled(true);
-    }
-
-    @Click
-    protected void btnSave() {
-        currentPhoto.setDesc(ContentUtil.nullIfEmpty(edtTitle));
-        getAppApplication().setTempObject(photoList);
-        setResult(RESULT_OK);
-        finish();
-    }
-
     private ViewPager.SimpleOnPageChangeListener pageLsn = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
-            setPagerTitle(position + 1);
             hideSoftKeyboard();
             if (showDescription) {
                 if (currentPhoto != null) currentPhoto.setDesc(ContentUtil.nullIfEmpty(edtTitle));
                 currentPhoto = photoList.get(position);
                 edtTitle.setText(currentPhoto.getDesc());
+            } else {
+                currentPhoto = photoList.get(position);
+                edtTitle.setText(currentPhoto.getFile().getName());
             }
         }
     };
 
-    protected void setPagerTitle(int position) {
-        setTitle(String.format("第%d张共%d张", position, photoList.size()));
+    public void toggle() {
+        if (getSupportActionBar().isShowing()) {
+            getSupportActionBar().hide();
+            indicator.setVisibility(View.GONE);
+        } else {
+            getSupportActionBar().show();
+            indicator.setVisibility(View.VISIBLE);
+        }
     }
 
-    class PicturePagerAdapter extends PagerAdapter {
+    class ImagesPagerAdapter extends PagerAdapter {
+
         @Override
         public int getCount() {
             return photoList.size();
@@ -142,13 +163,19 @@ public class ImagePagerActivity extends BaseActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            photoView.setAdjustViewBounds(true);
-            // Now just add PhotoView to ViewPager and return it
-            container.addView(photoView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
-            Picasso.with(getContext()).load(photoList.get(position).getPictureFile()).into(photoView);
-            return photoView;
+            SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(container.getContext());
+            File imageFile = photoList.get(position).getFile();
+            imageView.setImage(ImageSource.uri(imageFile.getPath()));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
+            imageView.setMinScale(getScaleRatio(imageFile));
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toggle();
+                }
+            });
+            container.addView(imageView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
+            return imageView;
         }
 
         @Override
@@ -159,6 +186,14 @@ public class ImagePagerActivity extends BaseActivity {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
+        }
+
+        private float getScaleRatio(File imageFile) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imageFile.getPath(), options);
+            float width = (float) (getResources().getDisplayMetrics().widthPixels + 0.1 - 0.1);
+            return width / options.outWidth;
         }
     }
 
