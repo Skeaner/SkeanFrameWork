@@ -17,7 +17,6 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import skean.me.base.net.DownloadHelper;
 
 /**
  * App的通用工具合集
@@ -40,21 +39,6 @@ public class AppCommonUtils {
                                          .writeTimeout(TIME_OUT, TimeUnit.SECONDS);
     }
 
-    public static Retrofit baseRetrofit(String baseUrl) {
-        return new Retrofit.Builder().baseUrl(baseUrl)
-                                     .client(newAppHttpBuilder().build())
-                                     .addConverterFactory(GsonConverterFactory.create())
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                                     .build();
-    }
-
-    public static Retrofit progressRetrofit(String baseUrl, @NonNull DownloadHelper helper) {
-        return new Retrofit.Builder().baseUrl(baseUrl)
-                                     .client(helper.getOkHttpClient(newAppHttpBuilder()))
-                                     .addConverterFactory(GsonConverterFactory.create())
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                                     .build();
-    }
 
     public static boolean commitEditorHelper(EditorHelper helper) {
         try {

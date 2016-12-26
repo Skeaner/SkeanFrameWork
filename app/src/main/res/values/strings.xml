@@ -41,7 +41,7 @@
     <string name="updatingApp">更新软件</string>
     <string name="downloadFinishClickInstall">下载完毕, 点击安装</string>
     <string name="downloadFailClickRetry">下载失败, 点击重试</string>
-    <string name="downloadProgress">正在下载<xliff:g id="1">%1$d</xliff:g></string>
+    <string name="downloadProgress">正在下载<xliff:g id="1">%1$d</xliff:g>%%</string>
     <string name="noSdcardMountedDownloadFail">找不到储存卡, 下载失败</string>
     <string name="createFileFail">创建文件失败, 下载失败</string>
 

@@ -1,5 +1,6 @@
 package skean.me.base.net;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -26,6 +27,8 @@ public interface PgyerService {
     @GET("install")
     Call<ResponseBody> downLoadApk(@Query("aId") String appId, @Query("_api_key") String apiKey);
 
-
+    @Multipart
+    @POST("upload")
+    Call<ResponseBody> uploadApk(@Part("uKey") RequestBody userkey, @Part("_api_key") RequestBody apiKey, @Part MultipartBody.Part file);
 
 }

@@ -27,13 +27,13 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import skean.me.base.net.CommonService;
 import skean.me.base.net.DefaultSubscriber;
-import skean.me.base.net.DownloadHelper;
 import skean.me.base.net.PgyAppInfo;
 import skean.me.base.net.PgyVersionInfo;
 import skean.me.base.net.PgyerService;
-import skean.me.base.net.ProgressHandler;
+import skean.me.base.net.ProgressInterceptor;
 import skean.me.base.utils.AppCommonUtils;
 import skean.me.base.utils.FileUtil;
+import skean.me.base.utils.NetworkUtil;
 import skean.me.base.utils.PackageUtils;
 import skean.me.base.widget.UpdateDialog;
 import skean.yzsm.com.framework.R;
@@ -52,7 +52,6 @@ public final class AppService extends Service {
 
     int tempProgress = 0;
     public static final int DOWNLOAD_NOTICE_ID = 1;
-    DownloadHelper helper;
 
     public static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
 
@@ -163,50 +162,50 @@ public final class AppService extends Service {
     ///////////////////////////////////////////////////////////////////////////
 
     private void checkUpdateInPGYER(final boolean showTips) {
-        AppCommonUtils.baseRetrofit(PgyerService.BASE_URL)
-                      .create(PgyerService.class)
-                      .getAppInfo(getAppVersion().getAppId(), getAppVersion().getApiKey())
-                      .subscribeOn(Schedulers.io())
-                      .filter(new Func1<PgyAppInfo, Boolean>() {
-                          @Override
-                          public Boolean call(PgyAppInfo appInfo) {
-                              return appInfo.getCode() == 0;
-                          }
-                      })
-                      .flatMap(new Func1<PgyAppInfo, Observable<PgyVersionInfo>>() {
-                          @Override
-                          public Observable<PgyVersionInfo> call(PgyAppInfo appInfo) {
-                              return Observable.from(appInfo.getData());
-                          }
-                      })
-                      .filter(new Func1<PgyVersionInfo, Boolean>() {
-                          @Override
-                          public Boolean call(PgyVersionInfo versionInfo) {
-                              return "1".equals(versionInfo.getAppIsLastest())
-                                      //
-                                      && Integer.valueOf(versionInfo.getAppVersionNo()) > PackageUtils.getVersionCode(context)//对比版本号
-                                      ;
-                          }
-                      })
-                      .observeOn(AndroidSchedulers.mainThread())
-                      .subscribe(new DefaultSubscriber<PgyVersionInfo>() {
-                          @Override
-                          public void onCompleted() {
-                              if (showTips && !getHasNext()) Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show();
-                              Log.i(TAG, "检查更新完毕: 已经是最新版本");
-                          }
+        NetworkUtil.baseRetrofit(PgyerService.BASE_URL)
+                   .create(PgyerService.class)
+                   .getAppInfo(getAppVersion().getAppId(), getAppVersion().getApiKey())
+                   .subscribeOn(Schedulers.io())
+                   .filter(new Func1<PgyAppInfo, Boolean>() {
+                       @Override
+                       public Boolean call(PgyAppInfo appInfo) {
+                           return appInfo.getCode() == 0;
+                       }
+                   })
+                   .flatMap(new Func1<PgyAppInfo, Observable<PgyVersionInfo>>() {
+                       @Override
+                       public Observable<PgyVersionInfo> call(PgyAppInfo appInfo) {
+                           return Observable.from(appInfo.getData());
+                       }
+                   })
+                   .filter(new Func1<PgyVersionInfo, Boolean>() {
+                       @Override
+                       public Boolean call(PgyVersionInfo versionInfo) {
+                           return "1".equals(versionInfo.getAppIsLastest())
+                                   //
+                                   && Integer.valueOf(versionInfo.getAppVersionNo()) > PackageUtils.getVersionCode(context)//对比版本号
+                                   ;
+                       }
+                   })
+                   .observeOn(AndroidSchedulers.mainThread())
+                   .subscribe(new DefaultSubscriber<PgyVersionInfo>() {
+                       @Override
+                       public void onCompleted() {
+                           if (showTips && !getHasNext()) Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show();
+                           Log.i(TAG, "检查更新完毕: 已经是最新版本");
+                       }
 
-                          @Override
-                          public void onError(Throwable e) {
-                              if (showTips) Toast.makeText(context, "检查更新出错", Toast.LENGTH_SHORT).show();
-                              Log.i(TAG, "检查更新出错: " + e.getMessage());
-                          }
+                       @Override
+                       public void onError(Throwable e) {
+                           if (showTips) Toast.makeText(context, "检查更新出错", Toast.LENGTH_SHORT).show();
+                           Log.i(TAG, "检查更新出错: " + e.getMessage());
+                       }
 
-                          @Override
-                          public void onNext(PgyVersionInfo versionInfo) {
-                              showUpdateDialog(versionInfo.getAppVersion(), versionInfo.getAppUpdateDescription(), null);
-                          }
-                      });
+                       @Override
+                       public void onNext(PgyVersionInfo versionInfo) {
+                           showUpdateDialog(versionInfo.getAppVersion(), versionInfo.getAppUpdateDescription(), null);
+                       }
+                   });
     }
 
     private void showUpdateDialog(String v, String changeLog, String url) {
@@ -220,23 +219,19 @@ public final class AppService extends Service {
     private void downloadApp(final String url) {
         File apkFile;
         if ((apkFile = createTempApk()) == null) return;
-        helper = new DownloadHelper();
-        helper.setProgressHandler(ProgressHandler.newInstance(getProgressCallback(apkFile)));
-        AppCommonUtils.progressRetrofit(CommonService.BASE_URL, helper)
-                      .create(CommonService.class)
-                      .downLoad(url)
-                      .enqueue(getResponseCallBack(apkFile));
+        NetworkUtil.progressRetrofit(CommonService.BASE_URL, null, getDownloadCallBack(apkFile))
+                   .create(CommonService.class)
+                   .downLoad(url)
+                   .enqueue(getResponseCallBack(apkFile));
     }
 
     protected void downloadApp(String appid, String apiKey) {
         File apkFile;
         if ((apkFile = createTempApk()) == null) return;
-        helper = new DownloadHelper();
-        helper.setProgressHandler(ProgressHandler.newInstance(getProgressCallback(apkFile)));
-        AppCommonUtils.progressRetrofit(PgyerService.BASE_URL, helper)
-                      .create(PgyerService.class)
-                      .downLoadApk(appid, apiKey)
-                      .enqueue(getResponseCallBack(apkFile));
+        NetworkUtil.progressRetrofit(PgyerService.BASE_URL, null, getDownloadCallBack(apkFile))
+                   .create(PgyerService.class)
+                   .downLoadApk(appid, apiKey)
+                   .enqueue(getResponseCallBack(apkFile));
     }
 
     private File createTempApk() {
@@ -261,36 +256,34 @@ public final class AppService extends Service {
         return apkFile;
     }
 
-    private ProgressHandler.ProgressHandlerCallback getProgressCallback(final File apkFile) {
-        return new ProgressHandler.ProgressHandlerCallback() {
+    private ProgressInterceptor.DownloadListener getDownloadCallBack(final File apkFile) {
+        return new ProgressInterceptor.DownloadListener() {
             @Override
-            protected void onProgress(int percent) {
-                nManager.notify(DOWNLOAD_NOTICE_ID,
-                                new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                 .setContentText(getString(R.string.downloadProgress, percent) + "%")
-                                                                 .setSmallIcon(R.drawable.ic_launcher)
-                                                                 .setOngoing(true)
-                                                                 .setProgress(100, percent, false)
-                                                                 .getNotification());
+            public void downloadProgress(long bytesRead, long contentLength, int percentage, boolean done) {
+                if (!done) {
+                    nManager.notify(DOWNLOAD_NOTICE_ID,
+                                    new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
+                                                                     .setContentText(getString(R.string.downloadProgress, percentage))
+                                                                     .setSmallIcon(R.drawable.ic_launcher)
+                                                                     .setOngoing(true)
+                                                                     .setProgress(100, percentage, false)
+                                                                     .getNotification());
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                                  .setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
+                    PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    nManager.notify(DOWNLOAD_NOTICE_ID,
+                                    new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
+                                                                     .setContentText(getString(R.string.downloadFinishClickInstall))
+                                                                     .setContentIntent(pi)
+                                                                     .setSmallIcon(R.drawable.ic_launcher)
+                                                                     .setOngoing(false)
+                                                                     .setAutoCancel(false)
+                                                                     .setProgress(100, 100, false)
+                                                                     .getNotification());
+                    context.startActivity(intent);
+                }
             }
-
-            @Override
-            protected void onDone() {
-                Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                              .setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
-                PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                nManager.notify(DOWNLOAD_NOTICE_ID,
-                                new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                 .setContentText(getString(R.string.downloadFinishClickInstall))
-                                                                 .setContentIntent(pi)
-                                                                 .setSmallIcon(R.drawable.ic_launcher)
-                                                                 .setOngoing(false)
-                                                                 .setAutoCancel(false)
-                                                                 .setProgress(100, 100, false)
-                                                                 .getNotification());
-                context.startActivity(intent);
-            }
-
         };
     }
 

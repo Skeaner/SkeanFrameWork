@@ -37,9 +37,8 @@ public class BaseActivity extends AppCompatActivity {
 
     private Handler mainHandler;
 
-
     protected boolean useHomeAsBack = true;
-    protected boolean isMenuCreated  = false;
+    protected boolean isMenuCreated = false;
 
     public static final int RESULT_MODIFIED = -2;
     public static final int RESULT_DELETE = -3;
@@ -79,8 +78,8 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        boolean result =  super.onCreateOptionsMenu(menu);
-        isMenuCreated  = true;
+        boolean result = super.onCreateOptionsMenu(menu);
+        isMenuCreated = true;
         return result;
     }
 
@@ -101,7 +100,6 @@ public class BaseActivity extends AppCompatActivity {
         this.useHomeAsBack = useHomeAsBack;
         initActionBar();
     }
-
 
     /**
      * 返回键的行为 <p/>
@@ -185,7 +183,10 @@ public class BaseActivity extends AppCompatActivity {
     };
 
     private LoadingDialog getLoadingDialog() {
-        return getLoadingDialog(getString(R.string.loading), true).setFinished(false);
+        if (loadingDialog == null) {
+            loadingDialog = getLoadingDialog(getString(R.string.loading), true).setFinished(false);
+        }
+        return loadingDialog;
     }
 
     private LoadingDialog getLoadingDialog(String text, boolean cancelable) {
@@ -327,7 +328,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         return false;
     }
-
 
     /**
      * 展示软键盘
