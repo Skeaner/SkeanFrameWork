@@ -1,9 +1,10 @@
 package skean.me.base.utils;
 
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,8 @@ import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+
+import retrofit2.converter.fastjson.FastJsonConverterFactory;
 import skean.me.base.component.AppApplication;
 import skean.me.base.net.ProgressInterceptor;
 import skean.me.base.net.ProgressInterceptor.DownloadListener;
@@ -30,7 +32,6 @@ import skean.yzsm.com.framework.BuildConfig;
 
 public class NetworkUtil {
     public static final int TIME_OUT = 10;
-    private static CookieJar cookie;
 
     public static OkHttpClient.Builder newAppHttpBuilder() {
         return new OkHttpClient.Builder().connectTimeout(TIME_OUT, TimeUnit.SECONDS)
@@ -72,23 +73,21 @@ public class NetworkUtil {
      * @return CookieJar
      */
     public static CookieJar persistentCookieJar() {
-        if (cookie == null)
-            cookie = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(AppApplication.getContext()));
-        return cookie;
+        return new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(AppApplication.getContext()));
     }
 
     public static Retrofit baseRetrofit(String baseUrl) {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpBuilder().build())
-                                     .addConverterFactory(GsonConverterFactory.create())
+                                     .addConverterFactory(FastJsonConverterFactory.create())
                                      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                      .build();
     }
 
-    public static Retrofit baseRetrofit(String baseUrl, Gson gson) {
+    public static Retrofit baseRetrofit(String baseUrl, ParserConfig parserConfig) {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpBuilder().build())
-                                     .addConverterFactory(GsonConverterFactory.create(gson))
+                                     .addConverterFactory(FastJsonConverterFactory.create().setParserConfig(parserConfig))
                                      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                      .build();
     }
@@ -96,7 +95,7 @@ public class NetworkUtil {
     public static Retrofit progressRetrofit(String baseUrl) {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpProgressBuilder().build())
-                                     .addConverterFactory(GsonConverterFactory.create())
+                                     .addConverterFactory(FastJsonConverterFactory.create())
                                      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                      .build();
     }
@@ -104,7 +103,7 @@ public class NetworkUtil {
     public static Retrofit progressRetrofit(String baseUrl, UploadListener uploadListener, DownloadListener downloadListener) {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
-                                     .addConverterFactory(GsonConverterFactory.create())
+                                     .addConverterFactory(FastJsonConverterFactory.create())
                                      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                      .build();
     }
