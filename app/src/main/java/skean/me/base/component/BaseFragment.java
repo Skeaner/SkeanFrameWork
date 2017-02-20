@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
@@ -302,6 +303,16 @@ public abstract class BaseFragment extends Fragment {
     protected void setErrorAndRequestFocus(EditText et, String errMessage) {
         et.setError(errMessage);
         et.requestFocus();
+    }
+
+
+    protected AlertDialog.Builder buildAlert(String title, String message) {
+        return new AlertDialog.Builder(alertTheme).setTitle(title).setMessage(message);
+    }
+
+
+    protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
+        return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);
     }
 
 }

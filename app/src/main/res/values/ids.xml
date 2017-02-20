@@ -4,5 +4,6 @@
     <item name="keyDownY" type="id"/>
     <item name="keyPackedPosition" type="id"/>
     <item name="keyHolder" type="id"/>
-
+    <item name="pwvWebView" type="id"/>
+    <item name="pwvProgressBar" type="id"/>
 </resources>

@@ -11,9 +11,13 @@ import android.widget.TextView;
 import com.baidu.location.BDLocation;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * 提取录入内容的便利工具
@@ -21,11 +25,38 @@ import java.util.Locale;
 public class ContentUtil {
 
     public static final String NO_DATA = "-";
-    public static final String COMMA = ", ";
+    public static final String COMMA_AND_SPACE = ", ";
+    public static final String COMMA_ = ",";
+    public static final String START_BRACE = "{";
+    public static final String END_BRACE = "}";
+    public static final String RMB = "¥";
 
-    public static final SimpleDateFormat DATE_TIME_FORMATER = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
-    public static final SimpleDateFormat DATE_TIME_WEEK_FORMATER = new SimpleDateFormat("yyyy-MM-dd E HH:mm", Locale.CHINA);
-    public static final SimpleDateFormat DATE_FORMATER = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+    public static final SimpleDateFormat DATE_TIME_FORMATER;
+    public static final SimpleDateFormat DATE_TIME_WEEK_FORMATER;
+    public static final SimpleDateFormat DATE_FORMATER;
+    private static final char[] DIGITS_LOWER;
+    private static final char[] DIGITS_UPPER;
+    public static NumberFormat PRICE_FORMAT;
+    public static NumberFormat PRICE_MINIMAL_FORMAT;
+    public static NumberFormat DISCOUNT_FORMAT;
+
+    static {
+        DATE_TIME_FORMATER = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+        DATE_TIME_WEEK_FORMATER = new SimpleDateFormat("yyyy-MM-dd E HH:mm", Locale.CHINA);
+        DATE_FORMATER = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        DIGITS_LOWER = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        DIGITS_UPPER = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        PRICE_FORMAT = NumberFormat.getNumberInstance();
+        PRICE_FORMAT.setMaximumFractionDigits(2);
+        PRICE_FORMAT.setMinimumFractionDigits(2);
+        PRICE_FORMAT.setGroupingUsed(false);
+        PRICE_MINIMAL_FORMAT = NumberFormat.getNumberInstance();
+        PRICE_MINIMAL_FORMAT.setMaximumFractionDigits(2);
+        PRICE_MINIMAL_FORMAT.setGroupingUsed(false);
+        DISCOUNT_FORMAT = NumberFormat.getNumberInstance();
+        DISCOUNT_FORMAT.setMaximumFractionDigits(1);
+        DISCOUNT_FORMAT.setGroupingUsed(false);
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 内容连接
@@ -83,9 +114,50 @@ public class ContentUtil {
      * @param text 需要连接的多个字符
      * @return 连接完成字符
      */
-    public static String concatAutoComma(CharSequence... text) {
+    public static String concatAutoCommaAndSpace(CharSequence... text) {
         if (text == null || text.length == 0) return null;
         else return concat(addCharInBetweenSequenceArray(", ", text));
+    }
+
+    /**
+     * 连接多个字符, 中间自动添加逗号
+     *
+     * @param text 需要连接的多个字符
+     * @return 连接完成字符
+     */
+    public static String concatAutoComma(CharSequence... text) {
+        if (text == null || text.length == 0) return null;
+        else return concat(addCharInBetweenSequenceArray(",", text));
+    }
+
+    /**
+     * 连接多个字符, 中间自动添加逗号
+     *
+     * @param list 需要连接的多个字符
+     * @return 连接完成字符
+     */
+    public static String concatAutoComma(List<String> list) {
+        if (list == null || list.size() == 0) return null;
+        return concat(addCharInBetweenSequenceArray(",", stringListToCharSequenceArray(list)));
+    }
+
+    public static CharSequence[] stringListToCharSequenceArray(List<String> list) {
+        CharSequence[] sq = new CharSequence[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            sq[i] = list.get(i);
+        }
+        return sq;
+    }
+
+    /**
+     * 连接多个字符, 中间自动添加逗号, 前后添加花括号
+     *
+     * @param text 需要连接的多个字符
+     * @return 连接完成字符
+     */
+    public static String concatAsArray(CharSequence... text) {
+        if (text == null || text.length == 0) return null;
+        else return concat(addCharAtStartEnd(addCharInBetweenSequenceArray(COMMA_, text), START_BRACE, END_BRACE));
     }
 
     /**
@@ -114,6 +186,47 @@ public class ContentUtil {
             if (i != length - 1) newArray[2 * i + 1] = addition;
         }
         return newArray;
+    }
+
+    /**
+     * 在字符数组前后指定的字符
+     *
+     * @param originArray 字符串数组
+     * @param start       前面的字符
+     * @param end         后面的字符
+     * @return 添加完成后的数组
+     */
+    private static CharSequence[] addCharAtStartEnd(CharSequence[] originArray, CharSequence start, CharSequence end) {
+        int newLength = originArray.length;
+        if (start != null) newLength++;
+        if (end != null) newLength++;
+        CharSequence[] newArray = new CharSequence[newLength];
+        int index = 0;
+        if (start != null) {
+            newArray[index] = start;
+            index++;
+        }
+        for (CharSequence cs : originArray) {
+            newArray[index] = cs;
+            index++;
+        }
+        if (end != null) {
+            newArray[index] = end;
+        }
+        return newArray;
+    }
+
+    /**
+     * 按照顺序选取字符, 直到选到不为空的字符为止
+     *
+     * @param texts 字符数组
+     * @return 最终选到的字符
+     */
+    public static CharSequence ordeSelect(CharSequence... texts) {
+        for (CharSequence text : texts) {
+            if (!TextUtils.isEmpty(text)) return text;
+        }
+        return null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -190,6 +303,28 @@ public class ContentUtil {
         return TextUtils.getTrimmedLength(text);
     }
 
+    /**
+     * 判断TextView内容是否相等
+     *
+     * @param v1 TextView1
+     * @param v2 TextView2
+     * @return 相等返回true, 不等返回false
+     */
+    public static boolean isEqual(TextView v1, TextView v2) {
+        return isEqual(v1.getText(), v2.getText());
+    }
+
+    /**
+     * 判断字符串的是否相等
+     *
+     * @param s1 字符1
+     * @param s2 字符2
+     * @return 相等返回true, 不等返回false
+     */
+    public static boolean isEqual(CharSequence s1, CharSequence s2) {
+        return TextUtils.equals(s1, s2);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // 其他内容的处理
     ///////////////////////////////////////////////////////////////////////////
@@ -254,8 +389,6 @@ public class ContentUtil {
         return value;
     }
 
-
-
     public static void checkByTag(RadioGroup group, String tag) {
         if (group != null) {
             View v = group.findViewWithTag(tag);
@@ -314,13 +447,36 @@ public class ContentUtil {
         return concatObjects(location.getLatitude(), "/", location.getLongitude());
     }
 
+    /**
+     * 使用NumberFormat,保留小数点后两位
+     */
+    public static String price(float value) {
+        return PRICE_FORMAT.format(value);
+    }
 
+    /**
+     * 使用NumberFormat,保留小数点后两位
+     */
+    public static String priceWithMark(float value) {
+        return "¥" + PRICE_FORMAT.format(value);
+    }
 
+    /**
+     * 使用NumberFormat,保留小数点后两位
+     */
+    public static String priceMin(float value) {
+        return PRICE_MINIMAL_FORMAT.format(value);
+    }
+
+    /**
+     * 折扣的字符, 保留一位小数, 最大为10折
+     */
+    public static String discount(float value) {
+        return DISCOUNT_FORMAT.format(value);
+    }
     ///////////////////////////////////////////////////////////////////////////
     // 其他内容
     ///////////////////////////////////////////////////////////////////////////
-
-
 
     public static String getMediaFileTimeLength(File file) {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
@@ -340,17 +496,87 @@ public class ContentUtil {
     }
 
     public static String validateIdcardCode(String idcardCode) {
-        if (idcardCode == null || idcardCode.length() != 18) return "身份证长度不符!";
-        int[] weight = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};    //十七位数字本体码权重
-        char[] validate = {'1', '0', 'x', '9', '8', '7', '6', '5', '4', '3', '2'};    //mod11,对应校验码字符值
-        int sum = 0;
-        int mode = 0;
-        for (int i = 0; i < 17; i++) {
-            sum = sum + Integer.parseInt(String.valueOf(idcardCode.charAt(i))) * weight[i];
+        if (idcardCode == null || idcardCode.length() != 18 || idcardCode.length() != 15) return "身份证长度不符!";
+        if (idcardCode.length() == 18) {
+            int[] weight = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};    //十七位数字本体码权重
+            char[] validate = {'1', '0', 'x', '9', '8', '7', '6', '5', '4', '3', '2'};    //mod11,对应校验码字符值
+            int sum = 0;
+            int mode = 0;
+            for (int i = 0; i < 17; i++) {
+                sum = sum + Integer.parseInt(String.valueOf(idcardCode.charAt(i))) * weight[i];
+            }
+            mode = sum % 11;
+            if (Character.toLowerCase(idcardCode.charAt(17)) != validate[mode]) return "身份证号校验不符!";
         }
-        mode = sum % 11;
-        if (Character.toLowerCase(idcardCode.charAt(17)) != validate[mode]) return "身份证号校验不符!";
         return null;
+    }
+
+    public static String validateIdcardCode2(String idCode) {
+        if (idCode == null || !(idCode.length() == 18 || idCode.length() == 15)) return "身份证长度不符!";
+        if (idCode.length() == 15) {
+            Pattern p = Pattern.compile("^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$");
+            if (p.matcher(idCode).matches()) {
+                return null;
+            } else return "身份证格式不符!";
+        } else if (idCode.length() == 18) {
+            Pattern pattern = Pattern.compile("^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|[xX])$");
+            if (pattern.matcher(idCode).matches()) {
+                int[] weight = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};    //十七位数字本体码权重
+                char[] validate = {'1', '0', 'x', '9', '8', '7', '6', '5', '4', '3', '2'};    //mod11,对应校验码字符值
+                int sum = 0;
+                int mode = 0;
+                for (int i = 0; i < 17; i++) {
+                    sum = sum + Integer.parseInt(String.valueOf(idCode.charAt(i))) * weight[i];
+                }
+                mode = sum % 11;
+                if (Character.toLowerCase(idCode.charAt(17)) != validate[mode]) return "身份证号校验不符!";
+                else return null;
+            } else return "身份证格式不符!";
+        } else return "身份证长度不符";
+    }
+
+    public static String md5(String text, boolean toLowerCase) {
+        return encodeHexString(text, "MD5", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
+    }
+
+    public static String sha1(String text, boolean toLowerCase) {
+        return encodeHexString(text, "SHA-1", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
+    }
+
+    public static String sha224(String text, boolean toLowerCase) {
+        return encodeHexString(text, "SHA-224", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
+    }
+
+    public static String sha256(String text, boolean toLowerCase) {
+        return encodeHexString(text, "SHA-256", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
+    }
+
+    public static String sha384(String text, boolean toLowerCase) {
+        return encodeHexString(text, "SHA-384", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
+    }
+
+    public static String sha512(String text, boolean toLowerCase) {
+        return encodeHexString(text, "SHA-512", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
+    }
+
+    private static String encodeHexString(String text, String method, char[] toDigits) {
+        String value = null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance(method);
+            digest.update(text.getBytes());
+            byte[] data = digest.digest();
+            int l = data.length;
+            char[] out = new char[l << 1];
+            int i = 0;
+            for (int j = 0; i < l; ++i) {
+                out[j++] = toDigits[(240 & data[i]) >>> 4];
+                out[j++] = toDigits[15 & data[i]];
+            }
+            value = new String(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 
 }

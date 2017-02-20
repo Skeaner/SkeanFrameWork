@@ -391,4 +391,13 @@ public class BaseActivity extends AppCompatActivity {
         et.requestFocus();
     }
 
+    protected AlertDialog.Builder buildAlert(String title, String message) {
+        return new AlertDialog.Builder(alertTheme).setTitle(title).setMessage(message);
+    }
+
+
+    protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
+        return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);
+    }
+
 }
