@@ -281,7 +281,6 @@ public final class AppService extends Service {
                                                                      .setAutoCancel(false)
                                                                      .setProgress(100, 100, false)
                                                                      .getNotification());
-                    context.startActivity(intent);
                 }
             }
         };
@@ -293,6 +292,9 @@ public final class AppService extends Service {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     FileUtil.storeFile(apkFile, response.body().byteStream());
+                    Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                                  .setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
+                    context.startActivity(intent);
                 } catch (IOException e) {
                     e.printStackTrace();
                     onFailure(call, e);
