@@ -6,8 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -17,9 +20,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.hannesdorfmann.mosby3.mvp.MvpFragment;
+import com.hannesdorfmann.mosby3.mvp.MvpPresenter;
+import com.hannesdorfmann.mosby3.mvp.MvpView;
+import com.hannesdorfmann.mosby3.mvp.delegate.FragmentMvpDelegate;
+import com.hannesdorfmann.mosby3.mvp.delegate.FragmentMvpDelegateImpl;
+import com.hannesdorfmann.mosby3.mvp.delegate.MvpDelegateCallback;
 
 import skean.me.base.widget.LoadingDialog;
 import skean.yzsm.com.framework.R;
@@ -28,309 +37,125 @@ import skean.yzsm.com.framework.R;
  * App的Fragment基类 <p/>
  */
 @SuppressWarnings("unused")
-public abstract class BaseFragment extends Fragment {
-    protected AppApplication app;
-    protected BaseHostActivity hostActivity;
-    private Context context;
-    protected ActionBar actionBar;
-    protected LoadingDialog loadingDialog;
+public abstract class BaseMvpFragment<V extends MvpView, P extends MvpPresenter<V>> extends BaseFragment implements MvpDelegateCallback<V, P>, MvpView {
 
-    protected float fragmentIndex;
-
-    protected boolean isMenuCreated;
-
-    protected static final int MAX_INTERVAL_FOR_CLICK = 250;
-    protected static final int MAX_DISTANCE_FOR_CLICK = 100;
-    protected static final int FILTER_FOR_CLICK = 300;
-
-    public ActionMode tempActionMode;
-
-    protected ContextThemeWrapper alertTheme;
-
-    Toast toast;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 设置/生命周期/初始化
-    ///////////////////////////////////////////////////////////////////////////
-
-    public BaseFragment() {
-        this.fragmentIndex = getFragmentIndex();
-    }
-
-    public abstract float getFragmentIndex();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        app = hostActivity.getAppApplication();
-        alertTheme = new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat_Light_Dialog_Alert);
-        toast = hostActivity.getToast();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.hostActivity = (BaseHostActivity) activity;
-        getHostActivity().currentFragment = this;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        isMenuCreated = true;
-    }
+    protected FragmentMvpDelegate<V, P> mvpDelegate;
 
     /**
-     * 自定义ActionBar的操作
+     * The presenter for this view. Will be instantiated with {@link #createPresenter()}
      */
-    public void customizeActionBar() {
-    }
+    protected P presenter;
 
     /**
-     * 清除ActionBar自定义内容
+     * Creates a new presenter instance, if needed. Will reuse the previous presenter instance if
+     * {@link #setRetainInstance(boolean)} is set to true. This method will be called from
+     * {@link #onViewCreated(View, Bundle)}
      */
-    public void clearActionBar() {
-    }
-
-    public boolean onBack() {
-        return true;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 状态获取/上下文相关
-    ///////////////////////////////////////////////////////////////////////////
-
-    public boolean isMenuCreated() {
-        return isMenuCreated;
-    }
-
-    public AppApplication getAppApplication() {
-        return app;
-    }
-
-    public BaseHostActivity getHostActivity() {
-        return hostActivity;
-    }
-
-    public Handler getMainHandler() {
-        return hostActivity.getMainHandler();
-    }
-
-    protected ActionBar getSupportActionBar() {
-        return hostActivity.getSupportActionBar();
-    }
-
-    protected ActionMode startSupportActionMode(ActionMode.Callback callback) {
-        return hostActivity.startSupportActionMode(callback);
-    }
-
-    public boolean isActiveNetworkAvailable() {
-        return hostActivity.isActiveNetworkAvailable();
-    }
-
-    public boolean isAnyNetworkAvailable() {
-        return hostActivity.isAnyNetworkAvailable();
-    }
-
-    public boolean isGpsEnabled() {
-        return hostActivity.isGpsEnabled();
-    }
-
-    public boolean isSdcardMounted(boolean alert, DialogInterface.OnClickListener listener) {
-        return hostActivity.isSdcardMounted(alert, listener);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 进度框便利方法
-    ///////////////////////////////////////////////////////////////////////////
-
-    public void showLoading(boolean cancelable) {
-        hostActivity.showLoading(cancelable);
-    }
-
-    public void showLoading(int stringId, boolean cancelable) {
-        hostActivity.showLoading(stringId, cancelable);
-    }
-
-    public void showLoading(String text, boolean cancelable) {
-        hostActivity.showLoading(text, cancelable);
-    }
-
-    public void setLoaded() {
-        hostActivity.setLoaded();
-    }
-
-    public void setLoaded(String text) {
-        hostActivity.setLoaded(text);
-    }
-
-    public void setLoadingText(String text) {
-        hostActivity.setLoadingText(text);
-    }
-
-    public void setLoadingText(int resId) {
-        hostActivity.setLoadingText(resId);
-    }
-
-    public void dismissLoading() {
-        hostActivity.dismissLoading();
-    }
-
-    public void dismissLoadingDelayed(long millis) {
-        hostActivity.dismissLoadingDelayed(millis);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // toast便利方法
-    ///////////////////////////////////////////////////////////////////////////
-
-    public void toast(int stringId, int toastLength) {
-        toast.setText(stringId);
-        toast.setDuration(toastLength);
-        toast.show();
-    }
-
-    public void toast(String text, int toastLength) {
-        toast.setText(text);
-        toast.setDuration(toastLength);
-        toast.show();
-
-    }
-
-    public void toast(int stringId) {
-        toast.setText(stringId);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.show();
-
-    }
-
-    public void toast(String text) {
-        toast.setText(text);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    public void toastFormat(String text, Object... args) {
-        String content = String.format(text, args);
-        toast(content);
-    }
-
-    public void toastFormat(@StringRes int resId, Object... args) {
-        String content = getString(resId, args);
-        toast(content);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 本地广播相关
-    ///////////////////////////////////////////////////////////////////////////
-
-    public LocalBroadcastManager getLocalBroadcastManager() {
-        return hostActivity.getLocalBroadcastManager();
-    }
-
-    public boolean sendLocalBroadcast(Intent intent) {
-        return hostActivity.sendLocalBroadcast(intent);
-    }
-
-    public void sendLocalBroadcastSync(Intent intent) {
-        hostActivity.sendLocalBroadcastSync(intent);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 便利方法
-    ///////////////////////////////////////////////////////////////////////////
-
-    public void postInMain(Runnable r) {
-        hostActivity.postInMain(r);
-    }
-
-    public void postInMainDelayed(Runnable r, long delayMillis) {
-        hostActivity.postInMainDelayed(r, delayMillis);
-    }
+    public abstract P createPresenter();
 
     /**
-     * 隐藏软键盘 <p/>
+     * * Get the mvp delegate. This is internally used for creating presenter, attaching and
+     * detaching view from presenter.
      *
-     * @return 是否有执行隐藏软键盘的操作
+     * <p>
+     * <b>Please note that only one instance of mvp delegate should be used per fragment
+     * instance</b>.
+     * </p>
+     *
+     * <p>
+     * Only override this method if you really know what you are doing.
+     * </p>
+     *
+     * @return {@link FragmentMvpDelegateImpl}
      */
-    public boolean hideSoftInput() {
-        return hostActivity.hideSoftKeyboard();
-    }
-
-    /**
-     * 展示软键盘
-     * <p/>
-     * * @return 是否有执行展示软键盘的操作
-     */
-    public boolean showSoftKeyboard(EditText target) {
-        return hostActivity.showSoftKeyboard(target);
-    }
-
-    protected void hideViews(View... views) {
-        for (View view : views) {
-            view.post(new WeakReferenceViewRunnable(view) {
-                @Override
-                public void run() {
-                    getView().setVisibility(View.GONE);
-                }
-            });
+    @NonNull
+    protected FragmentMvpDelegate<V, P> getMvpDelegate() {
+        if (mvpDelegate == null) {
+            mvpDelegate = new FragmentMvpDelegateImpl<>(this);
         }
+
+        return mvpDelegate;
     }
 
-    protected void showViews(View... views) {
-        for (View view : views) {
-            view.post(new WeakReferenceViewRunnable(view) {
-                @Override
-                public void run() {
-                    getView().setVisibility(View.VISIBLE);
-                }
-            });
-        }
+    @NonNull @Override public P getPresenter() {
+        return presenter;
     }
 
-    protected void enableViews(View... views) {
-        for (View view : views) {
-            view.post(new WeakReferenceViewRunnable(view) {
-                @Override
-                public void run() {
-                    getView().setEnabled(true);
-                }
-            });
-        }
+    @Override public void setPresenter(@NonNull P presenter) {
+        this.presenter = presenter;
     }
 
-    protected boolean detectClickEvent(View v, MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            v.setTag(R.id.keyDownX, ev.getX());
-            v.setTag(R.id.keyDownY, ev.getY());
-        } else if (ev.getAction() == MotionEvent.ACTION_UP) {
-            int dx = (int) Math.abs((float) v.getTag(R.id.keyDownX) - ev.getX());
-            int dy = (int) Math.abs((float) v.getTag(R.id.keyDownY) - ev.getY());
-            long dm = ev.getEventTime() - ev.getDownTime();
-            return dx < MAX_DISTANCE_FOR_CLICK && dy < MAX_DISTANCE_FOR_CLICK && dm < MAX_INTERVAL_FOR_CLICK;
-        }
-        return false;
+    @Override public boolean isRetainInstance() {
+        return getRetainInstance();
     }
 
-    protected void setErrorAndRequestFocus(EditText et, String errMessage) {
-        et.setError(errMessage);
-        et.requestFocus();
+    @Override public boolean shouldInstanceBeRetained() {
+        FragmentActivity activity = getActivity();
+        boolean changingConfig = activity != null && activity.isChangingConfigurations();
+        return getRetainInstance() && changingConfig;
     }
 
-
-    protected AlertDialog.Builder buildAlert(String title, String message) {
-        return new AlertDialog.Builder(alertTheme).setTitle(title).setMessage(message);
+    @NonNull @Override public V getMvpView() {
+        return (V) this;
     }
 
-
-    protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
-        return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);
+    @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getMvpDelegate().onViewCreated(view, savedInstanceState);
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        getMvpDelegate().onDestroyView();
+    }
+
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getMvpDelegate().onCreate(savedInstanceState);
+    }
+
+    @Override public void onDestroy() {
+        super.onDestroy();
+        getMvpDelegate().onDestroy();
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        getMvpDelegate().onPause();
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        getMvpDelegate().onResume();
+    }
+
+    @Override public void onStart() {
+        super.onStart();
+        getMvpDelegate().onStart();
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        getMvpDelegate().onStop();
+    }
+
+    @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getMvpDelegate().onActivityCreated(savedInstanceState);
+    }
+
+    @Override public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        getMvpDelegate().onAttach(activity);
+    }
+
+    @Override public void onDetach() {
+        super.onDetach();
+        getMvpDelegate().onDetach();
+    }
+
+    @Override public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getMvpDelegate().onSaveInstanceState(outState);
+    }
 }

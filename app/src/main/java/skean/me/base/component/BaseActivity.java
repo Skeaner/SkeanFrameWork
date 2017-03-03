@@ -2,6 +2,7 @@ package skean.me.base.component;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.StringRes;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -51,7 +53,9 @@ public class BaseActivity extends AppCompatActivity {
     protected static final int MAX_DISTANCE_FOR_CLICK = 100;
     protected static final int FILTER_FOR_CLICK = 300;
 
-    Toast toast;
+    private Toast toast;
+
+    private LocalBroadcastManager lbm;
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
@@ -61,6 +65,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         app = (AppApplication) getApplication();
         context = this;
+        lbm = LocalBroadcastManager.getInstance(getContext());
         initActionBar();
         mainHandler = new Handler();
         alertTheme = new ContextThemeWrapper(context, R.style.Theme_AppCompat_Light_Dialog_Alert);
@@ -218,46 +223,6 @@ public class BaseActivity extends AppCompatActivity {
         return isMenuCreated;
     }
 
-    public boolean isActiveNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (manager != null) {
-            NetworkInfo network = manager.getActiveNetworkInfo();
-            if (network != null && network.isConnectedOrConnecting()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isAnyNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (manager != null) {
-            NetworkInfo[] info = manager.getAllNetworkInfo();
-            if (info.length != 0) {
-                for (NetworkInfo networkInfo : info) {
-                    if (NetworkInfo.State.CONNECTED.equals(networkInfo.getState())) return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isGpsEnabled() {
-        LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
-    public boolean isSdcardMounted(boolean alert, DialogInterface.OnClickListener listener) {
-        boolean enabled = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-        if (alert) {
-            new AlertDialog.Builder(alertTheme).setTitle(R.string.tips)
-                                               .setMessage(R.string.noSdcardMounted)
-                                               .setPositiveButton(R.string.confirm, listener)
-                                               .show();
-        }
-        return enabled;
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // toast的便捷方法
     ///////////////////////////////////////////////////////////////////////////
@@ -300,6 +265,22 @@ public class BaseActivity extends AppCompatActivity {
     public void toastFormat(@StringRes int resId, Object... args) {
         String content = getString(resId, args);
         toast(content);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 本地广播相关
+    ///////////////////////////////////////////////////////////////////////////
+
+    public LocalBroadcastManager getLocalBroadcastManager() {
+        return lbm;
+    }
+
+    public boolean sendLocalBroadcast(Intent intent) {
+        return lbm.sendBroadcast(intent);
+    }
+
+    public void sendLocalBroadcastSync(Intent intent) {
+        lbm.sendBroadcastSync(intent);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -394,7 +375,6 @@ public class BaseActivity extends AppCompatActivity {
     protected AlertDialog.Builder buildAlert(String title, String message) {
         return new AlertDialog.Builder(alertTheme).setTitle(title).setMessage(message);
     }
-
 
     protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
         return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);

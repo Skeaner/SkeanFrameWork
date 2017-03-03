@@ -55,6 +55,7 @@ repositories {
     }
     maven { url "https://jitpack.io" }
     maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 
@@ -87,6 +88,10 @@ dependencies {
     compile 'com.github.Raizlabs.DBFlow:dbflow-core:3.1.1'
     compile 'com.github.Raizlabs.DBFlow:dbflow:3.1.1'
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:3.1.1"
+    //MVP框架
+    compile 'com.hannesdorfmann.mosby3:mvp:3.0.0-SNAPSHOT'
+    compile 'com.hannesdorfmann.mosby3:viewstate:3.0.0-SNAPSHOT'
+    compile 'com.hannesdorfmann.mosby3:mvi:3.0.0-SNAPSHOT'
     //三方工具
     compile 'commons-codec:commons-codec:1.10'
     compile 'commons-net:commons-net:3.5'

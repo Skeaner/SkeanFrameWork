@@ -3,10 +3,12 @@ package skean.me.base.component;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
@@ -128,22 +130,6 @@ public abstract class BaseFragment extends Fragment {
         return hostActivity.startSupportActionMode(callback);
     }
 
-    public boolean isActiveNetworkAvailable() {
-        return hostActivity.isActiveNetworkAvailable();
-    }
-
-    public boolean isAnyNetworkAvailable() {
-        return hostActivity.isAnyNetworkAvailable();
-    }
-
-    public boolean isGpsEnabled() {
-        return hostActivity.isGpsEnabled();
-    }
-
-    public boolean isSdcardMounted(boolean alert, DialogInterface.OnClickListener listener) {
-        return hostActivity.isSdcardMounted(alert, listener);
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // 进度框便利方法
     ///////////////////////////////////////////////////////////////////////////
@@ -222,6 +208,22 @@ public abstract class BaseFragment extends Fragment {
     public void toastFormat(@StringRes int resId, Object... args) {
         String content = getString(resId, args);
         toast(content);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 本地广播相关
+    ///////////////////////////////////////////////////////////////////////////
+
+    public LocalBroadcastManager getLocalBroadcastManager() {
+        return hostActivity.getLocalBroadcastManager();
+    }
+
+    public boolean sendLocalBroadcast(Intent intent) {
+        return hostActivity.sendLocalBroadcast(intent);
+    }
+
+    public void sendLocalBroadcastSync(Intent intent) {
+        hostActivity.sendLocalBroadcastSync(intent);
     }
 
     ///////////////////////////////////////////////////////////////////////////
