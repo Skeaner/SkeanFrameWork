@@ -7,20 +7,16 @@ import android.support.v4.app.FragmentTransaction;
 import skean.yzsm.com.framework.R;
 
 /**
- * Fragment容器的Activity基类 <p/>
+ * HostFragment基类 <p/>
  */
-public abstract class BaseHostActivity extends BaseActivity {
+public abstract class BaseHostFragment extends BaseFragment {
 
     protected FragmentManager fragmentManager;
     protected BaseFragment currentFragment;
     protected BaseFragment prevFragment;
     protected int backStackCount = 0;
-    protected  boolean useDefaultAnimation = true;
+    private boolean useDefaultAnimation = true;
 
-    public static final int ANIM_NONE = 0;
-    public static final int ANIM_LEFT_IN = 1;
-    public static final int ANIM_RIGHT_IN = 2;
-    public static final int ANIM_BOTTOM_IN = 3;
 
     ///////////////////////////////////////////////////////////////////////////
     // 设置/声明周期
@@ -42,9 +38,9 @@ public abstract class BaseHostActivity extends BaseActivity {
     public abstract int getContainerId();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = getChildFragmentManager();
         fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {

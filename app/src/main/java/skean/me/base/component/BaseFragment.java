@@ -99,7 +99,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public boolean onBack() {
-        return true;
+        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////
