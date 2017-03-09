@@ -31,6 +31,7 @@
 
     <style name="AppTextAppearance.Small" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/textcolor_normal</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="AppTextAppearance.Medium" parent="TextAppearance.AppCompat.Medium">
@@ -47,6 +48,7 @@
 
     <style name="AppTextAppearance.Small.Inverse" parent="TextAppearance.AppCompat.Small.Inverse">
         <item name="android:textColor">@color/textcolor_inverse</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="AppTextAppearance.Medium.Inverse" parent="TextAppearance.AppCompat.Medium.Inverse">
