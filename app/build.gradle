@@ -23,8 +23,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-base.pro'
+            shrinkResources true
             signingConfig signingConfigs.config
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
@@ -47,6 +48,10 @@ android {
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
+            res.srcDirs = [
+                    'src/main/res/_base',
+                    'src/main/res/'
+            ]
         }
     }
     packagingOptions {
@@ -70,14 +75,17 @@ repositories {
 
 
 dependencies {
-    compile 'org.androidannotations:androidannotations-api:4.1.0'
-    annotationProcessor "org.androidannotations:androidannotations:4.1.0"
+    compile 'com.github.hotchemi:permissionsdispatcher:2.3.2'
+    annotationProcessor 'com.github.hotchemi:permissionsdispatcher-processor:2.3.2'
+    compile 'org.androidannotations:androidannotations-api:4.2.0'
+    annotationProcessor "org.androidannotations:androidannotations:4.2.0"
+    annotationProcessor 'com.github.AleksanderMielczarek:AndroidAnnotationsPermissionsDispatcherPlugin:0.1.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //谷歌库
-    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile 'com.android.support:design:25.3.0'
     compile 'com.google.guava:guava:20.0'
     //retrofit2
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
@@ -93,14 +101,16 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'
     compile 'com.jakewharton.rxbinding:rxbinding-design:0.4.0'
     compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0'
+    compile 'com.trello:rxlifecycle:1.0'
+    compile 'com.trello:rxlifecycle-components:1.0'
     //DBFlow
     compile 'com.github.Raizlabs.DBFlow:dbflow-core:3.1.1'
     compile 'com.github.Raizlabs.DBFlow:dbflow:3.1.1'
     annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:3.1.1"
     //MVP框架
-    compile 'com.hannesdorfmann.mosby3:mvp:3.0.0-SNAPSHOT'
-    compile 'com.hannesdorfmann.mosby3:viewstate:3.0.0-SNAPSHOT'
-    compile 'com.hannesdorfmann.mosby3:mvi:3.0.0-SNAPSHOT'
+    compile 'com.hannesdorfmann.mosby3:mvp:3.0.0'
+    compile 'com.hannesdorfmann.mosby3:viewstate:3.0.0'
+    compile 'com.hannesdorfmann.mosby3:mvi:3.0.0'
     //json解析器
     compile 'com.fasterxml.jackson.core:jackson-core:2.9.0.pr1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr1'
@@ -121,4 +131,5 @@ dependencies {
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
     compile 'in.srain.cube:ultra-ptr:1.0.11'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.8.0'
+    compile 'com.afollestad.material-dialogs:core:0.9.4.2'
 }

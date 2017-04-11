@@ -1,45 +1,19 @@
 package skean.me.base.component;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.view.ContextThemeWrapper;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import com.hannesdorfmann.mosby3.mvp.MvpActivity;
 import com.hannesdorfmann.mosby3.mvp.MvpPresenter;
 import com.hannesdorfmann.mosby3.mvp.MvpView;
 import com.hannesdorfmann.mosby3.mvp.delegate.ActivityMvpDelegate;
-import com.hannesdorfmann.mosby3.mvp.delegate.ActivityMvpDelegateCallback;
 import com.hannesdorfmann.mosby3.mvp.delegate.ActivityMvpDelegateImpl;
-
-import skean.me.base.widget.LoadingDialog;
-import skean.yzsm.com.framework.R;
+import com.hannesdorfmann.mosby3.mvp.delegate.MvpDelegateCallback;
 
 /**
  * App的MvpActivity基类
  */
 @SuppressWarnings("unused")
-public abstract class BaseMvpActivity<V extends MvpView, P extends MvpPresenter<V>> extends BaseActivity implements ActivityMvpDelegateCallback<V, P>, MvpView {
+public abstract class BaseMvpActivity<V extends MvpView, P extends MvpPresenter<V>> extends BaseActivity implements MvpDelegateCallback<V, P>, MvpView {
 
     protected ActivityMvpDelegate mvpDelegate;
     protected P presenter;
@@ -130,9 +104,8 @@ public abstract class BaseMvpActivity<V extends MvpView, P extends MvpPresenter<
     @NonNull
     protected ActivityMvpDelegate<V, P> getMvpDelegate() {
         if (mvpDelegate == null) {
-            mvpDelegate = new ActivityMvpDelegateImpl(this);
+            mvpDelegate = new ActivityMvpDelegateImpl(this, this, true);
         }
-
         return mvpDelegate;
     }
 
@@ -151,40 +124,6 @@ public abstract class BaseMvpActivity<V extends MvpView, P extends MvpPresenter<
     @Override
     public V getMvpView() {
         return (V) this;
-    }
-
-    @Override
-    public boolean isRetainInstance() {
-        return retainInstance;
-    }
-
-    @Override
-    public boolean shouldInstanceBeRetained() {
-        return retainInstance && isChangingConfigurations();
-    }
-
-    @Override
-    public void setRetainInstance(boolean retainInstance) {
-        this.retainInstance = retainInstance;
-    }
-
-    @Override
-    public Object onRetainNonMosbyCustomNonConfigurationInstance() {
-        return null;
-    }
-
-    /**
-     * Internally used by Mosby. Use {@link #onRetainNonMosbyCustomNonConfigurationInstance()} and
-     * {@link #getNonMosbyLastCustomNonConfigurationInstance()}
-     */
-    @Override
-    public final Object onRetainCustomNonConfigurationInstance() {
-        return getMvpDelegate().onRetainCustomNonConfigurationInstance();
-    }
-
-    @Override
-    public final Object getNonMosbyLastCustomNonConfigurationInstance() {
-        return getMvpDelegate().getNonMosbyLastCustomNonConfigurationInstance();
     }
 
 }
