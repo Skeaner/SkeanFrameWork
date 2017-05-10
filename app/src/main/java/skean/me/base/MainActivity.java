@@ -1,19 +1,15 @@
 package skean.me.base;
 
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcel;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
-import skean.me.base.component.ImagePagerActivity_;
-import skean.me.base.db.AppBaseModel;
-import skean.me.base.db.Photo;
+import skean.me.base.widget.DateTimePickerDialog;
 import skean.yzsm.com.framework.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,15 +21,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.txvSelect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/DCIM/Camera");
-                ArrayList<Photo> list = new ArrayList<>();
-                for (File file : dir.listFiles()) {
-                    Photo p = new Photo();
-                    p.setDesc("desc:" + file.getName());
-                    p.setFile(file);
-                    list.add(p);
-                }
-                ImagePagerActivity_.intent(MainActivity.this).showDescription(true).defaultPosition(3).photoList(list).start();
+                DateTimePickerDialog dialog = new DateTimePickerDialog(MainActivity.this, false);
+                dialog.setMinDate(System.currentTimeMillis())
+                      .setMaxDate(System.currentTimeMillis())
+                      .setSelectedDate(System.currentTimeMillis())
+                      .setUse24Hour(true)
+                      .setCallback(new DateTimePickerDialog.Callback() {
+                          @Override
+                          public void onDateTimeSet(Calendar ca, Date date, Long millis, String text) {
+                              Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
+                          }
+
+                          @Override
+                          public void onCancelled() {
+
+                          }
+                      })
+                      .show();
             }
         });
     }

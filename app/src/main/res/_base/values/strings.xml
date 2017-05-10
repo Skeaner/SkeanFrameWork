@@ -55,4 +55,18 @@
     <string name="neverToSetting">不再提醒</string>
     <string name="permissionApplyFail">权限获取失败</string>
 
+
+    <!--*******************************************************************-->
+    <!--*下拉刷新的相关字符 -->
+    <!--*******************************************************************-->
+    <string name="app_pull_down">下拉</string>
+    <string name="app_pull_down_to_refresh">下拉刷新</string>
+    <string name="app_release_to_refresh">释放刷新</string>
+    <string name="app_refreshing">刷新中…</string>
+    <string name="app_refresh_complete">刷新完成.</string>
+    <string name="app_last_update">上次刷新:&#160;</string>
+    <string name="app_seconds_ago">&#160;秒前</string>
+    <string name="app_minutes_ago">&#160;分钟前</string>
+    <string name="app_hours_ago">&#160;小时前</string>
+
 </resources>

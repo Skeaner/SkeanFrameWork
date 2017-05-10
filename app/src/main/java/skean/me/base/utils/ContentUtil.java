@@ -1,6 +1,7 @@
 package skean.me.base.utils;
 
 import android.media.MediaMetadataRetriever;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,15 +10,19 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.google.common.primitives.Ints;
 
 import java.io.File;
 import java.security.MessageDigest;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import static skean.me.base.utils.ContentUtil.DateFiled.*;
 
 /**
  * 提取录入内容的便利工具
@@ -39,6 +44,18 @@ public class ContentUtil {
     public static NumberFormat PRICE_FORMAT;
     public static NumberFormat PRICE_MINIMAL_FORMAT;
     public static NumberFormat DISCOUNT_FORMAT;
+    public static int[] DATE_FIELD;
+
+    @IntDef
+    @interface DateFiled {
+        int YEAR = Calendar.YEAR;
+        int MONTH = Calendar.MONTH;
+        int DAY = Calendar.DATE;
+        int HOUR = Calendar.HOUR_OF_DAY;
+        int MINUTE = Calendar.MINUTE;
+        int SECOND = Calendar.SECOND;
+        int MILLIS = Calendar.MILLISECOND;
+    }
 
     static {
         DATE_TIME_FORMATER = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
@@ -56,6 +73,7 @@ public class ContentUtil {
         DISCOUNT_FORMAT = NumberFormat.getNumberInstance();
         DISCOUNT_FORMAT.setMaximumFractionDigits(1);
         DISCOUNT_FORMAT.setGroupingUsed(false);
+        DATE_FIELD = new int[]{YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, MILLIS};
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -474,6 +492,7 @@ public class ContentUtil {
     public static String discount(float value) {
         return DISCOUNT_FORMAT.format(value);
     }
+
     ///////////////////////////////////////////////////////////////////////////
     // 其他内容
     ///////////////////////////////////////////////////////////////////////////
@@ -577,6 +596,28 @@ public class ContentUtil {
             e.printStackTrace();
         }
         return value;
+    }
+
+    public static Calendar truncateDate(Calendar ca, @DateFiled int field) {
+        int index = Ints.indexOf(DATE_FIELD, field);
+        for (int i = index + 1; i < DATE_FIELD.length; i++) {
+            ca.set(DATE_FIELD[i], 0);
+        }
+        return ca;
+    }
+
+    public static long truncateDate(long millis, @DateFiled int field) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTimeInMillis(millis);
+        ca = truncateDate(ca, field);
+        return ca.getTimeInMillis();
+    }
+
+    public static Date truncateDate(Date date, @DateFiled int field) {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(date);
+        ca = truncateDate(ca, field);
+        return ca.getTime();
     }
 
 }

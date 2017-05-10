@@ -224,7 +224,7 @@ public final class AppService extends Service {
         NetworkUtil.progressRetrofit(CommonService.BASE_URL, null, getDownloadCallBack(apkFile))
                    .create(CommonService.class)
                    .downLoad(url)
-                   .enqueue(getResponseCallBack(apkFile));
+                   .enqueue(getResponseCallBack(apkFile, url));
     }
 
     protected void downloadApp(String appid, String apiKey) {
@@ -233,7 +233,7 @@ public final class AppService extends Service {
         NetworkUtil.progressRetrofit(PgyerService.BASE_URL, null, getDownloadCallBack(apkFile))
                    .create(PgyerService.class)
                    .downLoadApk(appid, apiKey)
-                   .enqueue(getResponseCallBack(apkFile));
+                   .enqueue(getResponseCallBack(apkFile, null));
     }
 
     private File createTempApk() {
@@ -288,7 +288,7 @@ public final class AppService extends Service {
         };
     }
 
-    private Callback<ResponseBody> getResponseCallBack(final File apkFile) {
+    private Callback<ResponseBody> getResponseCallBack(final File apkFile, final String url) {
         return new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -305,7 +305,8 @@ public final class AppService extends Service {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP);
+                Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP)
+                                                                             .putExtra(IntentKey.EXTRA_DOWNLOAD_URL, url);
                 PendingIntent pi = PendingIntent.getService(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
                 nManager.notify(DOWNLOAD_NOTICE_ID,
                                 new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
