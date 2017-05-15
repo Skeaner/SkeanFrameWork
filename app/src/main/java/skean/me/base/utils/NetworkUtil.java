@@ -101,9 +101,33 @@ public class NetworkUtil {
                                      .build();
     }
 
+    public static Retrofit baseRetrofit(String baseUrl, Interceptor... interceptors) {
+        OkHttpClient.Builder builder = newAppHttpBuilder();
+        for (Interceptor i : interceptors) {
+            builder.addInterceptor(i);
+        }
+        return new Retrofit.Builder().baseUrl(baseUrl)
+                                     .client(builder.build())
+                                     .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .build();
+    }
+
     public static Retrofit progressRetrofit(String baseUrl) {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpProgressBuilder().build())
+                                     .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .build();
+    }
+
+    public static Retrofit progressRetrofit(String baseUrl, Interceptor... interceptors) {
+        OkHttpClient.Builder builder = newAppHttpProgressBuilder();
+        for (Interceptor i : interceptors) {
+            builder.addInterceptor(i);
+        }
+        return new Retrofit.Builder().baseUrl(baseUrl)
+                                     .client(builder.build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
                                      .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                      .build();

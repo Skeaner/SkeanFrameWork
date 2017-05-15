@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.multidex.MultiDexApplication;
 
 import com.baidu.mapapi.SDKInitializer;
+import com.blankj.utilcode.utils.Utils;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -34,6 +35,7 @@ public final class AppApplication extends MultiDexApplication {
         FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
         SDKInitializer.initialize(getApplicationContext());
         PgyCrashManager.register(this);
+        Utils.init(this);
     }
 
     public static AppApplication getInstance() {
