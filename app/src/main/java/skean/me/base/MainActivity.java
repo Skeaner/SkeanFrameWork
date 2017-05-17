@@ -9,15 +9,18 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Date;
 
+import skean.me.base.component.AppService;
+import skean.me.base.component.BaseActivity;
 import skean.me.base.widget.DateTimePickerDialog;
 import skean.yzsm.com.framework.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AppService.startCheckUpdateInPGYER(getContext(), false);
         findViewById(R.id.txvSelect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

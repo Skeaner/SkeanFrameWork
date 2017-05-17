@@ -76,6 +76,14 @@
 -dontwarn com.raizlabs.android.dbflow.**
 -keepclasseswithmembers   class com.raizlabs.android.dbflow.** {*;}
 
+#GreenDAO
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties
+# If you do not use SQLCipher:
+-dontwarn org.greenrobot.greendao.database.**
+
 #MVP框架
 #mvp:3.0.0'
 #viewstate:3.0.0'
@@ -141,6 +149,9 @@
 #material-dialogs:core:0.9.4.2'
 -dontwarn com.afollestad.materialdialogs.**
 -keepclasseswithmembers  class com.afollestad.materialdialogs.** {*;}
+#sublimepickerlibrary:2.1.1
+-dontwarn com.appeaser.sublimepickerlibrary.**
+-keepclasseswithmembers class com.appeaser.sublimepickerlibrary.**{*;}
 
 #libs内部包
 #百度
@@ -156,6 +167,7 @@
 -keepclasseswithmembers class okio.** {*;}
 -dontwarn me.zhanghai.android.materialprogressbar.**
 -keepclasseswithmembers class me.zhanghai.android.materialprogressbar.** {*;}
+
 
 
 #-------------------------------------------------------------------------

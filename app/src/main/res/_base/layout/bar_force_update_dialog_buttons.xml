@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:showDividers="middle"
-              android:divider="@drawable/divider_1dp_width_gray"
-              android:orientation="horizontal">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/appMicroMargin">
 
-    <Button
+    <com.afollestad.materialdialogs.internal.MDButton
+        android:id="@+id/btnPositive"
+        style="@style/MD_ActionButton.Text"
+        android:layout_alignParentRight="true"
+        android:text="更新"
+        android:textColor="@color/colorAccent" />
+
+    <com.afollestad.materialdialogs.internal.MDButton
         android:id="@+id/btnNegative"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="暂不" />
+        style="@style/MD_ActionButton.Text"
+        android:layout_toLeftOf="@id/btnPositive"
+        android:text="暂不"
+        android:textColor="@color/colorAccent" />
 
-    <Button
+
+    <com.afollestad.materialdialogs.internal.MDButton
         android:visibility="gone"
         android:id="@+id/btnCenter"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="取消下载" />
+        style="@style/MD_ActionButton.Text"
+        android:text="取消下载"
+        android:textColor="@color/colorAccent" />
 
-    <Button
-        android:id="@+id/btnPositive"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="更新" />
 
-</LinearLayout>
+</RelativeLayout>

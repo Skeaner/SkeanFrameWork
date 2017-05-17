@@ -37,6 +37,7 @@ import skean.me.base.utils.AppCommonUtils;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.NetworkUtil;
 import skean.me.base.utils.PackageUtils;
+import skean.me.base.widget.ForceUpdateDialog;
 import skean.me.base.widget.UpdateDialog;
 import skean.yzsm.com.framework.R;
 
@@ -138,7 +139,7 @@ public final class AppService extends Service {
      */
     public AppVersion getAppVersion() {
         // FIXME: 2016/9/30 返回对应的版本
-        return new AppVersion("", "");
+        return new AppVersion("2684dd49fe2e94318d64e27e4589bf20", "521cf96c91d333da545c8176e2bbdad2");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -212,10 +213,18 @@ public final class AppService extends Service {
 
     private void showUpdateDialog(String v, String changeLog, String url) {
         Context c = AppService.this;
-        c.startActivity(new Intent(c, UpdateDialog.class).putExtra(UpdateDialog.EXTRA_VERSION, v)
-                                                         .putExtra(UpdateDialog.EXTRA_CHANGELOG, changeLog)
-                                                         .putExtra(UpdateDialog.EXTRA_URL, url)
-                                                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        boolean isForce = v.endsWith("f");
+        String downloadUrl = new StringBuilder(PgyerService.BASE_URL).append("install/?")
+                                                             .append("aId=")
+                                                             .append(getAppVersion().getAppId())
+                                                             .append("&_api_key=")
+                                                             .append(getAppVersion().getApiKey())
+                                                             .toString();
+        c.startActivity(new Intent(c, ForceUpdateDialog.class).putExtra(ForceUpdateDialog.EXTRA_VERSION, v)
+                                                              .putExtra(ForceUpdateDialog.EXTRA_CHANGELOG, changeLog)
+                                                              .putExtra(ForceUpdateDialog.EXTRA_URL, downloadUrl)
+                                                              .putExtra(ForceUpdateDialog.EXTRA_FORCE, isForce)
+                                                              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void downloadApp(final String url) {

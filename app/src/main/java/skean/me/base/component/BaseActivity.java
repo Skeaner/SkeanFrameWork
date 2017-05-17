@@ -1,13 +1,10 @@
 package skean.me.base.component;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,6 +54,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private LocalBroadcastManager lbm;
 
+
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
     ///////////////////////////////////////////////////////////////////////////
@@ -66,6 +64,7 @@ public class BaseActivity extends AppCompatActivity {
         app = (AppApplication) getApplication();
         context = this;
         lbm = LocalBroadcastManager.getInstance(getContext());
+        registerForceUpdateReceiver();
         initActionBar();
         mainHandler = new Handler();
         alertTheme = new ContextThemeWrapper(context, R.style.Theme_AppCompat_Light_Dialog_Alert);
@@ -74,11 +73,17 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        unRegisterForceUpdateReceiver();
         super.onDestroy();
         if (loadingDialog != null) {
             loadingDialog.dismiss();
             loadingDialog = null;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -281,6 +286,24 @@ public class BaseActivity extends AppCompatActivity {
 
     public void sendLocalBroadcastSync(Intent intent) {
         lbm.sendBroadcastSync(intent);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 强制更新相关
+    ///////////////////////////////////////////////////////////////////////////
+    private BroadcastReceiver forceUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(IntentKey.ACTION_FORCE_UPDATE_EXIT)) finish();
+        }
+    };
+
+    private void registerForceUpdateReceiver() {
+        lbm.registerReceiver(forceUpdateReceiver, new IntentFilter(IntentKey.ACTION_FORCE_UPDATE_EXIT));
+    }
+
+    private void unRegisterForceUpdateReceiver() {
+        lbm.unregisterReceiver(forceUpdateReceiver);
     }
 
     ///////////////////////////////////////////////////////////////////////////

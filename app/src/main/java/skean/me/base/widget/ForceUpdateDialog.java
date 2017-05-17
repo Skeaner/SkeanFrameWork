@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.internal.MDButton;
+import com.blankj.utilcode.utils.LogUtils;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
 import java.io.File;
@@ -23,13 +25,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import skean.me.base.component.AppService;
+import skean.me.base.component.BaseActivity;
+import skean.me.base.component.IntentKey;
 import skean.me.base.net.CommonService;
 import skean.me.base.net.ProgressInterceptor;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.NetworkUtil;
 import skean.yzsm.com.framework.R;
 
-public class ForceUpdateDialog extends Activity implements View.OnClickListener {
+public class ForceUpdateDialog extends BaseActivity implements View.OnClickListener {
 
     public static final String EXTRA_CHANGELOG = "changeLog";
     public static final String EXTRA_URL = "url";
@@ -38,9 +42,9 @@ public class ForceUpdateDialog extends Activity implements View.OnClickListener 
 
     public static final int REQUEST_INSTALL = 99;
 
-    private Button btnPositive;
-    private Button btnNegative;
-    private Button btnCenter;
+    private MDButton btnPositive;
+    private MDButton btnNegative;
+    private MDButton btnCenter;
     private TextView tvContent;
     private TextView txvForce;
     private View panelInfo;
@@ -61,9 +65,9 @@ public class ForceUpdateDialog extends Activity implements View.OnClickListener 
         getExtra();
         setFinishOnTouchOutside(false);
         setTitle(getString(R.string.findNewVersion, version));
-        btnPositive = (Button) findViewById(R.id.btnPositive);
-        btnNegative = (Button) findViewById(R.id.btnNegative);
-        btnCenter = (Button) findViewById(R.id.btnCenter);
+        btnPositive = (MDButton) findViewById(R.id.btnPositive);
+        btnNegative = (MDButton) findViewById(R.id.btnNegative);
+        btnCenter = (MDButton) findViewById(R.id.btnCenter);
         txvForce = (TextView) findViewById(R.id.txvForce);
         panelInfo = findViewById(R.id.panelInfo);
         tvContent = (TextView) findViewById(R.id.txvContent);
@@ -124,14 +128,16 @@ public class ForceUpdateDialog extends Activity implements View.OnClickListener 
                 startDownload();
             }
         } else if (v == btnNegative) {
-            setResult(RESULT_CANCELED, new Intent().putExtra(EXTRA_FORCE, force));
-            finish();
+            if (force) sendLocalBroadcast(new Intent(IntentKey.ACTION_FORCE_UPDATE_EXIT));
+            else finish();
         } else if (v == btnCenter) {
-            if (downloadCall != null && !downloadCall.isExecuted() && !downloadCall.isCanceled()) {
+            LogUtils.i("isExecuted", downloadCall.isExecuted());
+            LogUtils.i("isCanceled", downloadCall.isCanceled());
+            if (downloadCall != null && downloadCall.isExecuted() && !downloadCall.isCanceled()) {
                 downloadCall.cancel();
             }
-            setResult(RESULT_CANCELED, new Intent().putExtra(EXTRA_FORCE, force));
-            finish();
+            if (force) sendLocalBroadcast(new Intent(IntentKey.ACTION_FORCE_UPDATE_EXIT));
+            else finish();
         }
     }
 
@@ -172,7 +178,6 @@ public class ForceUpdateDialog extends Activity implements View.OnClickListener 
                 pgbProgress.setProgress(percentage);
             } else {
                 pgbProgress.setProgress(100);
-
             }
         }
     };
@@ -205,7 +210,7 @@ public class ForceUpdateDialog extends Activity implements View.OnClickListener 
             btnCenter.performClick();
             return;
         }
-        if (url==null ){
+        if (url == null) {
             Toast.makeText(this, "下载地址出错!", Toast.LENGTH_SHORT).show();
             btnCenter.performClick();
             return;

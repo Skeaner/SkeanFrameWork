@@ -34,7 +34,7 @@
         <!--fixme 替换为对应的蒲公英appId-->
         <meta-data
             android:name="PGYER_APPID"
-            android:value="" />
+            android:value="2684dd49fe2e94318d64e27e4589bf20" />
 
 
         <!-- 更新Dialog-->
@@ -42,6 +42,13 @@
             android:name="skean.me.base.widget.UpdateDialog"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Dialog"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+
+        <!-- 强制更新Dialog-->
+        <activity
+            android:name="skean.me.base.widget.ForceUpdateDialog"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Dialog"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
         <!--图片选取-->
