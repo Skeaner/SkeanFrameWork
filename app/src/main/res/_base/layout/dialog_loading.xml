@@ -1,6 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
     <LinearLayout
@@ -16,14 +17,16 @@
             android:orientation="horizontal">
             <ProgressBar
                 android:id="@+id/pgbProgress"
+                style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:indeterminate="true" />
             <ImageView
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_action_confirm"
+                android:id="@+id/imvFinish"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_action_confirm" />
         </LinearLayout>
         <TextView
             android:id="@+id/txvLoadingText"

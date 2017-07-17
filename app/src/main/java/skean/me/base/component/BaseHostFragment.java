@@ -1,6 +1,7 @@
 package skean.me.base.component;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -12,11 +13,12 @@ import skean.yzsm.com.framework.R;
 public abstract class BaseHostFragment extends BaseFragment {
 
     protected FragmentManager fragmentManager;
-    protected BaseFragment currentFragment;
-    protected BaseFragment prevFragment;
-    protected int backStackCount = 0;
-    private boolean useDefaultAnimation = true;
 
+    protected String currentTag;
+    protected String previousTag;
+    protected int backStackCount = 0;
+
+    protected boolean useDefaultAnimation = true;
 
     ///////////////////////////////////////////////////////////////////////////
     // 设置/声明周期
@@ -28,7 +30,7 @@ public abstract class BaseHostFragment extends BaseFragment {
      * @param fragmentTag 标签
      * @return 返回对应的Fragment
      */
-    public abstract BaseFragment createFragment(String fragmentTag);
+    public abstract Fragment createFragment(String fragmentTag);
 
     /**
      * Fragment替换的容器的ID
@@ -46,9 +48,7 @@ public abstract class BaseHostFragment extends BaseFragment {
             public void onBackStackChanged() {
                 int currentCount = fragmentManager.getBackStackEntryCount();
                 if (currentCount < backStackCount) {
-                    currentFragment.clearActionBar();
-                    prevFragment.customizeActionBar();
-                    currentFragment = prevFragment;
+                    currentTag = previousTag;
                 }
                 backStackCount = currentCount;
             }
@@ -61,7 +61,15 @@ public abstract class BaseHostFragment extends BaseFragment {
 
     @Override
     public boolean onBack() {
-        return super.onBack() || currentFragment.onBack() || fragmentManager.popBackStackImmediate();
+        if (super.onBack()) {
+            return true;
+        } else if (currentTag != null) {
+            Fragment currentFragment = fragmentManager.findFragmentByTag(currentTag);
+            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack())
+                return true;
+            else if (fragmentManager.popBackStackImmediate()) return true;
+        }
+        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -71,114 +79,110 @@ public abstract class BaseHostFragment extends BaseFragment {
     /**
      * 替换前台Fragment(当前的Fragment回到后台)
      *
-     * @param fragmentTag 标签
+     * @param targetTag 标签
      */
-    public void transFragment(String fragmentTag) {
-        transFragment(fragmentTag, false);
+    public void transFragment(String targetTag) {
+        transFragment(targetTag, false);
     }
 
     /**
      * 替换前台Fragment(当前的Fragment回到后台)
      *
-     * @param fragmentTag 标签
-     * @param args        启动参数
+     * @param targetTag 标签
+     * @param args      启动参数
      */
-    public void transFragment(String fragmentTag, Bundle args) {
-        transFragment(fragmentTag, false, args);
+    public void transFragment(String targetTag, Bundle args) {
+        transFragment(targetTag, false, args);
     }
 
     /**
      * 替换前台Fragment(当前的Fragment回到后台)
      *
-     * @param fragmentTag    标签
+     * @param targetTag      标签
      * @param addToBackStack 是否添加到回退盏
      */
-    public void transFragment(String fragmentTag, boolean addToBackStack) {
-        transFragment(fragmentTag, addToBackStack, null);
+    public void transFragment(String targetTag, boolean addToBackStack) {
+        transFragment(targetTag, addToBackStack, null);
     }
 
     /**
      * 替换前台Fragment(当前的Fragment回到后台)
      *
-     * @param fragmentTag    标签
+     * @param targetTag      标签
      * @param addToBackStack 是否添加到回退盏
      * @param args           启动参数
      */
-    public void transFragment(String fragmentTag, boolean addToBackStack, Bundle args) {
+    public void transFragment(String targetTag, boolean addToBackStack, Bundle args) {
         FragmentTransaction trans = fragmentManager.beginTransaction();
-        BaseFragment targetFragment = (BaseFragment) fragmentManager.findFragmentByTag(fragmentTag);
+        Fragment targetFragment = fragmentManager.findFragmentByTag(targetTag);
         if (targetFragment == null) {
-            targetFragment = createFragment(fragmentTag);
-            setTransAnimator(trans, currentFragment, targetFragment);
-            trans.add(getContainerId(), targetFragment, fragmentTag);
+            targetFragment = createFragment(targetTag);
+            setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
+            trans.add(getContainerId(), targetFragment, targetTag);
         } else {
-            setTransAnimator(trans, currentFragment, targetFragment);
+            setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
             trans.attach(targetFragment);
         }
         if (args != null) targetFragment.setArguments(args);
-        if (currentFragment != null) {
-            trans.detach(currentFragment);
-            currentFragment.clearActionBar();
+        if (currentTag != null) {
+            trans.detach(fragmentManager.findFragmentByTag(currentTag));
         }
-        if (targetFragment != currentFragment) { // 改变为Fragment指定的Actionbar
-            prevFragment = currentFragment;
-            currentFragment = targetFragment;
+        if (!targetTag.equals(currentTag)) {
+            previousTag = currentTag;
+            currentTag = targetTag;
         }
         if (addToBackStack) trans.addToBackStack(null);
         trans.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
-        targetFragment.customizeActionBar();
     }
 
     /**
      * 替代当前的Fragment(销毁其他Fragment)
      *
-     * @param fragmentTag 标签
+     * @param targetTag 标签
      */
-    public void replaceFragment(String fragmentTag) {
-        replaceFragment(fragmentTag, false);
+    public void replaceFragment(String targetTag) {
+        replaceFragment(targetTag, false);
     }
 
     /**
      * 替代当前的Fragment(销毁其他Fragment)
      *
-     * @param fragmentTag 标签
-     * @param args        启动参数
+     * @param targetTag 标签
+     * @param args      启动参数
      */
-    public void replaceFragment(String fragmentTag, Bundle args) {
-        replaceFragment(fragmentTag, false, args);
+    public void replaceFragment(String targetTag, Bundle args) {
+        replaceFragment(targetTag, false, args);
     }
 
     /**
      * 替代当前的Fragment(销毁其他Fragment)
      *
-     * @param fragmentTag    标签
+     * @param targetTag      标签
      * @param addToBackStack 是否添加到回退盏
      */
-    public void replaceFragment(String fragmentTag, boolean addToBackStack) {
-        replaceFragment(fragmentTag, addToBackStack, null);
+    public void replaceFragment(String targetTag, boolean addToBackStack) {
+        replaceFragment(targetTag, addToBackStack, null);
     }
 
     /**
      * 替代当前的Fragment(销毁其他Fragment)
      *
-     * @param fragmentTag    标签
+     * @param targetTag      标签
      * @param addToBackStack 是否添加到回退盏
      * @param args           启动参数
      */
-    public void replaceFragment(String fragmentTag, boolean addToBackStack, Bundle args) {
+    public void replaceFragment(String targetTag, boolean addToBackStack, Bundle args) {
         FragmentTransaction trans = fragmentManager.beginTransaction();
-        BaseFragment targetFragment = createFragment(fragmentTag);
+        Fragment targetFragment = createFragment(targetTag);
         if (args != null) targetFragment.setArguments(args);
-        setReplaceAnimator(trans, currentFragment, targetFragment);
-        if (currentFragment != null) currentFragment.clearActionBar();
-        prevFragment = currentFragment;
-        currentFragment = targetFragment;
+        setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
+        previousTag = currentTag;
+        currentTag = targetTag;
         trans.replace(getContainerId(), targetFragment);
         if (addToBackStack) trans.addToBackStack(null);
         trans.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
-        targetFragment.customizeActionBar();
     }
 
     /**
@@ -188,27 +192,19 @@ public abstract class BaseHostFragment extends BaseFragment {
      * @param current 当前的Fragment
      * @param target  目标的Fragment
      */
-    private void setReplaceAnimator(FragmentTransaction trans, BaseFragment current, BaseFragment target) {
-        if (!useDefaultAnimation)return;
-        if (currentFragment == null || current.fragmentIndex < target.getFragmentIndex()) {
-            trans.setCustomAnimations(R.anim.slide_bottom_in, R.anim.slide_top_out, R.anim.slide_top_in, R.anim.slide_bottom_out);
-        } else trans.setCustomAnimations(R.anim.slide_top_in, R.anim.slide_bottom_out, R.anim.slide_bottom_in, R.anim.slide_top_out);
-    }
-
-    /**
-     * 设置Fragment动画
-     *
-     * @param trans   操作
-     * @param current 当前的Fragment
-     * @param target  目标的Fragment
-     */
-    private void setTransAnimator(FragmentTransaction trans, BaseFragment current, BaseFragment target) {
-        if (!useDefaultAnimation)return;
-        if (current != null) {
-            if (current.fragmentIndex > target.getFragmentIndex())
-                trans.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out, R.anim.slide_right_in, R.anim.slide_left_out);
-            else trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
-        } else trans.setCustomAnimations(FragmentTransaction.TRANSIT_NONE, FragmentTransaction.TRANSIT_NONE);
+    private void setTransAnimator(FragmentTransaction trans, Fragment current, Fragment target) {
+        if (!useDefaultAnimation) return;
+        if (current == null) {
+            trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
+        } else {
+            if (!(current instanceof BaseFragment && target instanceof BaseFragment)) {
+                trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
+            } else {
+                if (((BaseFragment) current).fragmentIndex > ((BaseFragment) target).fragmentIndex)
+                    trans.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out, R.anim.slide_right_in, R.anim.slide_left_out);
+                else trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -221,8 +217,8 @@ public abstract class BaseHostFragment extends BaseFragment {
      * @param position 位置
      * @return 对应Fragment
      */
-    protected BaseFragment findFragmentInPager(int position) {
-        return (BaseFragment) fragmentManager.findFragmentByTag(getTagInPager(position));
+    protected Fragment findFragmentInPager(int position) {
+        return fragmentManager.findFragmentByTag(getTagInPager(position));
     }
 
     /**

@@ -46,18 +46,18 @@ public class AppBaseModel extends BaseModel implements IBaseModel {
     }
 
     @Override
-    public void save() {
+    public boolean save() {
         onSave();
-        super.save();
+       return   super.save();
     }
 
     @Override
-    public void delete() {
+    public boolean delete() {
         onDelete();
-        super.delete();
+        return super.delete();
     }
 
-    public void abort(){
+    public void abort() {
         onAbort();
     }
 
@@ -84,7 +84,5 @@ public class AppBaseModel extends BaseModel implements IBaseModel {
      */
     public void onSerialize() {
     }
-
-
 
 }

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.CookieJar;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -173,6 +174,6 @@ public class NetworkUtil {
     }
 
     public static MultipartBody.Part multiFilePart(String name, File uploadFile) {
-        return MultipartBody.Part.createFormData(name, uploadFile.getName(), RequestBody.create(MultipartBody.FORM, uploadFile));
+        return MultipartBody.Part.createFormData(name, uploadFile.getName(), RequestBody.create(MediaType.parse("application/otcet-stream"), uploadFile));
     }
 }

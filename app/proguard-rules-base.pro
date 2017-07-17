@@ -152,6 +152,13 @@ public static java.lang.String TABLENAME;
 #sublimepickerlibrary:2.1.1
 -dontwarn com.appeaser.sublimepickerlibrary.**
 -keepclasseswithmembers class com.appeaser.sublimepickerlibrary.**{*;}
+#rxpermissions:0.9.4
+-dontwarn com.tbruyelle.rxpermissions.**
+-keepclasseswithmembers class com.tbruyelle.rxpermissions.**{*;}
+#easypermissiondialog:1.0
+-dontwarn skean.yzsm.com.easypermissiondialog.**
+-keepclasseswithmembers class skean.yzsm.com.easypermissiondialog.**{*;}
+
 
 #libs内部包
 #百度

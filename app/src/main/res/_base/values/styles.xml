@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- 基础样式-->
-    <style name="AppEditText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:drawablePadding">@dimen/preferDrawablePadding</item>
-    </style>
+    <!-- 基础样式--><style name="AppEditText">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:drawablePadding">@dimen/preferDrawablePadding</item>
+</style>
 
     <style name="AppButton" parent="Widget.AppCompat.Button">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
@@ -53,6 +52,15 @@
 
     <style name="AppTextAppearance.Medium.Inverse" parent="TextAppearance.AppCompat.Medium.Inverse">
         <item name="android:textColor">@color/textcolor_inverse</item>
+    </style>
+
+    <style name="PTRFrameLayoutSetting">
+        <item name="ptr_duration_to_close">200</item>
+        <item name="ptr_duration_to_close_header">800</item>
+        <item name="ptr_keep_header_when_refresh">true</item>
+        <item name="ptr_pull_to_fresh">false</item>
+        <item name="ptr_ratio_of_header_height_to_refresh">1.2</item>
+        <item name="ptr_resistance">1.7</item>
     </style>
 
 </resources>

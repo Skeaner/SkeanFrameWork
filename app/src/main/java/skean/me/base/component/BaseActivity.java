@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.StringRes;
@@ -401,6 +402,19 @@ public class BaseActivity extends AppCompatActivity {
 
     protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
         return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);
+    }
+
+    protected abstract class ProgressAsyncTask<Params,Progress, Result>  extends AsyncTask<Params,Progress,Result>{
+
+        @Override
+        protected void onPreExecute() {
+            showLoading(true);
+        }
+
+        @Override
+        protected void onPostExecute(Result result) {
+            dismissLoading();
+        }
     }
 
 }

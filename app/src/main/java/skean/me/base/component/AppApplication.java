@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.support.multidex.MultiDexApplication;
 
 import com.baidu.mapapi.SDKInitializer;
-import com.blankj.utilcode.utils.Utils;
+import com.blankj.utilcode.util.Utils;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;

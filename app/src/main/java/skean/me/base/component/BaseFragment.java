@@ -77,7 +77,6 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.hostActivity = (BaseHostActivity) activity;
-        getHostActivity().currentFragment = this;
     }
 
     @Override
