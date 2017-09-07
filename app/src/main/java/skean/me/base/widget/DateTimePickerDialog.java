@@ -162,6 +162,8 @@ public class DateTimePickerDialog extends Dialog {
     }
 
     private void settingBeforeShow() {
+        SublimeOptions options = getOptions();
+        mSublimePicker.initializePicker(options, innerListener);
         if (use24Hour) {
             try {
                 Field field = SublimePicker.class.getDeclaredField("mDefaultTimeFormatter");
@@ -171,8 +173,6 @@ public class DateTimePickerDialog extends Dialog {
                 e.printStackTrace();
             }
         }
-        SublimeOptions options = getOptions();
-        mSublimePicker.initializePicker(options, innerListener);
     }
 
 }

@@ -31,7 +31,7 @@ public class RecyclerViewPtrHandler implements PtrHandler {
             return true;
         }
         int top = mRecyclerView.getChildAt(0).getTop();
-        if (top != 0) {
+        if (top != mRecyclerView.getPaddingTop()) {
             return false;
         }
         final RecyclerView recyclerView = mRecyclerView;

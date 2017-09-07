@@ -16,7 +16,7 @@ import static skean.me.base.net.GlobalPostParamsInterceptor.PostType.MULTI_PART;
 import static skean.me.base.net.GlobalPostParamsInterceptor.PostType.FORM;
 
 /**
- * 全局get参数添加的拦截器
+ * 全局post参数添加的拦截器
  */
 public class GlobalPostParamsInterceptor implements Interceptor {
 

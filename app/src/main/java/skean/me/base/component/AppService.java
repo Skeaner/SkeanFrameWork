@@ -8,16 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -33,12 +33,10 @@ import skean.me.base.net.PgyAppInfo;
 import skean.me.base.net.PgyVersionInfo;
 import skean.me.base.net.PgyerService;
 import skean.me.base.net.ProgressInterceptor;
-import skean.me.base.utils.AppCommonUtils;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.NetworkUtil;
 import skean.me.base.utils.PackageUtils;
 import skean.me.base.widget.ForceUpdateDialog;
-import skean.me.base.widget.UpdateDialog;
 import skean.yzsm.com.framework.R;
 
 /**
@@ -215,11 +213,11 @@ public final class AppService extends Service {
         Context c = AppService.this;
         boolean isForce = v.endsWith("f");
         String downloadUrl = new StringBuilder(PgyerService.BASE_URL).append("install/?")
-                                                             .append("aId=")
-                                                             .append(getAppVersion().getAppId())
-                                                             .append("&_api_key=")
-                                                             .append(getAppVersion().getApiKey())
-                                                             .toString();
+                                                                     .append("aId=")
+                                                                     .append(getAppVersion().getAppId())
+                                                                     .append("&_api_key=")
+                                                                     .append(getAppVersion().getApiKey())
+                                                                     .toString();
         c.startActivity(new Intent(c, ForceUpdateDialog.class).putExtra(ForceUpdateDialog.EXTRA_VERSION, v)
                                                               .putExtra(ForceUpdateDialog.EXTRA_CHANGELOG, changeLog)
                                                               .putExtra(ForceUpdateDialog.EXTRA_URL, downloadUrl)
@@ -230,7 +228,7 @@ public final class AppService extends Service {
     private void downloadApp(final String url) {
         File apkFile;
         if ((apkFile = createTempApk()) == null) return;
-        NetworkUtil.progressRetrofit(CommonService.BASE_URL, null, getDownloadCallBack(apkFile))
+        NetworkUtil.progressRetrofit(CommonService.BASE_URL, null, getDownloadCallBack())
                    .create(CommonService.class)
                    .downLoad(url)
                    .enqueue(getResponseCallBack(apkFile, url));
@@ -239,7 +237,7 @@ public final class AppService extends Service {
     protected void downloadApp(String appid, String apiKey) {
         File apkFile;
         if ((apkFile = createTempApk()) == null) return;
-        NetworkUtil.progressRetrofit(PgyerService.BASE_URL, null, getDownloadCallBack(apkFile))
+        NetworkUtil.progressRetrofit(PgyerService.BASE_URL, null, getDownloadCallBack())
                    .create(PgyerService.class)
                    .downLoadApk(appid, apiKey)
                    .enqueue(getResponseCallBack(apkFile, null));
@@ -267,7 +265,7 @@ public final class AppService extends Service {
         return apkFile;
     }
 
-    private ProgressInterceptor.DownloadListener getDownloadCallBack(final File apkFile) {
+    private ProgressInterceptor.DownloadListener getDownloadCallBack() {
         return new ProgressInterceptor.DownloadListener() {
             @Override
             public void downloadProgress(long bytesRead, long contentLength, int percentage, boolean done) {
@@ -279,10 +277,31 @@ public final class AppService extends Service {
                                                                      .setOngoing(true)
                                                                      .setProgress(100, percentage, false)
                                                                      .getNotification());
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                                  .setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
-                    PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                }
+            }
+        };
+    }
+
+    private Intent getInstallIntent(File apkFile) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(context, IntentKey.AUTHORITY + ".fileprovider", apkFile);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
+        }
+        return intent;
+    }
+
+    private Callback<ResponseBody> getResponseCallBack(final File apkFile, final String url) {
+        return new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    FileUtil.storeFile(apkFile, response.body().byteStream());
+                    Intent installIntent = getInstallIntent(apkFile);
+                    PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, installIntent, PendingIntent.FLAG_CANCEL_CURRENT);
                     nManager.notify(DOWNLOAD_NOTICE_ID,
                                     new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                      .setContentText(getString(R.string.downloadFinishClickInstall))
@@ -292,20 +311,7 @@ public final class AppService extends Service {
                                                                      .setAutoCancel(false)
                                                                      .setProgress(100, 100, false)
                                                                      .getNotification());
-                }
-            }
-        };
-    }
-
-    private Callback<ResponseBody> getResponseCallBack(final File apkFile, final String url) {
-        return new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    FileUtil.storeFile(apkFile, response.body().byteStream());
-                    Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                                  .setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
-                    context.startActivity(intent);
+                    context.startActivity(installIntent);
                 } catch (IOException e) {
                     e.printStackTrace();
                     onFailure(call, e);
