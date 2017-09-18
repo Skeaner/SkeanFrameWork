@@ -9,9 +9,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.baidu.location.BDLocation;
-import com.google.common.primitives.Ints;
-
 import java.io.File;
 import java.security.MessageDigest;
 import java.text.NumberFormat;
@@ -456,16 +453,6 @@ public class ContentUtil {
     }
 
     /**
-     * 经纬度描述
-     *
-     * @param location 百度定位的结果
-     * @return 描述字符
-     */
-    public static String latlon(BDLocation location) {
-        return concatObjects(location.getLatitude(), "/", location.getLongitude());
-    }
-
-    /**
      * 使用NumberFormat,保留小数点后两位
      */
     public static String price(float value) {
@@ -599,9 +586,17 @@ public class ContentUtil {
     }
 
     public static Calendar truncateDate(Calendar ca, @DateFiled int field) {
-        int index = Ints.indexOf(DATE_FIELD, field);
-        for (int i = index + 1; i < DATE_FIELD.length; i++) {
-            ca.set(DATE_FIELD[i], 0);
+        int targetIndex = -1;
+        for (int i = 0; i < DATE_FIELD.length; i++) {
+            if (field == DATE_FIELD[i]) {
+                targetIndex = i;
+                break;
+            }
+        }
+        if (targetIndex != -1) {
+            for (int i = targetIndex + 1; i < DATE_FIELD.length; i++) {
+                ca.set(DATE_FIELD[i], 0);
+            }
         }
         return ca;
     }

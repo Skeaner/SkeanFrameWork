@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Jimmy on 2017/5/11.
  */
@@ -16,7 +19,9 @@ public class AppStatusTracker implements Application.ActivityLifecycleCallbacks 
     private long timestamp;
     private StatusCallback statusCallback;
 
-    private interface StatusCallback {
+    private Set<String> createdActivitiesNames = new HashSet<>();
+
+    public interface StatusCallback {
         void onToForeground();
 
         void onToBackground();
@@ -41,7 +46,7 @@ public class AppStatusTracker implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+        createdActivitiesNames.add(activity.getClass().getName());
     }
 
     @Override
@@ -80,7 +85,7 @@ public class AppStatusTracker implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
+        createdActivitiesNames.remove(activity.getClass().getName());
     }
 
     public StatusCallback getStatusCallback() {
@@ -89,5 +94,9 @@ public class AppStatusTracker implements Application.ActivityLifecycleCallbacks 
 
     public void setStatusCallback(StatusCallback statusCallback) {
         this.statusCallback = statusCallback;
+    }
+
+    public boolean isActivityCreated(String clazzName) {
+        return createdActivitiesNames.contains(clazzName);
     }
 }

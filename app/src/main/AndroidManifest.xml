@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -22,6 +25,9 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+
+
+
     <application
         android:name="skean.me.base.component.AppApplication"
         android:icon="@drawable/ic_launcher"
@@ -29,10 +35,11 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme">
 
-        <!-- fixme 替换为对应的百度定位key-->
+        <!-- fixme 替换为对应的高德地图定位key-->
         <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="" />
+            android:name="com.amap.api.v2.apikey"
+            android:value="b46c4981b8e07d4d613867e03c753f4b" />
+
         <!--fixme 替换为对应的蒲公英appId-->
         <meta-data
             android:name="PGYER_APPID"
@@ -52,12 +59,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Dialog"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
-
-        <!--图片选取-->
-        <activity
-            android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait" />
 
 
         <!--照片预览-->
@@ -79,7 +80,7 @@
 
         <!--地图预览-->
         <activity
-            android:name="skean.me.base.component.MapActivity_"
+            android:name="skean.me.base.component.MapActivity"
             android:label="地图预览"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
@@ -100,17 +101,8 @@
             android:name="skean.me.base.component.AppService"
             android:exported="false" />
 
-        <!--百度的定位后台-->
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote">
-            <intent-filter>
-                <action android:name="com.baidu.location.service_v2.2">
-                </action>
-            </intent-filter>
-        </service>
-
+        <!--高德的定位后台-->
+        <service android:name="com.amap.api.location.APSService"></service>
 
         <!--App的文件Provider-->
         <!--fixme 替换为对应的包名-->

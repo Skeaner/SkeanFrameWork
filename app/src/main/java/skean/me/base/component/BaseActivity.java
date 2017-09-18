@@ -8,11 +8,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import skean.me.base.widget.LoadingDialog;
@@ -271,6 +274,45 @@ public class BaseActivity extends AppCompatActivity {
     public void toastFormat(@StringRes int resId, Object... args) {
         String content = getString(resId, args);
         toast(content);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Snack便捷方法
+    ///////////////////////////////////////////////////////////////////////////
+
+    public void snack(View parent, String text) {
+        Snackbar snackbar = Snackbar.make(parent, text, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
+
+    public void snack(View parent, String text, int duration) {
+        Snackbar snackbar = Snackbar.make(parent, text, duration);
+        snackbar.show();
+    }
+
+    public void snackTop(View parent, String text, int duration) {
+        Snackbar snackbar = Snackbar.make(parent, text, duration);
+        final long millis = duration == Snackbar.LENGTH_SHORT ? 1500 : 2750;
+        View view = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        view.setLayoutParams(params);
+        view.setVisibility(View.INVISIBLE);
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onShown(final Snackbar sb) {
+                sb.getView().setVisibility(View.VISIBLE);
+                sb.getView().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        sb.getView().setVisibility(View.GONE);
+                    }
+                }, millis);
+            }
+
+        });
+        snackbar.show();
     }
 
     ///////////////////////////////////////////////////////////////////////////

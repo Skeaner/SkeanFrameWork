@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.multidex.MultiDexApplication;
 
-import com.baidu.mapapi.SDKInitializer;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.pgyersdk.crash.PgyCrashManager;
 import com.raizlabs.android.dbflow.config.FlowConfig;
@@ -14,12 +14,13 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 
 import java.io.File;
 
+import skean.me.base.utils.AppStatusTracker;
 import skean.me.base.utils.FileUtil;
 
 /**
  * App的Application
  */
-public final class AppApplication extends MultiDexApplication {
+public final class AppApplication extends MultiDexApplication implements AppStatusTracker.StatusCallback {
 
     private Object tempObject = null;
 
@@ -32,10 +33,16 @@ public final class AppApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
-        SDKInitializer.initialize(getApplicationContext());
+        //蒲公英初始化
         PgyCrashManager.register(this);
+        //DBFlow初始化
+        FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
+        //AndroidUtils初始化
         Utils.init(this);
+        LogUtils.getConfig().setLogSwitch(true).setGlobalTag(TAG).setLogHeadSwitch(false);
+        //AppStatusTracker初始化
+        AppStatusTracker.init(this);
+        AppStatusTracker.getInstance().setStatusCallback(this);
     }
 
     public static AppApplication getInstance() {
@@ -95,4 +102,13 @@ public final class AppApplication extends MultiDexApplication {
         return new File(getAppExternalStorageDirectory(), name);
     }
 
+    @Override
+    public void onToForeground() {
+        LogUtils.i(TAG, "恢复到前台了");
+    }
+
+    @Override
+    public void onToBackground() {
+        LogUtils.i(TAG, "进入了后台");
+    }
 }

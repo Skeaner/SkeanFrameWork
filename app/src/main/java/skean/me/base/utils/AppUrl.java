@@ -13,10 +13,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import okhttp3.internal.Util;
 import okio.Buffer;
 
 import static okhttp3.internal.Util.delimiterOffset;
-import static okhttp3.internal.Util.domainToAscii;
 import static okhttp3.internal.Util.skipLeadingAsciiWhitespace;
 import static okhttp3.internal.Util.skipTrailingAsciiWhitespace;
 
@@ -1298,22 +1298,8 @@ public class AppUrl {
         }
 
         private static String canonicalizeHost(String input, int pos, int limit) {
-            // Start by percent decoding the host. The WHATWG spec suggests doing this only after we've
-            // checked for IPv6 square braces. But Chrome does it first, and that's more lenient.
             String percentDecoded = percentDecode(input, pos, limit, false);
-
-            // If the input contains a :, it’s an IPv6 address.
-            if (percentDecoded.contains(":")) {
-                // If the input is encased in square braces "[...]", drop 'em.
-                InetAddress inetAddress = percentDecoded.startsWith("[") && percentDecoded.endsWith("]") ? decodeIpv6(percentDecoded, 1, percentDecoded
-                        .length() - 1) : decodeIpv6(percentDecoded, 0, percentDecoded.length());
-                if (inetAddress == null) return null;
-                byte[] address = inetAddress.getAddress();
-                if (address.length == 16) return inet6AddressToAscii(address);
-                throw new AssertionError();
-            }
-
-            return domainToAscii(percentDecoded);
+            return Util.canonicalizeHost(percentDecoded);
         }
 
         /**

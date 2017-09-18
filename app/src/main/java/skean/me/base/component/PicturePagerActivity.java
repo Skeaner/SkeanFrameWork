@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 import skean.me.base.db.Photo;
 import skean.me.base.utils.ContentUtil;
 import skean.yzsm.com.framework.R;
-import uk.co.senab.photoview.PhotoView;
 
 /**
  * 预览图片
