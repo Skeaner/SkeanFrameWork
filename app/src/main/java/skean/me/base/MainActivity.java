@@ -1,31 +1,18 @@
 package skean.me.base;
 
-import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.PicassoEngine;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.androidannotations.api.sharedpreferences.EditorHelperExt;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import skean.me.base.component.AppService;
 import skean.me.base.component.BaseActivity;
-import skean.me.base.component.MapActivity;
-import skean.me.base.utils.ProgressObservable;
-import skean.me.base.widget.DateTimePickerDialog;
-import skean.me.base.widget.LoadingDialog2;
 import skean.yzsm.com.framework.R;
 
 public class MainActivity extends BaseActivity {
@@ -33,12 +20,22 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_main);
         findViewById(R.id.txvSelect).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), MapActivity.class));
+                Matisse.from(MainActivity.this)
+                       .choose(MimeType.of(MimeType.JPEG, MimeType.PNG), true)
+                       .showSingleMediaType(true)
+                       .capture(true)
+                       .captureStrategy(new CaptureStrategy(true, "skean.yzsm.com.framework.fileprovider"))
+                       .countable(true)
+                       .maxSelectable(1)
+                       .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                       .thumbnailScale(0.85f)
+                       .imageEngine(new PicassoEngine())
+                       .forResult(9);
+
             }
         });
     }
@@ -46,7 +43,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 }

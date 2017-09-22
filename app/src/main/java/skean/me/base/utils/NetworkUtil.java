@@ -18,7 +18,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 //import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import skean.me.base.component.AppApplication;
@@ -90,7 +90,7 @@ public class NetworkUtil {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpBuilder().build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                      .build();
     }
 
@@ -98,7 +98,7 @@ public class NetworkUtil {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpBuilder().build())
                                      .addConverterFactory(JacksonConverterFactory.create(mapper))
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                      .build();
     }
 
@@ -110,7 +110,7 @@ public class NetworkUtil {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(builder.build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                      .build();
     }
 
@@ -118,7 +118,7 @@ public class NetworkUtil {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpProgressBuilder().build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                      .build();
     }
 
@@ -130,7 +130,7 @@ public class NetworkUtil {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(builder.build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                      .build();
     }
 
@@ -138,7 +138,7 @@ public class NetworkUtil {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                                      .build();
     }
 

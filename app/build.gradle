@@ -124,23 +124,27 @@ dependencies {
     //retrofit2
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-jackson:2.3.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     //RxJava的库
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.3.1'
-    compile 'com.jakewharton.rxbinding:rxbinding:1.0.1'
-    compile 'com.jakewharton.rxbinding:rxbinding-support-v4:1.0.1'
-    compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:1.0.1'
-    compile 'com.jakewharton.rxbinding:rxbinding-design:1.0.1'
-    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:1.0.1'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.3'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-design:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.0.0'
     //DBFlow
     compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
     compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:${dbflow_version}"   // sql-cipher支持
-    compile "net.zetetic:android-database-sqlcipher:3.5.7@aar" // sql-cipher支持
-    compile "com.github.Raizlabs.DBFlow:dbflow-rx:${dbflow_version}" // RXJava支持
+    compile "com.github.Raizlabs.DBFlow:dbflow-sqlcipher:${dbflow_version}"
+    // sql-cipher支持
+    compile 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+    // sql-cipher支持
+    compile "com.github.Raizlabs.DBFlow:dbflow-rx2:${dbflow_version}"
+    // RXJava支持
+
     //MVP框架
     compile 'com.hannesdorfmann.mosby3:mvp:3.0.0'
     compile 'com.hannesdorfmann.mosby3:viewstate:3.0.0'
@@ -150,22 +154,42 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr1'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.0.pr1'
     //三方工具
-    compile 'commons-codec:commons-codec:1.10' //阿帕奇commons-codec
-    compile 'commons-net:commons-net:3.5' //阿帕奇commons-net
-    compile 'org.apache.commons:commons-collections4:4.1' //阿帕奇commons-collections4
-    compile 'com.badoo.mobile:android-weak-handler:1.1' //软引用的handler
-    compile 'com.squareup.picasso:picasso:2.5.2' //图片加载picasso
-    compile 'com.pgyersdk:sdk:2.7.4' //蒲公英sdk
-    compile 'com.github.chrisbanes:PhotoView:2.1.3' //图片显示PhotoView
-    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0' //图片显示subsamplingImageView
-    compile 'com.zhihu.android:matisse:0.5.0-mod@aar' //图片选择器matisse
-    compile 'fr.avianey.com.viewpagerindicator:library:2.4.1.1@aar' //ViewPager指示器viewpagerindicator
-    compile 'com.blankj:utilcode:1.9.0' //综合工具库utilcode
-    compile 'com.tamic:browse:1.0.0' //带进度显示的Webview
-    compile 'com.daimajia.numberprogressbar:library:1.2@aar' //带数字显示的numberprogressbar
-    compile 'in.srain.cube:ultra-ptr:1.0.11' //下拉刷新ultra-ptr
-    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.29' //RecyclerView综合适配器
-    compile 'com.afollestad.material-dialogs:core:0.9.4.7' //material design对话框
-    compile 'com.appeaser.sublimepickerlibrary:sublimepickerlibrary:2.1.1' //material design日期加时间选择器
-    compile 'skean.yzsm.com.easypermissiondialog:easypermissiondialog:1.3@aar' //权限提示
+    compile 'commons-codec:commons-codec:1.10'
+    //阿帕奇commons-codec
+    compile 'commons-net:commons-net:3.5'
+    //阿帕奇commons-net
+    compile 'org.apache.commons:commons-collections4:4.1'
+    //阿帕奇commons-collections4
+    compile 'com.badoo.mobile:android-weak-handler:1.1'
+    //软引用的handler
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    //图片加载picasso
+    compile 'com.pgyersdk:sdk:2.7.4'
+    //蒲公英sdk
+    compile 'com.github.chrisbanes:PhotoView:2.1.3'
+    //图片显示PhotoView
+    compile 'it.sephiroth.android.library.imagezoom:imagezoom:2.3.0'
+    //图片触摸库
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+    //图片显示subsamplingImageView
+    compile 'com.zhihu.android:matisse:0.5.0-mod@aar'
+    //图片选择器matisse
+    compile 'fr.avianey.com.viewpagerindicator:library:2.4.1.1@aar'
+    //ViewPager指示器viewpagerindicator
+    compile 'com.blankj:utilcode:1.9.0'
+    //综合工具库utilcode
+    compile 'com.tamic:browse:1.0.0'
+    //带进度显示的Webview
+    compile 'com.daimajia.numberprogressbar:library:1.2@aar'
+    //带数字显示的numberprogressbar
+    compile 'in.srain.cube:ultra-ptr:1.0.11'
+    //下拉刷新ultra-ptr
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.29'
+    //RecyclerView综合适配器
+    compile 'com.afollestad.material-dialogs:core:0.9.4.7'
+    //material design对话框
+    compile 'com.appeaser.sublimepickerlibrary:sublimepickerlibrary:2.1.1'
+    //material design日期加时间选择器
+    compile 'skean.yzsm.com.easypermissiondialog:easypermissiondialog:1.3@aar'
+    //权限提示
 }

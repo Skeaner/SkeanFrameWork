@@ -45,28 +45,8 @@
 -dontwarn io.reactivex.**
 -keepclasseswithmembers  class io.reactivex.** {*;}
 #rxbinding:0.4.0'
--dontwarn com.jakewharton.rxbinding.**
--keepclasseswithmembers  class com.jakewharton.rxbinding.** {*;}
-#rxbinding-support-v4:0.4.0'
--dontwarn com.jakewharton.rxbinding.support.v4.**
--keepclasseswithmembers  class com.jakewharton.rxbinding.support.v4.** {*;}
-#rxbinding-appcompat-v7:0.4.0'
--dontwarn com.jakewharton.rxbinding.support.v7.**
--keepclasseswithmembers  class com.jakewharton.rxbinding.support.v7.** {*;}
-#rxbinding-design:0.4.0'
--dontwarn com.jakewharton.rxbinding.support.design.**
--keepclasseswithmembers  class com.jakewharton.rxbinding.support.design.** {*;}
-#rxbinding-recyclerview-v7:0.4.0'
--dontwarn com.jakewharton.rxbinding.support.v7.**
--keepclasseswithmembers  class com.jakewharton.rxbinding.support.v7.** {*;}
-#rxlifecycle:1.0'
--dontwarn com.trello.rxlifecycle.**
--keepclasseswithmembers  class com.trello.rxlifecycle.** {*;}
--dontwarn com.trello.rxlifecycle.android.**
--keepclasseswithmembers  class com.trello.rxlifecycle.android.** {*;}
-#rxlifecycle-components:1.0'
--dontwarn com.trello.rxlifecycle.components.**
--keepclasseswithmembers  class com.trello.rxlifecycle.components.** {*;}
+-dontwarn com.jakewharton.rxbinding2.**
+-keepclasseswithmembers  class com.jakewharton.rxbinding2.** {*;}
 
 #DBFlow
 #dbflow-core:3.1.1'
@@ -193,6 +173,10 @@ public static java.lang.String TABLENAME;
 #-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
 #    <init>(java.lang.Throwable);
 #}
+
+#图片触摸ImageTouch
+-dontwarn it.sephiroth.android.library.imagezoom.**
+-keepclasseswithmembers class it.sephiroth.android.library.imagezoom.** {*;}
 
 
 #-------------------------------------------------------------------------
