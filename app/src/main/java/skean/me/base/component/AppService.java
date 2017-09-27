@@ -19,24 +19,28 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import skean.me.base.net.CommonService;
-import skean.me.base.net.DefaultSubscriber;
 import skean.me.base.net.PgyAppInfo;
 import skean.me.base.net.PgyVersionInfo;
 import skean.me.base.net.PgyerService;
 import skean.me.base.net.ProgressInterceptor;
+import skean.me.base.rx.DefaultObserver;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.NetworkUtil;
 import skean.me.base.utils.PackageUtils;
 import skean.me.base.widget.ForceUpdateDialog;
+import skean.yzsm.com.framework.BuildConfig;
 import skean.yzsm.com.framework.R;
 
 /**
@@ -136,8 +140,7 @@ public final class AppService extends Service {
      * @return 对应版本
      */
     public AppVersion getAppVersion() {
-        // FIXME: 2016/9/30 返回对应的版本
-        return new AppVersion("2684dd49fe2e94318d64e27e4589bf20", "521cf96c91d333da545c8176e2bbdad2");
+        return new AppVersion(BuildConfig.PGYER_APPID, BuildConfig.PGYER_APIKEY);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -167,34 +170,37 @@ public final class AppService extends Service {
                    .create(PgyerService.class)
                    .getAppInfo(getAppVersion().getAppId(), getAppVersion().getApiKey())
                    .subscribeOn(Schedulers.io())
-                   .filter(new Func1<PgyAppInfo, Boolean>() {
+                   .filter(new Predicate<PgyAppInfo>() {
                        @Override
-                       public Boolean call(PgyAppInfo appInfo) {
+                       public boolean test(@NonNull PgyAppInfo appInfo) throws Exception {
                            return appInfo.getCode() == 0;
                        }
                    })
-                   .flatMap(new Func1<PgyAppInfo, Observable<PgyVersionInfo>>() {
+                   .flatMap(new Function<PgyAppInfo, ObservableSource<PgyVersionInfo>>() {
                        @Override
-                       public Observable<PgyVersionInfo> call(PgyAppInfo appInfo) {
-                           return Observable.from(appInfo.getData());
+                       public ObservableSource<PgyVersionInfo> apply(@NonNull PgyAppInfo pgyAppInfo) throws Exception {
+                           return Observable.fromIterable(pgyAppInfo.getData());
                        }
                    })
-                   .filter(new Func1<PgyVersionInfo, Boolean>() {
+                   .filter(new Predicate<PgyVersionInfo>() {
                        @Override
-                       public Boolean call(PgyVersionInfo versionInfo) {
+                       public boolean test(@NonNull PgyVersionInfo versionInfo) throws Exception {
                            return "1".equals(versionInfo.getAppIsLastest())
                                    //
                                    && Integer.valueOf(versionInfo.getAppVersionNo()) > PackageUtils.getVersionCode(context)//对比版本号
                                    ;
                        }
+
                    })
                    .observeOn(AndroidSchedulers.mainThread())
-                   .subscribe(new DefaultSubscriber<PgyVersionInfo>() {
+                   .subscribe(new DefaultObserver<PgyVersionInfo>() {
+
                        @Override
-                       public void onCompleted() {
-                           if (showTips && !getHasNext()) Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show();
+                       public void onComplete() {
+                           if (showTips && !isHasNext()) Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show();
                            Log.i(TAG, "检查更新完毕: 已经是最新版本");
                        }
+
 
                        @Override
                        public void onError(Throwable e) {
