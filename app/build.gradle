@@ -164,7 +164,7 @@ dependencies {
     //软引用的handler
     compile 'com.squareup.picasso:picasso:2.5.2'
     //图片加载picasso
-    compile 'com.pgyersdk:sdk:2.7.4'
+    compile 'com.pgyersdk:sdk:2.7.6'
     //蒲公英sdk
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
     //图片显示PhotoView
