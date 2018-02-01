@@ -138,6 +138,9 @@ public static java.lang.String TABLENAME;
 #easypermissiondialog:1.0
 -dontwarn skean.yzsm.com.easypermissiondialog.**
 -keepclasseswithmembers class skean.yzsm.com.easypermissiondialog.**{*;}
+#textdrawable
+-dontwarn com.amulyakhare.textdrawable.**
+-keepclasseswithmembers class com.amulyakhare.textdrawable.**{*;}
 
 
 #libs内部包

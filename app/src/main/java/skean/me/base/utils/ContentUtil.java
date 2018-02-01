@@ -340,9 +340,37 @@ public class ContentUtil {
         return TextUtils.equals(s1, s2);
     }
 
+    /**
+     * 判断两个浮点是否相等
+     */
+    public static boolean isEqual(float f1, float f2) {
+        if (Math.abs(f1 - f2) < 0.00000001) {
+            return true;
+        } else return false;
+    }
+
+    /**
+     * 判断两个double是否相等
+     */
+    public static boolean isEqual(double d1, double d2) {
+        if (Math.abs(d1 - d2) < 0.00000001) {
+            return true;
+        } else return false;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // 其他内容的处理
     ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * int值转换为字符
+     *
+     * @param value 原始值
+     * @return 如果int=0返回null, 否则就返回int的值的字符
+     */
+    public static String nullIfZero(int value) {
+        return value == 0 ? null : (String.valueOf(value));
+    }
 
     /**
      * int值转换为字符
@@ -387,7 +415,17 @@ public class ContentUtil {
      * @return 如果float=0返回空字符, 否则就返回float的值的字符
      */
     public static String emptyIfZero(float value) {
-        return value == 0 ? "" : (String.valueOf(value));
+        return isEqual(value, 0) ? "" : (String.valueOf(value));
+    }
+
+    /**
+     * float值转换为字符
+     *
+     * @param value 原始值
+     * @return 如果float=0返回null, 否则就返回float的值的字符
+     */
+    public static String nullIfZero(float value) {
+        return isEqual(value, 0) ? null : (String.valueOf(value));
     }
 
     public static float floatValue(TextView tv) {
@@ -398,6 +436,40 @@ public class ContentUtil {
         float value = 0;
         try {
             value = Float.valueOf(text.toString());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    /**
+     * double值转换为字符
+     *
+     * @param value 原始值
+     * @return 如果double=0返回空字符, 否则就返回double的值的字符
+     */
+    public static String emptyIfZero(double value) {
+        return isEqual(value, 0) ? "" : (String.valueOf(value));
+    }
+
+    /**
+     * double值转换为字符
+     *
+     * @param value 原始值
+     * @return 如果double=0返回null, 否则就返回double的值的字符
+     */
+    public static String nullIfZero(double value) {
+        return isEqual(value, 0) ? null : (String.valueOf(value));
+    }
+
+    public static double doubleValue(TextView tv) {
+        return doubleValue(tv.getText());
+    }
+
+    public static double doubleValue(CharSequence text) {
+        double value = 0;
+        try {
+            value = Double.valueOf(text.toString());
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }

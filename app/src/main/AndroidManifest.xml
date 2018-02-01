@@ -26,8 +26,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
-
-
     <application
         android:name="skean.me.base.component.AppApplication"
         android:icon="@drawable/ic_launcher"
@@ -102,7 +100,7 @@
             android:exported="false" />
 
         <!--高德的定位后台-->
-        <service android:name="com.amap.api.location.APSService"></service>
+        <service android:name="com.amap.api.location.APSService" />
 
         <!--App的文件Provider-->
         <!--fixme 替换为对应的包名-->
