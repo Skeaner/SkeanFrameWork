@@ -7,11 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.ImageUtil;
 
@@ -43,18 +44,13 @@ public abstract class BasePictureActivity extends BaseActivity {
         try {
             containerFolder = new File(AppApplication.getAppPicturesDirectory(), containerId + "");
             FileUtil.initializeFile(containerFolder, true);
-            String fileName = new StringBuilder().append(containerId)
-                                                 .append(SEPERATOR)
-                                                 .append(findPictureTag())
-                                                 .append(EXTENTION)
-                                                 .toString();
+            String fileName = new StringBuilder().append(containerId).append(SEPERATOR).append(findPictureTag()).append(EXTENTION).toString();
             compressedFile = new File(containerFolder, fileName);
             compressedFile.createNewFile();
             ImageUtil.Compressor.toPreferSizeFile(context, rawPicture, compressedFile);
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-                File SdDir  = Environment.getExternalStorageDirectory();
-            }
-            else {
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                File SdDir = Environment.getExternalStorageDirectory();
+            } else {
                 // 没sd卡
             }
         } catch (IOException e) {
@@ -80,16 +76,20 @@ public abstract class BasePictureActivity extends BaseActivity {
 
     protected void returnPictures(File... rawPictures) {
         compressedPictures.clear();
-        Observable.from(rawPictures).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.io()).map(new Func1<File, File>() {
+        Observable.fromArray(rawPictures).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.io()).map(new Function<File, File>() {
             @Override
-            public File call(File rawPicture) {
+            public File apply(File rawPicture) throws Exception {
                 return doPictureCompress(rawPicture);
             }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<File>() {
             @Override
-            public void onCompleted() {
-                setResult(RESULT_OK, new Intent().putExtra(EXTRA_PIC_LIST, compressedPictures));
-                finish();
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(File file) {
+                compressedPictures.add(file);
             }
 
             @Override
@@ -102,8 +102,9 @@ public abstract class BasePictureActivity extends BaseActivity {
             }
 
             @Override
-            public void onNext(File file) {
-                compressedPictures.add(file);
+            public void onComplete() {
+                setResult(RESULT_OK, new Intent().putExtra(EXTRA_PIC_LIST, compressedPictures));
+                finish();
             }
         });
     }

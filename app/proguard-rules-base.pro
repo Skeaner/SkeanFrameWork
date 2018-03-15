@@ -158,13 +158,9 @@ public static java.lang.String TABLENAME;
 -dontwarn me.zhanghai.android.materialprogressbar.**
 -keepclasseswithmembers class me.zhanghai.android.materialprogressbar.** {*;}
 
-#高德定位
--keep class com.amap.api.location.**{*;}
--keep class com.amap.api.fence.**{*;}
--keep class com.autonavi.aps.amapapi.model.**{*;}
-#高德2D地图
--keep class com.amap.api.maps2d.**{*;}
--keep class com.amap.api.mapcore2d.**{*;}
+#高德
+-dontwarn com.amap.**
+-keepclasseswithmembers class com.amap.** {*;}
 
 #EventBus
 -keepattributes *Annotation*
@@ -181,7 +177,9 @@ public static java.lang.String TABLENAME;
 -dontwarn it.sephiroth.android.library.imagezoom.**
 -keepclasseswithmembers class it.sephiroth.android.library.imagezoom.** {*;}
 
-
+#Glide
+-dontwarn com.bumptech.glide.**
+-keepclasseswithmembers class com.bumptech.glide.** {*;}
 #-------------------------------------------------------------------------
 
 #---------------------------------3.与js互相调用的类------------------------

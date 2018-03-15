@@ -278,6 +278,18 @@ public class ContentUtil {
         return isEmpty(text) ? "无" : text;
     }
 
+
+
+    /**
+     * 读取字符串的内容
+     *
+     * @param text 原始字符
+     * @return 如果字符为null或者长度为0的话返回空字符, 否则返回字符串的内容
+     */
+    public static String nullCharIfEmpty(String text) {
+        return isEmpty(text) ? "" : text;
+    }
+
     /**
      * 判断TextView是否有内容
      *
@@ -378,7 +390,7 @@ public class ContentUtil {
      * @param value 原始值
      * @return 如果int=0返回空字符, 否则就返回int的值的字符
      */
-    public static String emptyIfZero(int value) {
+    public static String nullCharIfZero(int value) {
         return value == 0 ? "" : (String.valueOf(value));
     }
 
@@ -414,7 +426,7 @@ public class ContentUtil {
      * @param value 原始值
      * @return 如果float=0返回空字符, 否则就返回float的值的字符
      */
-    public static String emptyIfZero(float value) {
+    public static String nullCharIfZero(float value) {
         return isEqual(value, 0) ? "" : (String.valueOf(value));
     }
 
@@ -448,7 +460,7 @@ public class ContentUtil {
      * @param value 原始值
      * @return 如果double=0返回空字符, 否则就返回double的值的字符
      */
-    public static String emptyIfZero(double value) {
+    public static String nullCharIfZero(double value) {
         return isEqual(value, 0) ? "" : (String.valueOf(value));
     }
 
