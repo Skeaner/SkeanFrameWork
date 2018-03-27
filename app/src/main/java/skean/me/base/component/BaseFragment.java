@@ -39,8 +39,6 @@ public abstract class BaseFragment extends Fragment {
 
     protected boolean isMenuCreated;
 
-    protected static final int MAX_INTERVAL_FOR_CLICK = 250;
-    protected static final int MAX_DISTANCE_FOR_CLICK = 100;
     protected static final int FILTER_FOR_CLICK = 300;
 
     public ActionMode tempActionMode;
@@ -255,6 +253,14 @@ public abstract class BaseFragment extends Fragment {
         return hostActivity.showSoftKeyboard(target);
     }
 
+    /**
+     * 展示软键盘, 并且光标移到最后面
+     * * @return 是否有执行展示软键盘的操作
+     */
+    public boolean showSoftKeyboardAndMoveToEnd(EditText target) {
+        return hostActivity.showSoftKeyboardAndMoveToEnd(target);
+    }
+
     protected void hideViews(View... views) {
         for (View view : views) {
             view.post(new WeakReferenceViewRunnable(view) {
@@ -288,29 +294,9 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    protected boolean detectClickEvent(View v, MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            v.setTag(R.id.keyDownX, ev.getX());
-            v.setTag(R.id.keyDownY, ev.getY());
-        } else if (ev.getAction() == MotionEvent.ACTION_UP) {
-            int dx = (int) Math.abs((float) v.getTag(R.id.keyDownX) - ev.getX());
-            int dy = (int) Math.abs((float) v.getTag(R.id.keyDownY) - ev.getY());
-            long dm = ev.getEventTime() - ev.getDownTime();
-            return dx < MAX_DISTANCE_FOR_CLICK && dy < MAX_DISTANCE_FOR_CLICK && dm < MAX_INTERVAL_FOR_CLICK;
-        }
-        return false;
-    }
-
-    protected void setErrorAndRequestFocus(EditText et, String errMessage) {
-        et.setError(errMessage);
-        et.requestFocus();
-    }
-
-
     protected AlertDialog.Builder buildAlert(String title, String message) {
         return new AlertDialog.Builder(alertTheme).setTitle(title).setMessage(message);
     }
-
 
     protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
         return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);

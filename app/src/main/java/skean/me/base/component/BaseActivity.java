@@ -52,14 +52,11 @@ public class BaseActivity extends AppCompatActivity {
 
     protected ContextThemeWrapper alertTheme;
 
-    protected static final int MAX_INTERVAL_FOR_CLICK = 250;
-    protected static final int MAX_DISTANCE_FOR_CLICK = 100;
     protected static final int FILTER_FOR_CLICK = 300;
 
     private Toast toast;
 
     private LocalBroadcastManager lbm;
-
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
@@ -284,7 +281,6 @@ public class BaseActivity extends AppCompatActivity {
         toast(content);
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
     // Snack便捷方法
     ///////////////////////////////////////////////////////////////////////////
@@ -395,6 +391,17 @@ public class BaseActivity extends AppCompatActivity {
         return kbManager.showSoftInput(target, 0);
     }
 
+    /**
+     * 展示软键盘, 并且光标移到最后面
+     * * @return 是否有执行展示软键盘的操作
+     */
+    public boolean showSoftKeyboardAndMoveToEnd(EditText target) {
+        InputMethodManager kbManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        target.requestFocus();
+        target.setSelection(target.length());
+        return kbManager.showSoftInput(target, 0);
+    }
+
     protected void hideViews(View... views) {
         for (View view : views) {
             view.post(new WeakReferenceViewRunnable(view) {
@@ -428,24 +435,6 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected boolean detectClickEvent(View v, MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            v.setTag(R.id.keyDownX, ev.getX());
-            v.setTag(R.id.keyDownY, ev.getY());
-        } else if (ev.getAction() == MotionEvent.ACTION_UP) {
-            int dx = (int) Math.abs((float) v.getTag(R.id.keyDownX) - ev.getX());
-            int dy = (int) Math.abs((float) v.getTag(R.id.keyDownY) - ev.getY());
-            long dm = ev.getEventTime() - ev.getDownTime();
-            return dx < MAX_DISTANCE_FOR_CLICK && dy < MAX_DISTANCE_FOR_CLICK && dm < MAX_INTERVAL_FOR_CLICK;
-        }
-        return false;
-    }
-
-    protected void setErrorAndRequestFocus(EditText et, String errMessage) {
-        et.setError(errMessage);
-        et.requestFocus();
-    }
-
     protected AlertDialog.Builder buildAlert(String title, String message) {
         return new AlertDialog.Builder(alertTheme).setTitle(title).setMessage(message);
     }
@@ -454,7 +443,7 @@ public class BaseActivity extends AppCompatActivity {
         return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);
     }
 
-    protected abstract class ProgressAsyncTask<Params,Progress, Result>  extends AsyncTask<Params,Progress,Result>{
+    protected abstract class ProgressAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
         @Override
         protected void onPreExecute() {
