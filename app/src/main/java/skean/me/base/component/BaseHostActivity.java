@@ -64,8 +64,7 @@ public abstract class BaseHostActivity extends BaseActivity {
             return true;
         } else if (currentTag != null) {
             Fragment currentFragment = fragmentManager.findFragmentByTag(currentTag);
-            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack())
-                return true;
+            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack()) return true;
             else if (fragmentManager.popBackStackImmediate()) return true;
         }
         return false;
@@ -178,7 +177,7 @@ public abstract class BaseHostActivity extends BaseActivity {
         setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
         previousTag = currentTag;
         currentTag = targetTag;
-        trans.replace(getContainerId(), targetFragment);
+        trans.replace(getContainerId(), targetFragment, currentTag);
         if (addToBackStack) trans.addToBackStack(null);
         trans.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
@@ -229,6 +228,5 @@ public abstract class BaseHostActivity extends BaseActivity {
     protected String getTagInPager(int position) {
         return "android:switcher:" + getContainerId() + ":" + position;
     }
-
 
 }

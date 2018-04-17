@@ -5,6 +5,7 @@ import android.database.Cursor;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.QueryBuilder;
 import com.raizlabs.android.dbflow.sql.SQLiteType;
+import com.raizlabs.android.dbflow.sql.language.OperatorGroup;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.migration.BaseMigration;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -84,12 +85,48 @@ public abstract class ExtendMigration extends BaseMigration {
     }
 
     /**
+     * 删除数据
+     */
+    public void deleteData(DatabaseWrapper database, Class<? extends BaseModel> modelClass, OperatorGroup where) {
+        if (verifyTable(database, modelClass)) {
+            QueryBuilder builder = new QueryBuilder(getDeleteQueryBuilder(modelClass));
+            if (where != null) {
+                builder.append("WHERE ").append(where.getQuery());
+            }
+            String deleteQuery = builder.toString();
+            database.execSQL(deleteQuery);
+        }
+    }
+
+
+    /**
      * 构造修改表格的QueryBuilder
      */
     private QueryBuilder getAlterTableQueryBuilder(Class<? extends BaseModel> modelClass) {
         String tableName = FlowManager.getTableName(modelClass);
         return new QueryBuilder().append("ALTER").appendSpaceSeparated("TABLE").appendQuotedIfNeeded(tableName).appendSpace();
     }
+
+
+
+    /**
+     * 构造删除表格的QueryBuilder
+     */
+    private QueryBuilder getDeleteQueryBuilder(Class<? extends BaseModel> modelClass) {
+        String tableName = FlowManager.getTableName(modelClass);
+        return new QueryBuilder().append("DELETE").appendSpaceSeparated("FROM").appendQuotedIfNeeded(tableName).appendSpace();
+    }
+
+
+
+    /**
+     * 检查数据库, 表格是否存在
+     */
+    private boolean verifyTable(DatabaseWrapper database, Class<? extends BaseModel> modelClass) {
+        Cursor cursorToCheckColumnFor = SQLite.select().from(modelClass).limit(0).query(database);
+        return cursorToCheckColumnFor != null;
+    }
+
 
     /**
      * 检查数据库, 表格是否存在和列是否已创建
