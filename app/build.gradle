@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 //fixme 替换对应的蒲公英
@@ -36,8 +38,10 @@ android {
         }
         applicationVariants.all { variant ->
             variant.outputs.all {
-                def appInfo = "${defaultConfig.applicationId}-${variant.versionName}(b${variant.versionCode})"
-                outputFileName = appInfo + (variant.buildType.isDebuggable() ? "-debug" : "-release") + ".apk"
+                def dateStr = new SimpleDateFormat("yyyyMMddHHmm", Locale.US).format(new Date())
+                def shortAppId = "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1)
+                def versionTag = variant.buildType.isDebuggable() ? "d" : "r"
+                outputFileName = "${shortAppId}-${variant.versionName}${versionTag}(b${variant.versionCode})-${dateStr}.apk"
             }
         }
     }
