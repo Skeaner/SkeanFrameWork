@@ -1,6 +1,8 @@
 package skean.me.base.utils;
 
+import android.content.Context;
 import android.media.MediaMetadataRetriever;
+import android.support.annotation.ColorRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -697,6 +699,21 @@ public class ContentUtil {
         ca.setTime(date);
         ca = truncateDate(ca, field);
         return ca.getTime();
+    }
+
+
+    public static String getColorTextHtmlCode(Context context, @ColorRes int colorRes, String front, String colorText, String back) {
+        int color = context.getResources().getColor(colorRes);
+        return getColorTextHtmlCode(color, front, colorText, back);
+    }
+
+    public static String getColorTextHtmlCode(int color, String front, String colorText, String back) {
+        String сolorString = String.format("%X", color).substring(2);
+        return getColorTextHtmlCode(сolorString, front, colorText, back);
+    }
+
+    public static String getColorTextHtmlCode(String color, String front, String colorText, String back) {
+        return (front == null ? "" : front) + String.format("<font color=\"#%s\">%s</font>", color, colorText) + (back == null ? "" : back);
     }
 
 }

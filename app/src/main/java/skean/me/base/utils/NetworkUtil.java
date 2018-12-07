@@ -7,6 +7,7 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.CookieJar;
@@ -83,7 +84,8 @@ public class NetworkUtil {
     }
 
     public static ObjectMapper newObjectMapper() {
-        return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                 .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
     }
 
     public static Retrofit baseRetrofit(String baseUrl) {
@@ -104,9 +106,7 @@ public class NetworkUtil {
 
     public static Retrofit baseRetrofit(String baseUrl, Interceptor... interceptors) {
         OkHttpClient.Builder builder = newAppHttpBuilder();
-        for (Interceptor i : interceptors) {
-            builder.addInterceptor(i);
-        }
+        builder.interceptors().addAll(0, Arrays.asList(interceptors));
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(builder.build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
@@ -124,9 +124,7 @@ public class NetworkUtil {
 
     public static Retrofit progressRetrofit(String baseUrl, Interceptor... interceptors) {
         OkHttpClient.Builder builder = newAppHttpProgressBuilder();
-        for (Interceptor i : interceptors) {
-            builder.addInterceptor(i);
-        }
+        builder.interceptors().addAll(0, Arrays.asList(interceptors));
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(builder.build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
@@ -174,6 +172,8 @@ public class NetworkUtil {
     }
 
     public static MultipartBody.Part multiFilePart(String name, File uploadFile) {
-        return MultipartBody.Part.createFormData(name, uploadFile.getName(), RequestBody.create(MediaType.parse("application/otcet-stream"), uploadFile));
+        return MultipartBody.Part.createFormData(name,
+                                                 uploadFile.getName(),
+                                                 RequestBody.create(MediaType.parse("application/otcet-stream"), uploadFile));
     }
 }
