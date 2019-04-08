@@ -1,19 +1,64 @@
 package skean.me.base.utils;
 
-import java.util.Objects;
+import android.text.TextUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 三个元素的集合, 类似Pair
+ * 元素集合, 最多5元素
  */
-public class Group<F, S, T> {
-    public final F first;
-    public final S second;
-    public final T third;
+public class Group {
+    private List objects = new ArrayList();
 
-    public Group(F first, S second, T third) {
-        this.first = first;
-        this.second = second;
-        this.third = third;
+    public Group(Object first) {
+        objects.add(first);
+    }
+
+    public Group(Object first, Object second) {
+        objects.add(first);
+        objects.add(second);
+    }
+
+    public Group(Object first, Object second, Object third) {
+        objects.add(first);
+        objects.add(second);
+        objects.add(third);
+    }
+
+    public Group(Object first, Object second, Object third, Object fourth) {
+        objects.add(first);
+        objects.add(second);
+        objects.add(third);
+        objects.add(fourth);
+    }
+
+    public Group(Object first, Object second, Object third, Object fourth, Object fifth) {
+        objects.add(first);
+        objects.add(second);
+        objects.add(third);
+        objects.add(fourth);
+        objects.add(fifth);
+    }
+
+    public static Group create(Object first) {
+        return new Group(first);
+    }
+
+    public static Group create(Object first, Object second) {
+        return new Group(first, second);
+    }
+
+    public static Group create(Object first, Object second, Object third) {
+        return new Group(first, second, third);
+    }
+
+    public static Group create(Object first, Object second, Object third, Object fourth) {
+        return new Group(first, second, third, fourth);
+    }
+
+    public static Group create(Object first, Object second, Object third, Object fourth, Object fifth) {
+        return new Group(first, second, third, fourth, fifth);
     }
 
     @Override
@@ -21,28 +66,17 @@ public class Group<F, S, T> {
         if (!(o instanceof Group)) {
             return false;
         }
-        Group<?, ?, ?> p = (Group<?, ?, ?>) o;
-        return equals(p.first, first) && equals(p.second, second) && equals(p.third, third);
-    }
-
-    private boolean equals(Object a, Object b) {
-        return (a == b) || (a != null && a.equals(b));
-    }
-
-    @Override
-    public int hashCode() {
-        int result = first != null ? first.hashCode() : 0;
-        result = 31 * result + (second != null ? second.hashCode() : 0);
-        result = 31 * result + (third != null ? third.hashCode() : 0);
-        return result;
+        return objects.equals(((Group) o).objects);
     }
 
     @Override
     public String toString() {
-        return "Group{" + String.valueOf(first) + " " + String.valueOf(second) + " " + String.valueOf(third) + "}";
+        StringBuilder sb = new StringBuilder("Group{");
+        if (objects.size() > 0) {
+            sb.append(TextUtils.join(",", objects));
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
-    public static <A, B, C> Group<A, B, C> create(A a, B b, C c) {
-        return new Group<A, B, C>(a, b, c);
-    }
 }

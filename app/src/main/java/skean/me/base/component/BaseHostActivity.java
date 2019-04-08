@@ -3,7 +3,9 @@ package skean.me.base.component;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 
 import skean.yzsm.com.framework.R;
 
@@ -64,7 +66,8 @@ public abstract class BaseHostActivity extends BaseActivity {
             return true;
         } else if (currentTag != null) {
             Fragment currentFragment = fragmentManager.findFragmentByTag(currentTag);
-            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack()) return true;
+            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack())
+                return true;
             else if (fragmentManager.popBackStackImmediate()) return true;
         }
         return false;
@@ -215,8 +218,11 @@ public abstract class BaseHostActivity extends BaseActivity {
      * @param position 位置
      * @return 对应Fragment
      */
-    protected Fragment findFragmentInPager(int position) {
-        return fragmentManager.findFragmentByTag(getTagInPager(position));
+    protected Fragment findFragmentInPager(PagerAdapter adapter, int position) {
+        if (adapter instanceof FragmentStatePagerAdapter) {
+            throw new RuntimeException("FragmentStatePagerAdapter不能使用改方法找出Fragment");
+        }
+        return fragmentManager.findFragmentByTag(getTagInPager(adapter, position));
     }
 
     /**
@@ -225,7 +231,10 @@ public abstract class BaseHostActivity extends BaseActivity {
      * @param position 位置
      * @return 标签
      */
-    protected String getTagInPager(int position) {
+    protected String getTagInPager(PagerAdapter adapter, int position) {
+        if (adapter instanceof FragmentStatePagerAdapter) {
+            throw new RuntimeException("FragmentStatePagerAdapter的Fragment没有TAG标签");
+        }
         return "android:switcher:" + getContainerId() + ":" + position;
     }
 

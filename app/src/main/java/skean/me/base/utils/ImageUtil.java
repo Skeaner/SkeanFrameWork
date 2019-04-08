@@ -5,13 +5,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.util.Base64;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,7 +85,7 @@ public class ImageUtil {
          */
         @WorkerThread
         public static Bitmap toActualSizeBitmap(Context context, File rawFile, int longSide) {
-            return toActualSizeBitmap(context, rawFile, longSide, 0);
+            return toActualSizeBitmap(context, rawFile, longSide, 1);
         }
 
         /**
@@ -94,28 +97,30 @@ public class ImageUtil {
          * @param callBack 回调
          */
         public static void toActualSizeBitmap(Context context, File rawFile, int longSide, BitmapCallBack callBack) {
-            toActualSizeBitmap(context, rawFile, longSide, 0, callBack);
+            toActualSizeBitmap(context, rawFile, longSide, 1, callBack);
         }
 
         /**
-         * 以同步方式, 将原图片压缩成指定长边尺寸, 短边尺寸的Bitmap
+         * 以同步方式, 将原图片按照比例压缩成设定尺寸的Bitmap
          *
          * @param context   上下文
          * @param rawFile   原图片
-         * @param longSide  长边尺寸
-         * @param shortSide 短边尺寸
+         * @param longSide  长边最少尺寸
+         * @param shortSide 短边最少尺寸
          * @return 压缩后图片
          */
         @WorkerThread
         public static Bitmap toActualSizeBitmap(Context context, File rawFile, int longSide, int shortSide) {
             try {
                 int[] sizes = convertSize(rawFile, longSide, shortSide);
-                return Picasso.with(context)
-                              .load(rawFile)
-                              .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                              .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                              .resize(sizes[0], sizes[1])
-                              .get();
+                return Glide.with(context)
+                            .asBitmap()
+                            .load(rawFile)
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .apply(RequestOptions.overrideOf(sizes[0], sizes[1]))
+                            .submit()
+                            .get();
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -123,22 +128,23 @@ public class ImageUtil {
         }
 
         /**
-         * 以异步方式, 将原图片压缩成指定长边尺寸, 短边尺寸的Bitmap
+         * 以异步方式, 将原图片按照比例压缩成设定尺寸的Bitmap
          *
          * @param context   上下文
          * @param rawFile   原图片
-         * @param longSide  长边尺寸
-         * @param shortSide 短边尺寸
+         * @param longSide  长边最短尺寸
+         * @param shortSide 短边最短尺寸
          * @param callBack  回调
          */
         public static void toActualSizeBitmap(Context context, File rawFile, int longSide, int shortSide, BitmapCallBack callBack) {
             int[] sizes = convertSize(rawFile, longSide, shortSide);
-            Picasso.with(context)
-                   .load(rawFile)
-                   .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                   .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                   .resize(sizes[0], sizes[1])
-                   .into(new CustomTarget(callBack));
+            Glide.with(context)
+                 .asBitmap()
+                 .load(rawFile)
+                 .skipMemoryCache(true)
+                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+                 .apply(RequestOptions.overrideOf(sizes[0], sizes[1]))
+                 .into(new CustomTarget2(callBack));
         }
 
         /**
@@ -178,7 +184,7 @@ public class ImageUtil {
          */
         @WorkerThread
         public static boolean toActualSizeFile(Context context, File rawFile, File targetFile, int quality, int longSide) {
-            return toActualSizeFile(context, rawFile, targetFile, quality, longSide, 0);
+            return toActualSizeFile(context, rawFile, targetFile, quality, longSide, 1);
         }
 
         /**
@@ -197,18 +203,18 @@ public class ImageUtil {
                                             int quality,
                                             int longSide,
                                             FileCallBack callBack) {
-            toActualSizeFile(context, rawFile, targetFile, quality, longSide, 0, callBack);
+            toActualSizeFile(context, rawFile, targetFile, quality, longSide, 1, callBack);
         }
 
         /**
-         * 以同步方式, 将原图片压缩成指定长边尺寸, 短边尺寸的Bitmap, 保存在目标文件中
+         * 以同步方式, 将原图片按照比例压缩成设定尺寸的Bitmap, 保存在目标文件中
          *
          * @param context    上下文
          * @param rawFile    原图片
          * @param targetFile 目标文件
          * @param quality    图片质量,为0-100
-         * @param longSide   长边尺寸
-         * @param shortSide  短边尺寸
+         * @param longSide   长边最短尺寸
+         * @param shortSide  短边最短尺寸
          * @return 是否保存成功
          */
         @WorkerThread
@@ -228,14 +234,14 @@ public class ImageUtil {
         }
 
         /**
-         * 以异步方式, 将原图片压缩成指定长边尺寸, 短边尺寸的Bitmap, 保存在目标文件中
+         * 以异步方式, 将原图片按照比例压缩成设定尺寸的Bitmap, 保存在目标文件中
          *
          * @param context    上下文
          * @param rawFile    原图片
          * @param targetFile 目标文件
          * @param quality    图片质量,为0-100
-         * @param longSide   长边尺寸
-         * @param shortSide  短边尺寸
+         * @param longSide   长边最短尺寸
+         * @param shortSide  短边最短尺寸
          * @param callBack   回调
          */
         public static void toActualSizeFile(Context context,
@@ -246,12 +252,13 @@ public class ImageUtil {
                                             int shortSide,
                                             FileCallBack callBack) {
             int[] sizes = convertSize(rawFile, longSide, shortSide);
-            Picasso.with(context)
-                   .load(rawFile)
-                   .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                   .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                   .resize(sizes[0], sizes[1])
-                   .into(new CustomTarget(targetFile, quality, callBack));
+            Glide.with(context)
+                 .asBitmap()
+                 .load(rawFile)
+                 .skipMemoryCache(true)
+                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+                 .apply(RequestOptions.overrideOf(sizes[0], sizes[1]))
+                 .into(new CustomTarget2(targetFile, quality, callBack));
 
         }
 
@@ -286,24 +293,13 @@ public class ImageUtil {
             return options;
         }
 
-        /**
-         * Picasso的回调操作
-         */
-        private static class CustomTarget implements Target {
-
+        private static class CustomTarget2 extends CustomTarget<Bitmap> {
             File targetFile;
             int quality;
             FileCallBack fCallback;
             BitmapCallBack bCallback;
 
-            /**
-             * 自定义Picasso的回调操作
-             *
-             * @param targetFile 目标文件, 如果为空, 则会在callback中返回bitmap
-             * @param quality    图片质量, 为0-100整型
-             * @param callback   回调
-             */
-            public CustomTarget(File targetFile, int quality, FileCallBack callback) {
+            CustomTarget2(File targetFile, int quality, FileCallBack callback) {
                 this.quality = quality;
                 this.targetFile = targetFile;
                 this.fCallback = callback;
@@ -314,172 +310,185 @@ public class ImageUtil {
              *
              * @param callback 回调
              */
-            public CustomTarget(BitmapCallBack callback) {
+            CustomTarget2(BitmapCallBack callback) {
                 this.bCallback = callback;
             }
 
             @Override
-            public void onBitmapLoaded(Bitmap bitmap, final Picasso.LoadedFrom from) {
-                if (bitmap == null) {
-                    if (fCallback != null) fCallback.onFail();
-                    else if (bCallback != null) bCallback.onFail();
-                    return;
-                }
+            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
                 if (bCallback != null) bCallback.onSuccess(bitmap);
                 else if (fCallback != null) {
                     if (targetFile == null) fCallback.onFail();
-                    new AsyncTask<Bitmap, Void, Boolean>() {
-                        @Override
-                        protected Boolean doInBackground(Bitmap... params) {
-                            Bitmap b = params[0];
-                            try {
-                                if (targetFile.exists()) targetFile.delete();
-                                targetFile.createNewFile();
-                                b.compress(Bitmap.CompressFormat.JPEG, quality, new FileOutputStream(targetFile));
-                                return true;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                return false;
-                            }
-                        }
-
-                        @Override
-                        protected void onPostExecute(Boolean result) {
-                            if (result) fCallback.onSuccess(targetFile);
-                            else fCallback.onFail();
-                        }
-                    }.execute(bitmap);
+                    new BitmapCompressTask(targetFile, quality, fCallback, bCallback).execute(bitmap);
                 }
             }
 
             @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+            }
+
+            @Override
+            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                super.onLoadFailed(errorDrawable);
                 if (fCallback != null) fCallback.onFail();
                 else if (bCallback != null) bCallback.onFail();
             }
 
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-            }
+            private static class BitmapCompressTask extends AsyncTask<Bitmap, Void, Boolean> {
+                File targetFile;
+                int quality;
+                FileCallBack fCallback;
+                BitmapCallBack bCallback;
 
-        }
-    }
+                BitmapCompressTask(File targetFile, int quality, FileCallBack fCallback, BitmapCallBack bCallback) {
+                    this.targetFile = targetFile;
+                    this.quality = quality;
+                    this.fCallback = fCallback;
+                    this.bCallback = bCallback;
+                }
 
-    /**
-     * Base64操作类
-     */
-    public static class Base64Util {
-
-        /**
-         * 将图片转换为Base64编码
-         *
-         * @param image 图片的file
-         * @return 转换后的字符串
-         */
-        public static String encodeToString(File image) {
-            InputStream is;
-            byte[] data;
-            //读取图片字节数组
-            try {
-                is = new FileInputStream(image);
-                data = new byte[is.available()];
-                is.read(data);
-                is.close();
-                return Base64.encodeToString(data, Base64.DEFAULT);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        /**
-         * 图片转换为Base64编码字节数组
-         *
-         * @param image 图片的file
-         * @return 转换后的字节数组
-         */
-        public static byte[] encodeToBytes(File image) {
-            InputStream is;
-            byte[] data;
-            byte[] result = null;
-            //读取图片字节数组
-            try {
-                is = new FileInputStream(image);
-                data = new byte[is.available()];
-                is.read(data);
-                is.close();
-                result = Base64.encode(data, Base64.DEFAULT);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        /**
-         * 将base64字符串转化成图片Bitmap
-         *
-         * @param base64Str base64编码字符串
-         * @return Bitmap数据
-         */
-        public static Bitmap decodeAsBitmap(String base64Str) {   //对字节数组字符串进行Base64解码并生成图片
-            if (base64Str == null) //图像数据为空
-                return null;
-            try {
-                //Base64解码
-                byte[] data = Base64.decode(base64Str.getBytes(), Base64.DEFAULT);
-                for (int i = 0; i < data.length; ++i) {
-                    if (data[i] < 0) {//调整异常数据
-                        data[i] += 256;
+                @Override
+                protected Boolean doInBackground(Bitmap... bitmaps) {
+                    Bitmap b = bitmaps[0];
+                    try {
+                        if (targetFile.exists()) targetFile.delete();
+                        boolean success = targetFile.createNewFile();
+                        if (!success) return false;
+                        b.compress(Bitmap.CompressFormat.JPEG, quality, new FileOutputStream(targetFile));
+                        return true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
                     }
                 }
-                return BitmapFactory.decodeByteArray(data, 0, data.length);
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                @Override
+                protected void onPostExecute(Boolean result) {
+                    super.onPostExecute(result);
+                    if (result) fCallback.onSuccess(targetFile);
+                    else fCallback.onFail();
+                }
             }
-            return null;
+
         }
 
         /**
-         * 将base64字符串转化成图片数据字节数组
-         *
-         * @param base64Str base64编码字符串
-         * @return Bitmap数据
+         * Base64操作类
          */
-        public static byte[] decodeAsBytes(String base64Str) {   //对字节数组字符串进行Base64解码并生成图片
-            if (base64Str == null) //图像数据为空
-                return null;
-            try {
-                //Base64解码
-                byte[] data = Base64.decode(base64Str.getBytes(), Base64.DEFAULT);
-                for (int i = 0; i < data.length; ++i) {
-                    if (data[i] < 0) {//调整异常数据
-                        data[i] += 256;
-                    }
-                }
-                return data;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
+        public static class Base64Util {
 
-        //base64字符串转化成图片
-        public static Bitmap decodeAsBitmap(byte[] rawData) {   //对字节数组字符串进行Base64解码并生成图片
-            if (rawData == null) //图像数据为空
-                return null;
-            try {
-                //Base64解码
-                byte[] data = Base64.decode(rawData, Base64.DEFAULT);
-                for (int i = 0; i < data.length; ++i) {
-                    if (data[i] < 0) {//调整异常数据
-                        data[i] += 256;
-                    }
+            /**
+             * 将图片转换为Base64编码
+             *
+             * @param image 图片的file
+             * @return 转换后的字符串
+             */
+            public static String encodeToString(File image) {
+                InputStream is;
+                byte[] data;
+                //读取图片字节数组
+                try {
+                    is = new FileInputStream(image);
+                    data = new byte[is.available()];
+                    is.read(data);
+                    is.close();
+                    return Base64.encodeToString(data, Base64.DEFAULT);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                return BitmapFactory.decodeByteArray(data, 0, data.length);
-            } catch (Exception e) {
-                e.printStackTrace();
+                return null;
             }
-            return null;
+
+            /**
+             * 图片转换为Base64编码字节数组
+             *
+             * @param image 图片的file
+             * @return 转换后的字节数组
+             */
+            public static byte[] encodeToBytes(File image) {
+                InputStream is;
+                byte[] data;
+                byte[] result = null;
+                //读取图片字节数组
+                try {
+                    is = new FileInputStream(image);
+                    data = new byte[is.available()];
+                    is.read(data);
+                    is.close();
+                    result = Base64.encode(data, Base64.DEFAULT);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+
+            /**
+             * 将base64字符串转化成图片Bitmap
+             *
+             * @param base64Str base64编码字符串
+             * @return Bitmap数据
+             */
+            public static Bitmap decodeAsBitmap(String base64Str) {   //对字节数组字符串进行Base64解码并生成图片
+                if (base64Str == null) //图像数据为空
+                    return null;
+                try {
+                    //Base64解码
+                    byte[] data = Base64.decode(base64Str.getBytes(), Base64.DEFAULT);
+                    for (int i = 0; i < data.length; ++i) {
+                        if (data[i] < 0) {//调整异常数据
+                            data[i] += 256;
+                        }
+                    }
+                    return BitmapFactory.decodeByteArray(data, 0, data.length);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            /**
+             * 将base64字符串转化成图片数据字节数组
+             *
+             * @param base64Str base64编码字符串
+             * @return Bitmap数据
+             */
+            public static byte[] decodeAsBytes(String base64Str) {   //对字节数组字符串进行Base64解码并生成图片
+                if (base64Str == null) //图像数据为空
+                    return null;
+                try {
+                    //Base64解码
+                    byte[] data = Base64.decode(base64Str.getBytes(), Base64.DEFAULT);
+                    for (int i = 0; i < data.length; ++i) {
+                        if (data[i] < 0) {//调整异常数据
+                            data[i] += 256;
+                        }
+                    }
+                    return data;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            //base64字符串转化成图片
+            public static Bitmap decodeAsBitmap(byte[] rawData) {   //对字节数组字符串进行Base64解码并生成图片
+                if (rawData == null) //图像数据为空
+                    return null;
+                try {
+                    //Base64解码
+                    byte[] data = Base64.decode(rawData, Base64.DEFAULT);
+                    for (int i = 0; i < data.length; ++i) {
+                        if (data[i] < 0) {//调整异常数据
+                            data[i] += 256;
+                        }
+                    }
+                    return BitmapFactory.decodeByteArray(data, 0, data.length);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
         }
     }
 }

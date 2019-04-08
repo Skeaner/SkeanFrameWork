@@ -178,8 +178,17 @@ public static java.lang.String TABLENAME;
 -keepclasseswithmembers class it.sephiroth.android.library.imagezoom.** {*;}
 
 #Glide
--dontwarn com.bumptech.glide.**
--keepclasseswithmembers class com.bumptech.glide.** {*;}
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+#腾讯
+-dontwarn com.tencent.**
+-keepclasseswithmembers class com.tencent.** {*;}
+
 #-------------------------------------------------------------------------
 
 #---------------------------------3.与js互相调用的类------------------------

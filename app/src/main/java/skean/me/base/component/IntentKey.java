@@ -2,21 +2,16 @@ package skean.me.base.component;
 
 import android.net.Uri;
 
+import skean.yzsm.com.framework.BuildConfig;
+
 /**
  * 一些在Intent中使用的Key
  */
 public class IntentKey {
-    // FIXME: 2016/9/30 修改包名
-    public static final String AUTHORITY = "skean.yzsm.com.framework";
+
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID;
     public static final String ACTION_PREFIX = AUTHORITY + ".actions.";
     public static final String EXTRA_PREFIX = AUTHORITY + ".extras.";
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 检查应用更新(蒲公英)
-    ///////////////////////////////////////////////////////////////////////////
-    public static final String ACTION_CHECK_UPDATE_IN_PGYER = ACTION_PREFIX + "CHECK_UPDATE_IN_PGYER";
-    public static final String EXTRA_SHOW_TIPS = EXTRA_PREFIX + "EXTRA_SHOW_TIPS";
-
 
     ///////////////////////////////////////////////////////////////////////////
     // 下载更新

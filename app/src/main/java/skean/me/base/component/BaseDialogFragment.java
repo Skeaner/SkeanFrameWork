@@ -3,7 +3,6 @@ package skean.me.base.component;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.annotation.StringRes;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -12,12 +11,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle2.components.support.RxDialogFragment;
+
+import skean.me.base.utils.WeakReferenceViewRunnable;
 import skean.yzsm.com.framework.R;
 
 /**
  * App的DialogFragment基类
  */
-public class BaseDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
+public class BaseDialogFragment extends RxDialogFragment implements DialogInterface.OnClickListener {
 
     private boolean dismissWhenPositiveClick = true;
     private int customizeAnimation = -1;

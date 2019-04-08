@@ -16,6 +16,8 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -38,7 +40,7 @@ import skean.me.base.net.ProgressInterceptor;
 import skean.me.base.rx.DefaultObserver;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.NetworkUtil;
-import skean.me.base.utils.PackageUtils;
+
 import skean.me.base.widget.ForceUpdateDialog;
 import skean.yzsm.com.framework.BuildConfig;
 import skean.yzsm.com.framework.R;
@@ -59,24 +61,6 @@ public final class AppService extends Service {
     public static final int DOWNLOAD_NOTICE_ID = 1;
 
     public static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
-
-    protected class AppVersion {
-        private String appId;
-        private String apiKey;
-
-        AppVersion(String appId, String apiKey) {
-            this.appId = appId;
-            this.apiKey = apiKey;
-        }
-
-        public String getAppId() {
-            return appId;
-        }
-
-        public String getApiKey() {
-            return apiKey;
-        }
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 生命周期
@@ -119,13 +103,10 @@ public final class AppService extends Service {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             switch (intent.getAction()) {
-                case IntentKey.ACTION_CHECK_UPDATE_IN_PGYER:
-                    checkUpdateInPGYER(intent.getBooleanExtra(IntentKey.EXTRA_SHOW_TIPS, false));
-                    break;
                 case IntentKey.ACTION_DOWNLOAD_APP:
                     String url = intent.getStringExtra(IntentKey.EXTRA_DOWNLOAD_URL);
                     if (url != null) downloadApp(url);
-                    else downloadApp(getAppVersion().getAppId(), getAppVersion().getApiKey());
+                    else ToastUtils.showLong("没有找到下载地址");
                     break;
                 default:
                     Log.i(TAG, "未知Intent: " + intent);
@@ -134,25 +115,9 @@ public final class AppService extends Service {
         }
     }
 
-    /**
-     * 获取当前应用在蒲公英的对应值
-     *
-     * @return 对应版本
-     */
-    public AppVersion getAppVersion() {
-        return new AppVersion(BuildConfig.PGYER_APPID, BuildConfig.PGYER_APIKEY);
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // 便利启动方法
     ///////////////////////////////////////////////////////////////////////////
-
-    public static void startCheckUpdateInPGYER(Context context, boolean showTips) {
-        Intent intent = new Intent(context, AppService.class);
-        intent.setAction(IntentKey.ACTION_CHECK_UPDATE_IN_PGYER);
-        intent.putExtra(IntentKey.EXTRA_SHOW_TIPS, showTips);
-        context.startService(intent);
-    }
 
     public static void startDownloadApp(Context context, String url) {
         Intent intent = new Intent(context, AppService.class);
@@ -165,71 +130,7 @@ public final class AppService extends Service {
     // 更新
     ///////////////////////////////////////////////////////////////////////////
 
-    private void checkUpdateInPGYER(final boolean showTips) {
-        NetworkUtil.baseRetrofit(PgyerService.BASE_URL)
-                   .create(PgyerService.class)
-                   .getAppInfo(getAppVersion().getAppId(), getAppVersion().getApiKey())
-                   .subscribeOn(Schedulers.io())
-                   .filter(new Predicate<PgyAppInfo>() {
-                       @Override
-                       public boolean test(@NonNull PgyAppInfo appInfo) throws Exception {
-                           return appInfo.getCode() == 0;
-                       }
-                   })
-                   .flatMap(new Function<PgyAppInfo, ObservableSource<PgyVersionInfo>>() {
-                       @Override
-                       public ObservableSource<PgyVersionInfo> apply(@NonNull PgyAppInfo pgyAppInfo) throws Exception {
-                           return Observable.fromIterable(pgyAppInfo.getData());
-                       }
-                   })
-                   .filter(new Predicate<PgyVersionInfo>() {
-                       @Override
-                       public boolean test(@NonNull PgyVersionInfo versionInfo) throws Exception {
-                           return "1".equals(versionInfo.getAppIsLastest())
-                                   //
-                                   && Integer.valueOf(versionInfo.getAppVersionNo()) > PackageUtils.getVersionCode(context)//对比版本号
-                                   ;
-                       }
 
-                   })
-                   .observeOn(AndroidSchedulers.mainThread())
-                   .subscribe(new DefaultObserver<PgyVersionInfo>() {
-
-                       @Override
-                       public void onComplete() {
-                           if (showTips && !isHasNext()) Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show();
-                           Log.i(TAG, "检查更新完毕: 已经是最新版本");
-                       }
-
-
-                       @Override
-                       public void onError(Throwable e) {
-                           if (showTips) Toast.makeText(context, "检查更新出错", Toast.LENGTH_SHORT).show();
-                           Log.i(TAG, "检查更新出错: " + e.getMessage());
-                       }
-
-                       @Override
-                       public void onNext(PgyVersionInfo versionInfo) {
-                           showUpdateDialog(versionInfo.getAppVersion(), versionInfo.getAppUpdateDescription(), null);
-                       }
-                   });
-    }
-
-    private void showUpdateDialog(String v, String changeLog, String url) {
-        Context c = AppService.this;
-        boolean isForce = v.endsWith("f");
-        String downloadUrl = new StringBuilder(PgyerService.BASE_URL).append("install/?")
-                                                                     .append("aId=")
-                                                                     .append(getAppVersion().getAppId())
-                                                                     .append("&_api_key=")
-                                                                     .append(getAppVersion().getApiKey())
-                                                                     .toString();
-        c.startActivity(new Intent(c, ForceUpdateDialog.class).putExtra(ForceUpdateDialog.EXTRA_VERSION, v)
-                                                              .putExtra(ForceUpdateDialog.EXTRA_CHANGELOG, changeLog)
-                                                              .putExtra(ForceUpdateDialog.EXTRA_URL, downloadUrl)
-                                                              .putExtra(ForceUpdateDialog.EXTRA_FORCE, isForce)
-                                                              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
 
     private void downloadApp(final String url) {
         File apkFile;
@@ -240,14 +141,6 @@ public final class AppService extends Service {
                    .enqueue(getResponseCallBack(apkFile, url));
     }
 
-    protected void downloadApp(String appid, String apiKey) {
-        File apkFile;
-        if ((apkFile = createTempApk()) == null) return;
-        NetworkUtil.progressRetrofit(PgyerService.BASE_URL, null, getDownloadCallBack())
-                   .create(PgyerService.class)
-                   .downLoadApk(appid, apiKey)
-                   .enqueue(getResponseCallBack(apkFile, null));
-    }
 
     private File createTempApk() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

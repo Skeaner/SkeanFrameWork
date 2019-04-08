@@ -1,4 +1,4 @@
-package skean.me.base.component;
+package skean.me.base.utils;
 
 import android.view.View;
 
@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
 /**
  * 对View的弱引用Runnable
  */
-abstract class WeakReferenceViewRunnable implements Runnable {
+public abstract class WeakReferenceViewRunnable implements Runnable {
     WeakReference<View> ref;
 
     public WeakReferenceViewRunnable(View targetView) {

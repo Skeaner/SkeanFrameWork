@@ -12,8 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -152,7 +152,7 @@ public class PicturePagerActivity extends BaseActivity {
             photoView.setAdjustViewBounds(true);
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
-            Picasso.with(getContext()).load(photoList.get(position).getFile()).into(photoView);
+            Glide.with(getContext()).load(photoList.get(position).getFile()).into(photoView);
             return photoView;
         }
 

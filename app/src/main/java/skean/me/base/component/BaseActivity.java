@@ -13,13 +13,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -27,6 +25,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
+
+import skean.me.base.utils.WeakReferenceViewRunnable;
 import skean.me.base.widget.LoadingDialog;
 import skean.yzsm.com.framework.R;
 
@@ -34,7 +35,7 @@ import skean.yzsm.com.framework.R;
  * App的Activity基类 <p/>
  */
 @SuppressWarnings("unused")
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends RxAppCompatActivity {
     protected AppApplication app;
     protected Context context = null;
     protected ActionBar actionBar;

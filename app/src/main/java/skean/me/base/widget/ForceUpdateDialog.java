@@ -1,6 +1,7 @@
 package skean.me.base.widget;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -57,6 +58,14 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
 
     private Call<ResponseBody> downloadCall;
     private File tempFile;
+
+    public static void show(Context c, String version, String changeLog, String downloadUrl, boolean isForceUpdate) {
+        c.startActivity(new Intent(c, ForceUpdateDialog.class).putExtra(ForceUpdateDialog.EXTRA_VERSION, version)
+                                                              .putExtra(ForceUpdateDialog.EXTRA_CHANGELOG, changeLog)
+                                                              .putExtra(ForceUpdateDialog.EXTRA_URL, downloadUrl)
+                                                              .putExtra(ForceUpdateDialog.EXTRA_FORCE, isForceUpdate)
+                                                              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,12 +2,10 @@ package skean.me.base.component;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -15,12 +13,13 @@ import android.support.v7.view.ActionMode;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle2.components.support.RxFragment;
+
+import skean.me.base.utils.WeakReferenceViewRunnable;
 import skean.me.base.widget.LoadingDialog;
 import skean.yzsm.com.framework.R;
 
@@ -28,7 +27,7 @@ import skean.yzsm.com.framework.R;
  * App的Fragment基类 <p/>
  */
 @SuppressWarnings("unused")
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends RxFragment {
     protected AppApplication app;
     protected BaseHostActivity hostActivity;
     private Context context;

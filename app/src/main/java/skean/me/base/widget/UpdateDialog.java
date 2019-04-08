@@ -1,6 +1,8 @@
 package skean.me.base.widget;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +22,14 @@ public class UpdateDialog extends Activity implements View.OnClickListener {
     public static final String EXTRA_CHANGELOG = "changeLog";
     public static final String EXTRA_URL = "url";
     public static final String EXTRA_VERSION = "version";
+
+
+    public static void show(Context c, String version, String changeLog, String downloadUrl) {
+        c.startActivity(new Intent(c, UpdateDialog.class).putExtra(UpdateDialog.EXTRA_VERSION, version)
+                                                              .putExtra(UpdateDialog.EXTRA_CHANGELOG, changeLog)
+                                                              .putExtra(UpdateDialog.EXTRA_URL, downloadUrl)
+                                                              .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
