@@ -28,6 +28,7 @@ import skean.yzsm.com.framework.R;
  */
 @SuppressWarnings("unused")
 public abstract class BaseFragment extends RxFragment {
+    protected  Bundle savedInstanceStateCache ;
     protected AppApplication app;
     protected BaseHostActivity hostActivity;
     private Context context;
@@ -59,6 +60,7 @@ public abstract class BaseFragment extends RxFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        savedInstanceStateCache = savedInstanceState;
         app = hostActivity.getAppApplication();
         alertTheme = new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat_Light_Dialog_Alert);
         toast = hostActivity.getToast();
@@ -113,6 +115,11 @@ public abstract class BaseFragment extends RxFragment {
     public BaseHostActivity getHostActivity() {
         return hostActivity;
     }
+
+    public BaseFragment getThis() {
+        return this;
+    }
+
 
     public Handler getMainHandler() {
         return hostActivity.getMainHandler();

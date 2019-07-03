@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 
+import java.util.Stack;
+
 import skean.yzsm.com.framework.R;
 
 /**
@@ -16,10 +18,10 @@ public abstract class BaseHostActivity extends BaseActivity {
     protected FragmentManager fragmentManager;
 
     protected String currentTag;
-    protected String previousTag;
-    protected int backStackCount = 0;
+    private Stack<String> fragmentTagStack = new Stack<>();
 
     protected boolean useDefaultAnimation = true;
+    protected boolean ignoreSameTagFragment = true;
 
     ///////////////////////////////////////////////////////////////////////////
     // 设置/声明周期
@@ -44,20 +46,14 @@ public abstract class BaseHostActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                int currentCount = fragmentManager.getBackStackEntryCount();
-                if (currentCount < backStackCount) {
-                    currentTag = previousTag;
-                }
-                backStackCount = currentCount;
-            }
-        });
     }
 
     public void setUseDefaultAnimation(boolean useDefaultAnimation) {
         this.useDefaultAnimation = useDefaultAnimation;
+    }
+
+    public void setIgnoreSameTagFragment(boolean ignoreSameTagFragment) {
+        this.ignoreSameTagFragment = ignoreSameTagFragment;
     }
 
     @Override
@@ -66,9 +62,11 @@ public abstract class BaseHostActivity extends BaseActivity {
             return true;
         } else if (currentTag != null) {
             Fragment currentFragment = fragmentManager.findFragmentByTag(currentTag);
-            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack())
+            if (currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack()) return true;
+            else if (fragmentManager.popBackStackImmediate()) {
+                currentTag = fragmentTagStack.pop();
                 return true;
-            else if (fragmentManager.popBackStackImmediate()) return true;
+            }
         }
         return false;
     }
@@ -114,6 +112,9 @@ public abstract class BaseHostActivity extends BaseActivity {
      * @param args           启动参数
      */
     public void transFragment(String targetTag, boolean addToBackStack, Bundle args) {
+        if (ignoreSameTagFragment && targetTag.equals(currentTag)) {
+            return;
+        }
         FragmentTransaction trans = fragmentManager.beginTransaction();
         Fragment targetFragment = fragmentManager.findFragmentByTag(targetTag);
         if (targetFragment == null) {
@@ -128,11 +129,13 @@ public abstract class BaseHostActivity extends BaseActivity {
         if (currentTag != null) {
             trans.detach(fragmentManager.findFragmentByTag(currentTag));
         }
+        if (addToBackStack) {
+            trans.addToBackStack(null);
+            fragmentTagStack.push(currentTag);
+        }
         if (!targetTag.equals(currentTag)) {
-            previousTag = currentTag;
             currentTag = targetTag;
         }
-        if (addToBackStack) trans.addToBackStack(null);
         trans.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
     }
@@ -174,14 +177,19 @@ public abstract class BaseHostActivity extends BaseActivity {
      * @param args           启动参数
      */
     public void replaceFragment(String targetTag, boolean addToBackStack, Bundle args) {
+        if (ignoreSameTagFragment && targetTag.equals(currentTag)) {
+            return;
+        }
         FragmentTransaction trans = fragmentManager.beginTransaction();
         Fragment targetFragment = createFragment(targetTag);
         if (args != null) targetFragment.setArguments(args);
         setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
-        previousTag = currentTag;
+        if (addToBackStack) {
+            fragmentTagStack.push(currentTag);
+            trans.addToBackStack(null);
+        }
         currentTag = targetTag;
         trans.replace(getContainerId(), targetFragment, currentTag);
-        if (addToBackStack) trans.addToBackStack(null);
         trans.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
     }
@@ -218,11 +226,8 @@ public abstract class BaseHostActivity extends BaseActivity {
      * @param position 位置
      * @return 对应Fragment
      */
-    protected Fragment findFragmentInPager(PagerAdapter adapter, int position) {
-        if (adapter instanceof FragmentStatePagerAdapter) {
-            throw new RuntimeException("FragmentStatePagerAdapter不能使用改方法找出Fragment");
-        }
-        return fragmentManager.findFragmentByTag(getTagInPager(adapter, position));
+    protected Fragment findFragmentInPager(int position) {
+        return fragmentManager.findFragmentByTag(getTagInPager(position));
     }
 
     /**
@@ -231,10 +236,7 @@ public abstract class BaseHostActivity extends BaseActivity {
      * @param position 位置
      * @return 标签
      */
-    protected String getTagInPager(PagerAdapter adapter, int position) {
-        if (adapter instanceof FragmentStatePagerAdapter) {
-            throw new RuntimeException("FragmentStatePagerAdapter的Fragment没有TAG标签");
-        }
+    protected String getTagInPager(int position) {
         return "android:switcher:" + getContainerId() + ":" + position;
     }
 

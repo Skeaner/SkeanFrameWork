@@ -79,4 +79,34 @@ public class Group {
         return sb.toString();
     }
 
+
+    public List getObjects() {
+        return objects;
+    }
+
+    public <T> T first() {
+        if (objects.size() > 0) return (T) objects.get(0);
+        return null;
+    }
+
+    public <T> T second() {
+        if (objects.size() > 1) return (T) objects.get(1);
+        return null;
+    }
+
+    public <T> T third() {
+        if (objects.size() > 2) return (T) objects.get(2);
+        return null;
+    }
+
+    public <T> T forth() {
+        if (objects.size() > 3) return (T) objects.get(3);
+        return null;
+    }
+
+    public <T> T fifth() {
+        if (objects.size() > 4) return (T) objects.get(4);
+        return null;
+    }
+
 }

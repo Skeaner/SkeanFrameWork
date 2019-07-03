@@ -36,6 +36,7 @@ import skean.yzsm.com.framework.R;
  */
 @SuppressWarnings("unused")
 public class BaseActivity extends RxAppCompatActivity {
+    protected Bundle savedInstanceStateCache;
     protected AppApplication app;
     protected Context context = null;
     protected ActionBar actionBar;
@@ -65,6 +66,7 @@ public class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        savedInstanceStateCache = savedInstanceState;
         app = (AppApplication) getApplication();
         context = this;
         lbm = LocalBroadcastManager.getInstance(getContext());
@@ -237,6 +239,11 @@ public class BaseActivity extends RxAppCompatActivity {
     public boolean isMenuCreated() {
         return isMenuCreated;
     }
+
+    public BaseActivity getThis() {
+        return this;
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // toast的便捷方法

@@ -1,5 +1,7 @@
 package skean.me.base.utils;
 
+import android.webkit.MimeTypeMap;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -162,18 +164,17 @@ public class NetworkUtil {
         return retrofit;
     }
 
-    public static ResponseBody multiParamPart(String content) {
-        return ResponseBody.create(MultipartBody.FORM, content);
-    }
-
-    public static MultipartBody.Part multiParamPart(String name, String content) {
+    public static MultipartBody.Part paramMultiPart(String name, String content) {
         return MultipartBody.Part.createFormData(name, content);
-
     }
 
-    public static MultipartBody.Part multiFilePart(String name, File uploadFile) {
-        return MultipartBody.Part.createFormData(name,
-                                                 uploadFile.getName(),
-                                                 RequestBody.create(MediaType.parse("application/otcet-stream"), uploadFile));
+    public static MultipartBody.Part fileMultiPart(String name, File uploadFile) {
+        String type = null;
+        String filename = uploadFile.getName();
+        String extension = MimeTypeMap.getFileExtensionFromUrl(filename);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return MultipartBody.Part.createFormData(name, filename, RequestBody.create(MediaType.parse(type), uploadFile));
     }
 }

@@ -171,7 +171,9 @@ dependencies {
     //图片显示subsamplingImageView
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
     //图片选择器matisse
-    implementation(name: "matisse-0.5.0-mod", ext: "aar")
+    implementation ('com.zhihu.android:matisse:0.5.2-beta4'){
+        exclude module: "library"
+    }
     //ViewPager指示器viewpagerindicator
     implementation "fr.avianey.com.viewpagerindicator:library:2.4.1.1@aar"
     //综合工具库utilcode
