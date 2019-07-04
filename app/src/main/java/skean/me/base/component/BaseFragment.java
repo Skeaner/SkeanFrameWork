@@ -19,12 +19,15 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import skean.me.base.utils.WeakReferenceViewRunnable;
 import skean.me.base.widget.LoadingDialog;
 import skean.yzsm.com.framework.R;
 
 /**
- * App的Fragment基类 <p/>
+ * App的DialogFragment基类 <p/>
  */
 @SuppressWarnings("unused")
 public abstract class BaseFragment extends RxFragment {
@@ -38,8 +41,6 @@ public abstract class BaseFragment extends RxFragment {
     protected float fragmentIndex;
 
     protected boolean isMenuCreated;
-
-    protected static final int FILTER_FOR_CLICK = 300;
 
     public ActionMode tempActionMode;
 
@@ -307,5 +308,15 @@ public abstract class BaseFragment extends RxFragment {
     protected AlertDialog.Builder buildAlert(int titleId, int messageId) {
         return new AlertDialog.Builder(alertTheme).setTitle(titleId).setMessage(messageId);
     }
+
+    private Scheduler io(){
+        return Schedulers.io();
+    }
+
+
+    private Scheduler mainThread(){
+        return AndroidSchedulers.mainThread();
+    }
+
 
 }

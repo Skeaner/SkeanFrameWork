@@ -33,25 +33,11 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        findViewById(R.id.txvSelect).setOnClickListener(v -> Matisse.from(MainActivity.this)
-//                                                                    .choose(MimeType.of(MimeType.JPEG, MimeType.PNG), true)
-//                                                                    .showSingleMediaType(true)
-//                                                                    .capture(true)
-//                                                                    .captureStrategy(new CaptureStrategy(true,
-//                                                                                                         "skean.yzsm.com.framework.fileprovider"))
-//                                                                    .countable(true)
-//                                                                    .maxSelectable(1)
-//                                                                    .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-//                                                                    .thumbnailScale(0.85f)
-//                                                                    .imageEngine(new PicassoEngine())
-//                                                                    .forResult(9));
         findViewById(R.id.txvSelect).setOnClickListener(v -> {
-
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_GET_SINGLE_FILE);
+            TestDialog testDialog  =new TestDialog(getThis());
+            testDialog.setContentView(R.layout.dialog_loading);
+            testDialog.setDimAmount(0);
+            testDialog.show();
         });
     }
 

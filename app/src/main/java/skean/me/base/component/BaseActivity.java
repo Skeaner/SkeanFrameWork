@@ -27,6 +27,9 @@ import android.widget.Toast;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import skean.me.base.utils.WeakReferenceViewRunnable;
 import skean.me.base.widget.LoadingDialog;
 import skean.yzsm.com.framework.R;
@@ -462,6 +465,15 @@ public class BaseActivity extends RxAppCompatActivity {
         protected void onPostExecute(Result result) {
             dismissLoading();
         }
+    }
+
+    private Scheduler io(){
+        return Schedulers.io();
+    }
+
+
+    private Scheduler mainThread(){
+        return AndroidSchedulers.mainThread();
     }
 
 }
