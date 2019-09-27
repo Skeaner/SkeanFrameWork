@@ -5,27 +5,22 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
-
-import skean.me.base.widget.LoadingDialog;
-import skean.yzsm.com.framework.R;
 
 /**
  * 全屏Dialog基类
  */
 public class FullDialog extends Dialog {
 
-    private float dimAmount = 0.6f;
+    protected float dimAmount = 0.6f;
+    private boolean useCustomAnimation = false;
+    private int customAnimation;
 
     public FullDialog(@NonNull Context context) {
         super(context);
@@ -74,5 +69,17 @@ public class FullDialog extends Dialog {
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.dimAmount = dimAmount;
         getWindow().setAttributes(params);
+    }
+
+
+    /**
+     * 设置弹出的动画, 注意这个styleId是在style中的两项设置的id
+     *
+     * @param resId resId, 具体需要的两个item为 "android:windowEnterAnimation" 和 "android:windowExitAnimation"
+     */
+    public void setCustomAnimation(@StyleRes int resId) {
+        useCustomAnimation = true;
+        customAnimation = resId;
+        getWindow().setWindowAnimations(resId);
     }
 }

@@ -63,4 +63,9 @@
         <item name="ptr_resistance">1.7</item>
     </style>
 
+    <style name="WindowBottomInOutStyle">
+        <item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
+    </style>
+
 </resources>

@@ -17,6 +17,8 @@ import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.api.sharedpreferences.EditorHelperExt;
 
 import java.io.File;
@@ -26,20 +28,18 @@ import skean.me.base.component.BaseActivity;
 import skean.me.base.utils.ImageUtil;
 import skean.yzsm.com.framework.R;
 
+@EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
     private static final int REQUEST_GET_SINGLE_FILE = 1;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        findViewById(R.id.txvSelect).setOnClickListener(v -> {
-            TestDialog testDialog  =new TestDialog(getThis());
-            testDialog.setContentView(R.layout.dialog_loading);
-            testDialog.setDimAmount(0);
-            testDialog.show();
-        });
+    @Click
+    void txvSelectClicked(){
+        TestDialog testDialog = new TestDialog();
+        testDialog.setCustomAnimation(R.style.WindowBottomInOutStyle);
+        testDialog.setCancelable(false);
+        testDialog.show(getSupportFragmentManager());
     }
+
 
     @Override
     protected void onDestroy() {

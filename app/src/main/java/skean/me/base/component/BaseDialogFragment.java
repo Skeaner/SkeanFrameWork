@@ -2,6 +2,8 @@ package skean.me.base.component;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.support.annotation.StyleRes;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
 import com.trello.rxlifecycle2.components.support.RxDialogFragment;
@@ -59,14 +61,17 @@ public class BaseDialogFragment extends RxDialogFragment {
     //  设置
     ///////////////////////////////////////////////////////////////////////////
 
+    public void show(FragmentManager manager) {
+        super.show(manager, getClass().getSimpleName());
+    }
+
     /**
      * 点击确定时候是否dismiss对话框
      *
      * @param autoDismiss 是否
      */
-    public BaseDialogFragment setAutoDismiss(boolean autoDismiss) {
+    public void setAutoDismiss(boolean autoDismiss) {
         this.autoDismiss = autoDismiss;
-        return this;
     }
 
     /**
@@ -74,15 +79,13 @@ public class BaseDialogFragment extends RxDialogFragment {
      *
      * @param styleId styId, 具体需要的两个item为 "android:windowEnterAnimation" 和 "android:windowExitAnimation"
      */
-    public BaseDialogFragment setCustomAnimation(int styleId) {
+    public void setCustomAnimation(@StyleRes int styleId) {
         useCustomAnimation = true;
         customAnimation = styleId;
-        return this;
     }
 
-    public BaseDialogFragment setOnClickListener(DialogInterface.OnClickListener onClickListener) {
+    public void setOnClickListener(DialogInterface.OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
-        return this;
     }
 
     public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
@@ -101,13 +104,11 @@ public class BaseDialogFragment extends RxDialogFragment {
     // 内部方法
     ///////////////////////////////////////////////////////////////////////////
 
-
-    private Scheduler io(){
+    private Scheduler io() {
         return Schedulers.io();
     }
 
-
-    private Scheduler mainThread(){
+    private Scheduler mainThread() {
         return AndroidSchedulers.mainThread();
     }
 }
