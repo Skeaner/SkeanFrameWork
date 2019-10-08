@@ -4,7 +4,6 @@ package skean.me.base.delegate;
  * Created by Skean on 17/2/3.
  */
 
-import android.support.annotation.LayoutRes;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -13,6 +12,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.util.List;
+
+import androidx.annotation.LayoutRes;
 
 public abstract class MultiItemAdapter<T extends MultiItemEntity, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
 

@@ -2,12 +2,13 @@ package skean.me.base.component;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.annotation.StyleRes;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
+
+import androidx.annotation.StyleRes;
+import androidx.appcompat.app.AlertDialog;
 
 import com.trello.rxlifecycle2.components.support.RxDialogFragment;
 
+import androidx.fragment.app.FragmentManager;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;

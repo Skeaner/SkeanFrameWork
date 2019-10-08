@@ -1,10 +1,10 @@
 package skean.me.base.component;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import skean.yzsm.com.framework.R;
 
 /**
@@ -65,7 +65,7 @@ public abstract class BaseHostFragment extends BaseFragment {
             return true;
         } else if (currentTag != null) {
             Fragment currentFragment = fragmentManager.findFragmentByTag(currentTag);
-            if (currentFragment != null && currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack())
+            if ( currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack())
                 return true;
             else if (fragmentManager.popBackStackImmediate()) return true;
         }

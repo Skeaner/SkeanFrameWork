@@ -11,8 +11,9 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,28 +22,15 @@ import com.blankj.utilcode.util.ToastUtils;
 import java.io.File;
 import java.io.IOException;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import skean.me.base.net.CommonService;
-import skean.me.base.net.PgyAppInfo;
-import skean.me.base.net.PgyVersionInfo;
-import skean.me.base.net.PgyerService;
 import skean.me.base.net.ProgressInterceptor;
-import skean.me.base.rx.DefaultObserver;
 import skean.me.base.utils.FileUtil;
 import skean.me.base.utils.NetworkUtil;
 
-import skean.me.base.widget.ForceUpdateDialog;
-import skean.yzsm.com.framework.BuildConfig;
 import skean.yzsm.com.framework.R;
 
 /**

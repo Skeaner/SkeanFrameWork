@@ -2,9 +2,9 @@ package skean.me.base.utils;
 
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
-import android.support.annotation.ColorRes;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RadioButton;

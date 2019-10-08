@@ -1,6 +1,6 @@
 package skean.me.base.delegate;
 
-import android.support.design.widget.TabLayout;
+import com.google.android.material.tabs.TabLayout;
 
 /**
  * TabLayout.OnTabSelectedListener 接口的默认实现

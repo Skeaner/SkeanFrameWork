@@ -28,6 +28,7 @@
 
 
     <application
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         android:name="skean.me.base.component.AppApplication"
         android:icon="@drawable/ic_launcher"
@@ -100,7 +101,7 @@
 
         <!--App的文件Provider-->
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true"

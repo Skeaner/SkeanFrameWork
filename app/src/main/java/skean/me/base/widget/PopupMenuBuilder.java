@@ -1,7 +1,7 @@
 package skean.me.base.widget;
 
 import android.content.Context;
-import android.support.annotation.MenuRes;
+import androidx.annotation.MenuRes;
 import android.view.View;
 import android.widget.PopupMenu;
 

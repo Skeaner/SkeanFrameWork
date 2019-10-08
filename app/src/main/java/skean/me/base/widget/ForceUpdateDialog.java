@@ -1,20 +1,18 @@
 package skean.me.base.widget;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.internal.MDButton;
+import com.afollestad.materialdialogs.internal.button.DialogActionButton;
 import com.blankj.utilcode.util.LogUtils;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
@@ -43,9 +41,9 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
 
     public static final int REQUEST_INSTALL = 99;
 
-    private MDButton btnPositive;
-    private MDButton btnNegative;
-    private MDButton btnCenter;
+    private DialogActionButton btnPositive;
+    private DialogActionButton btnNegative;
+    private DialogActionButton btnCenter;
     private TextView tvContent;
     private TextView txvForce;
     private View panelInfo;
@@ -74,9 +72,9 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
         getExtra();
         setFinishOnTouchOutside(false);
         setTitle(getString(R.string.findNewVersion, version));
-        btnPositive = (MDButton) findViewById(R.id.btnPositive);
-        btnNegative = (MDButton) findViewById(R.id.btnNegative);
-        btnCenter = (MDButton) findViewById(R.id.btnCenter);
+        btnPositive = (DialogActionButton) findViewById(R.id.btnPositive);
+        btnNegative = (DialogActionButton) findViewById(R.id.btnNegative);
+        btnCenter = (DialogActionButton) findViewById(R.id.btnCenter);
         txvForce = (TextView) findViewById(R.id.txvForce);
         panelInfo = findViewById(R.id.panelInfo);
         tvContent = (TextView) findViewById(R.id.txvContent);

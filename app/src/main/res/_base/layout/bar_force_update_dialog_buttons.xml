@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="@dimen/appMicroMargin">
 
-    <com.afollestad.materialdialogs.internal.MDButton
+    <com.afollestad.materialdialogs.internal.button.DialogActionButton
         android:id="@+id/btnPositive"
-        style="@style/MD_ActionButton.Text"
+        style="@style/MD_ActionButton"
         android:layout_alignParentRight="true"
         android:text="更新"
         android:textColor="@color/colorAccent" />
 
-    <com.afollestad.materialdialogs.internal.MDButton
+    <com.afollestad.materialdialogs.internal.button.DialogActionButton
         android:id="@+id/btnNegative"
-        style="@style/MD_ActionButton.Text"
+        style="@style/MD_ActionButton"
         android:layout_toLeftOf="@id/btnPositive"
         android:text="暂不"
         android:textColor="@color/colorAccent" />
 
 
-    <com.afollestad.materialdialogs.internal.MDButton
-        android:visibility="gone"
+    <com.afollestad.materialdialogs.internal.button.DialogActionButton
         android:id="@+id/btnCenter"
-        style="@style/MD_ActionButton.Text"
+        style="@style/MD_ActionButton"
         android:text="取消下载"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 
 </RelativeLayout>

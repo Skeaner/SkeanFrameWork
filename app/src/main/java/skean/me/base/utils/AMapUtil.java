@@ -1,13 +1,14 @@
 package skean.me.base.utils;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.CoordinateConverter;
 import com.amap.api.maps2d.model.LatLng;
+
+import androidx.annotation.IntDef;
 
 import static skean.me.base.utils.AMapUtil.LType.GPS;
 import static skean.me.base.utils.AMapUtil.LType.MIXED;

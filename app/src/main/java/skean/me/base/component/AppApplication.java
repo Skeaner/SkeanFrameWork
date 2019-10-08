@@ -5,16 +5,20 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Environment;
-import android.support.multidex.MultiDexApplication;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
-import com.raizlabs.android.dbflow.config.FlowConfig;
-import com.raizlabs.android.dbflow.config.FlowManager;
 import com.tencent.bugly.Bugly;
 
-import java.io.File;
+import org.greenrobot.greendao.database.Database;
 
+import java.io.File;
+import java.util.List;
+
+import androidx.multidex.MultiDexApplication;
+import skean.me.base.db.Migrations;
+import skean.me.base.db.entity.DaoMaster;
+import skean.me.base.db.entity.DaoSession;
 import skean.me.base.utils.AppStatusTracker;
 import skean.me.base.utils.FileUtil;
 import skean.yzsm.com.framework.BuildConfig;
@@ -26,6 +30,8 @@ public final class AppApplication extends MultiDexApplication implements AppStat
 
     private Object tempObject = null;
     private static AppApplication instance;
+    private DaoSession daoSession;
+
 
     public static final String TAG = BuildConfig.APP_TAG;
 
@@ -35,8 +41,25 @@ public final class AppApplication extends MultiDexApplication implements AppStat
         instance = this;
         //Bugly初始化
         Bugly.init(getApplicationContext(), BuildConfig.BUGLY_APPID, BuildConfig.DEBUG);
-        //DBFlow初始化
-        FlowManager.init(new FlowConfig.Builder(this).openDatabasesOnInit(true).build());
+        //GreenDAO初始化
+        DaoMaster.OpenHelper helper = new DaoMaster.OpenHelper(this, "db") {
+            @Override
+            public void onCreate(Database db) {
+                super.onCreate(db);
+            }
+
+            @Override
+            public void onUpgrade(Database db, int oldVersion, int newVersion) {
+                List<Migrations.Migration> migrations = Migrations.getMigrations();
+                for (Migrations.Migration migration : migrations) {
+                    if (oldVersion < migration.getVersion()) {
+                        migration.runMigration(db);
+                    }
+                }
+            }
+        };
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
         //AndroidUtils初始化
         Utils.init(this);
         LogUtils.getConfig().setLogSwitch(true).setGlobalTag(TAG).setLogHeadSwitch(false);
@@ -51,6 +74,10 @@ public final class AppApplication extends MultiDexApplication implements AppStat
 
     public static Context getContext() {
         return instance.getApplicationContext();
+    }
+
+    public DaoSession getDaoSession() {
+        return daoSession;
     }
 
     public static String getAppExternalStorageDirectory() {

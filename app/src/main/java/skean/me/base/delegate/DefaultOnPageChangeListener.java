@@ -1,6 +1,6 @@
 package skean.me.base.delegate;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  *ViewPager.OnPageChangeListener的默认实现

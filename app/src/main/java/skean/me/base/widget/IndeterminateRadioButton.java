@@ -5,8 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatRadioButton;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatRadioButton;
 import android.util.AttributeSet;
 import android.view.ViewDebug;
 
@@ -54,7 +54,7 @@ public class IndeterminateRadioButton extends AppCompatRadioButton implements In
     public IndeterminateRadioButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        //setSupportButtonTintList(ContextCompat.getColorStateList(context, R.color.control_checkable_material));
+        //sexButtonTintList(ContextCompat.getColorStateList(context, R.color.control_checkable_material));
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IndeterminateRadioButton, defStyleAttr, 0);
         try {

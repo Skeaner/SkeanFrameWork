@@ -1,10 +1,10 @@
 package skean.me.base.net;
 
-import android.support.annotation.IntDef;
 
 import java.io.IOException;
 import java.util.Map;
 
+import androidx.annotation.IntDef;
 import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
