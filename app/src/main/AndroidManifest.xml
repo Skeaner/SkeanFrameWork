@@ -56,22 +56,6 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
 
-        <!--照片预览-->
-        <activity
-            android:name="skean.me.base.component.PicturePagerActivity_"
-            android:label="照片预览"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--照片预览2-->
-        <activity
-            android:name="skean.me.base.component.ImagePagerActivity_"
-            android:label="照片预览"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.ActionBarOverlay"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
 
         <!--地图预览-->
         <activity
@@ -84,6 +68,9 @@
 
         <!--主页-->
         <activity android:name="skean.me.base.MainActivity_">
+        </activity>
+
+        <activity android:name="skean.me.base.MainActivityKT_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

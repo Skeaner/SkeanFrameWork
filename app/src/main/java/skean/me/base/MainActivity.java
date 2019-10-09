@@ -37,8 +37,8 @@ public class MainActivity extends BaseActivity {
         testDialog.setCustomAnimation(R.style.WindowBottomInOutStyle);
         testDialog.setCancelable(false);
         testDialog.show(getSupportFragmentManager());
-    }
 
+}
 
     @Override
     protected void onDestroy() {
