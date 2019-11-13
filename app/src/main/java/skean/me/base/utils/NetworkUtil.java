@@ -175,6 +175,7 @@ public class NetworkUtil {
         if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
+        if (type==null) type= "text/plain";
         return MultipartBody.Part.createFormData(name, filename, RequestBody.create(MediaType.parse(type), uploadFile));
     }
 }
