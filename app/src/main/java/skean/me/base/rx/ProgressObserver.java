@@ -12,14 +12,25 @@ import skean.me.base.widget.LoadingDialog2;
 /**
  * 自动显示进度Dialog的Observer
  */
-public abstract class ProgressObserver<T> implements Observer<T> {
+public abstract class ProgressObserver<T> implements Observer2<T> {
 
     private Context context;
     private String message = "请稍候";
     private boolean cancelable = true;
     private Disposable disposable;
-    protected DisposableWrapper disposableWrapper;
+    private DisposableWrapper disposableWrapper;
     private LoadingDialog2 loadingDialog;
+
+    private boolean hasNext = false;
+    private boolean hasComplete = false;
+
+    public boolean isHasNext() {
+        return hasNext;
+    }
+
+    public boolean isComplete() {
+        return hasComplete;
+    }
 
     public ProgressObserver(Context context) {
         this.context = context;
@@ -36,46 +47,50 @@ public abstract class ProgressObserver<T> implements Observer<T> {
         this.cancelable = cancelable;
     }
 
-
-    /**
-     * @deprecated 为了正确地关闭ProgressDialog, 请使用 {@link #onSubscribe2(DisposableWrapper)} 代替
-     */
     @Override
-    @Deprecated
-    public void onSubscribe(@NonNull Disposable d) {
+    public final void onSubscribe(@NonNull Disposable d) {
         disposable = d;
         disposableWrapper = new DisposableWrapper();
         onSubscribe2(disposableWrapper);
-        loadingDialog = LoadingDialog2.show(context, message, cancelable, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                if (disposable != null && !disposable.isDisposed()) {
-                    disposable.dispose();
-                }
-                disposable = null;
+        loadingDialog = LoadingDialog2.show(context, message, cancelable, dialog -> {
+            if (disposable != null && !disposable.isDisposed()) {
+                disposable.dispose();
             }
+            disposable = null;
         });
     }
 
-    /**
-     * 参加 {@link #onSubscribe(Disposable)}的方法说明
-     */
-    public void onSubscribe2(@NonNull DisposableWrapper d) {
+    @Override
+    public final void onNext(@NonNull T t) {
+        hasNext = true;
+        onNext2(t);
     }
 
     @Override
-    public abstract void onNext(@NonNull T t);
-
-    @Override
-    public void onError(@NonNull Throwable e) {
+    public final void onError(@NonNull Throwable e) {
         e.printStackTrace();
         loadingDialog.dismiss();
+        onError2(e);
     }
 
     @Override
-    public void onComplete() {
+    public final void onComplete() {
+        hasComplete = true;
         disposable = null;
         loadingDialog.dismiss();
+        onComplete2();
+    }
+
+    @Override
+    public void onSubscribe2(Disposable d) {
+    }
+
+    @Override
+    public void onError2(Throwable e) {
+    }
+
+    @Override
+    public void onComplete2() {
     }
 
     /**

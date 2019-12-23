@@ -13,14 +13,25 @@ import skean.me.base.widget.LoadingDialog2;
 /**
  * 自动显示进度Dialog的Subscriber
  */
-public abstract class ProgressSubscriber<T> implements Subscriber<T> {
+public abstract class ProgressSubscriber<T> implements Subscriber2<T> {
 
     private Context context;
     private String message = "请稍候";
     private boolean cancelable = true;
     private Subscription subscription;
-    protected SubscriptionWrapper subscriptionWrapper;
+    private SubscriptionWrapper subscriptionWrapper;
     private LoadingDialog2 LoadingDialog;
+
+    private boolean hasNext = false;
+    private boolean hasComplete = false;
+
+    public boolean isHasNext() {
+        return hasNext;
+    }
+
+    public boolean isComplete() {
+        return hasComplete;
+    }
 
     public ProgressSubscriber(Context context) {
         this.context = context;
@@ -37,46 +48,50 @@ public abstract class ProgressSubscriber<T> implements Subscriber<T> {
         this.cancelable = cancelable;
     }
 
-
-    /**
-     * @deprecated 为了正确地关闭ProgressDialog, 请使用 {@link #onSubscribe2(SubscriptionWrapper)} 代替
-     */
     @Override
-    @Deprecated
-    public void onSubscribe(Subscription s) {
+    public final void onSubscribe(Subscription s) {
         subscription = s;
         subscriptionWrapper = new SubscriptionWrapper();
         onSubscribe2(subscriptionWrapper);
-        LoadingDialog = LoadingDialog2.show(context, message, cancelable, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                if (subscription != null) {
-                    subscription.cancel();
-                }
-                subscription = null;
+        LoadingDialog = LoadingDialog2.show(context, message, cancelable, dialog -> {
+            if (subscription != null) {
+                subscription.cancel();
             }
+            subscription = null;
         });
     }
 
-    /**
-     * 参加 {@link #onSubscribe(Subscription)} 的方法说明
-     */
-    public void onSubscribe2(@NonNull SubscriptionWrapper s) {
+    @Override
+    public final void onNext(@NonNull T t) {
+        hasNext = true;
+        onNext2(t);
     }
 
     @Override
-    public abstract void onNext(@NonNull T t);
-
-    @Override
-    public void onError(@NonNull Throwable e) {
+    public final void onError(@NonNull Throwable e) {
         e.printStackTrace();
         LoadingDialog.dismiss();
+        onError2(e);
     }
 
     @Override
     public void onComplete() {
         subscription = null;
         LoadingDialog.dismiss();
+        hasComplete = true;
+        onComplete2();
+    }
+
+    @Override
+    public void onSubscribe2(Subscription s) {
+    }
+
+    @Override
+    public void onError2(Throwable t) {
+    }
+
+    @Override
+    public void onComplete2() {
     }
 
     /**
