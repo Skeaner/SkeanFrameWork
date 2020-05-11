@@ -30,14 +30,14 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         //fixme 修改程序ID
         applicationId "skean.yzsm.com.framework"
 
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -49,7 +49,8 @@ android {
         }
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [eventBusIndex: android.defaultConfig.applicationId + ".AppEventBusIndex"]
+                arguments = [eventBusIndex        : android.defaultConfig.applicationId + ".AppEventBusIndex",
+                             "resourcePackageName": android.defaultConfig.applicationId]
             }
         }
         applicationVariants.all { variant ->
@@ -68,9 +69,9 @@ android {
         def buglyAppIdRelease = "ccced6668f"
         def useExternalDatabase = true
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-base.pro'
-            shrinkResources false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources true
             signingConfig signingConfigs.config
             buildConfigField "String", "BUGLY_APPID", "\"${buglyAppIdDebug}\""
             buildConfigField "String", "APP_TAG", "${appTag}"
@@ -101,6 +102,8 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/androidx.exifinterface_exifinterface.version'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
     }
 }
 
@@ -109,21 +112,8 @@ repositories {
         dirs 'libs'
     }
     maven { url "https://jitpack.io" }
-    maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://dl.bintray.com/skean/maven" }
-}
-
-//避免其他库的support库不够新, 全部替换为最新的support
-configurations.all {
-    resolutionStrategy.eachDependency { details ->
-        def requested = details.requested
-        if (requested.group == 'com.android.support') {
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion '28.0.0'
-            }
-        }
-    }
 }
 
 
@@ -140,8 +130,8 @@ dependencies {
     //谷歌库
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
     //retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-jackson:2.6.2'
@@ -183,7 +173,7 @@ dependencies {
     //图片显示subsamplingImageView
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     //图片选择器matisse
-    implementation ('com.zhihu.android:matisse:0.5.2-beta4'){
+    implementation('com.zhihu.android:matisse:0.5.2-beta4') {
         exclude module: "library"
     }
     //ViewPager指示器viewpagerindicator

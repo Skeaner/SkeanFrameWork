@@ -140,7 +140,7 @@
 #-------------------------------------------项目定义区-------------------------------------------------
 # todo 添加一些类不进行混淆
 #bean
--keep class skean.me.base.db.entity.** {*;}
+-keep class app.db.entity.** {*;}
 #eventbus传递的类
 #-keep class com.juiniot.app.ev.** {*;}
 #zxing相关，目前没动过
