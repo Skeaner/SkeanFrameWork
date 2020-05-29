@@ -154,9 +154,10 @@ dependencies {
     // sql-cipher支持
     implementation 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
     //json解析器
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.9.6'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.6'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.0'
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0"
     //Apache的常用库
     implementation 'commons-codec:commons-codec:1.11'
     implementation 'commons-net:commons-net:3.5'

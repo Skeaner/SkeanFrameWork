@@ -61,7 +61,12 @@ public final class AppApplication extends MultiDexApplication implements AppStat
         daoSession = new DaoMaster(db).newSession();
         //AndroidUtils初始化
         Utils.init(this);
-        LogUtils.getConfig().setLogSwitch(true).setGlobalTag(TAG).setLogHeadSwitch(false);
+        LogUtils.getConfig()
+                .setLogSwitch(BuildConfig.DEBUG)
+                .setGlobalTag(TAG)
+                .setLogHeadSwitch(true)
+                .setLog2FileSwitch(false)
+                .setSingleTagSwitch(true);
         //AppStatusTracker初始化
         AppStatusTracker.init(this);
         AppStatusTracker.getInstance().setStatusCallback(this);
