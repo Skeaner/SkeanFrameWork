@@ -52,6 +52,7 @@ public class BaseActivity extends RxAppCompatActivity {
 
     protected boolean useHomeAsBack = true;
     protected boolean isMenuCreated = false;
+    protected  boolean backControl = false;
 
     public static final int RESULT_MODIFIED = -2;
     public static final int RESULT_DELETE = -3;
@@ -140,7 +141,12 @@ public class BaseActivity extends RxAppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!onBack()) finish();
+        if (backControl){
+            if (!onBack()) finish();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     protected boolean collapseActionView(ActionBar actionBar) {

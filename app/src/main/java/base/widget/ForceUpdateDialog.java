@@ -4,21 +4,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+
 import androidx.appcompat.app.AlertDialog;
+
 import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.internal.button.DialogActionButton;
 import com.blankj.utilcode.util.LogUtils;
-import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
 import java.io.File;
 import java.io.IOException;
 
+import androidx.core.content.FileProvider;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +34,7 @@ import base.net.CommonService;
 import base.net.ProgressInterceptor;
 import base.utils.FileUtil;
 import base.utils.NetworkUtil;
+import skean.yzsm.com.framework.BuildConfig;
 import skean.yzsm.com.framework.R;
 
 public class ForceUpdateDialog extends BaseActivity implements View.OnClickListener {
@@ -41,13 +46,14 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
 
     public static final int REQUEST_INSTALL = 99;
 
-    private DialogActionButton btnPositive;
-    private DialogActionButton btnNegative;
-    private DialogActionButton btnCenter;
+    private Button btnPositive;
+    private Button btnNegative;
+    private Button btnCenter;
     private TextView tvContent;
     private TextView txvForce;
     private View panelInfo;
-    private NumberProgressBar pgbProgress;
+    private View panelProgress;
+    private QMUIProgressBar pgbProgress;
 
     private String changeLog;
     private String url;
@@ -72,18 +78,20 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
         getExtra();
         setFinishOnTouchOutside(false);
         setTitle(getString(R.string.findNewVersion, version));
-        btnPositive = (DialogActionButton) findViewById(R.id.btnPositive);
-        btnNegative = (DialogActionButton) findViewById(R.id.btnNegative);
-        btnCenter = (DialogActionButton) findViewById(R.id.btnCenter);
-        txvForce = (TextView) findViewById(R.id.txvForce);
+        btnPositive = findViewById(R.id.btnPositive);
+        btnNegative = findViewById(R.id.btnNegative);
+        btnCenter = findViewById(R.id.btnCenter);
+        txvForce = findViewById(R.id.txvForce);
         panelInfo = findViewById(R.id.panelInfo);
-        tvContent = (TextView) findViewById(R.id.txvContent);
-        pgbProgress = (NumberProgressBar) findViewById(R.id.pgbProgress);
+        panelProgress = findViewById(R.id.panelProgress);
+        tvContent = findViewById(R.id.txvContent);
+        pgbProgress = findViewById(R.id.pgbProgress);
         btnPositive.setOnClickListener(this);
         btnNegative.setOnClickListener(this);
         btnCenter.setOnClickListener(this);
         tvContent.setText(getString(R.string.changeLog, changeLog));
         if (force) txvForce.setVisibility(View.VISIBLE);
+        pgbProgress.setQMUIProgressBarTextGenerator((progressBar, value, maxValue) -> 100 * value / maxValue + "%");
     }
 
     protected void getExtra() {
@@ -99,20 +107,16 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_INSTALL) {
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,
                                                                                           R.style.Theme_AppCompat_Light_Dialog_Alert));
-            builder.setTitle(R.string.tips).setMessage("请点击进行应用更新!").setPositiveButton("更新", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    installApp();
-                }
-            }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    btnCenter.performClick();
-                }
-            }).setCancelable(false).show();
+            builder.setTitle(R.string.tips)
+                   .setMessage("请点击进行应用更新!")
+                   .setPositiveButton("更新", (dialog, which) -> installApp())
+                   .setNegativeButton("暂不", (dialog, which) -> btnCenter.performClick())
+                   .setCancelable(false)
+                   .show();
         }
     }
 
@@ -126,18 +130,22 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
             if (!force) {
                 AppService.startDownloadApp(this, url);
                 finish();
-            } else {
+            }
+            else {
                 pgbProgress.setProgress(0);
                 panelInfo.setVisibility(View.GONE);
+                panelProgress.setVisibility(View.VISIBLE);
                 btnCenter.setVisibility(View.VISIBLE);
                 btnPositive.setVisibility(View.GONE);
                 btnNegative.setVisibility(View.GONE);
                 startDownload();
             }
-        } else if (v == btnNegative) {
+        }
+        else if (v == btnNegative) {
             if (force) sendLocalBroadcast(new Intent(IntentKey.ACTION_FORCE_UPDATE_EXIT));
             else finish();
-        } else if (v == btnCenter) {
+        }
+        else if (v == btnCenter) {
             LogUtils.i("isExecuted", downloadCall.isExecuted());
             LogUtils.i("isCanceled", downloadCall.isCanceled());
             if (downloadCall != null && downloadCall.isExecuted() && !downloadCall.isCanceled()) {
@@ -154,7 +162,8 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
             try {
                 FileUtil.storeFile(tempFile, response.body().byteStream());
                 installApp();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
                 onFailure(call, e);
             }
@@ -183,7 +192,8 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
         public void downloadProgress(long bytesRead, long contentLength, int percentage, boolean done) {
             if (!done) {
                 pgbProgress.setProgress(percentage);
-            } else {
+            }
+            else {
                 pgbProgress.setProgress(100);
             }
         }
@@ -194,12 +204,13 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
             Toast.makeText(this, R.string.noSdcardMountedDownloadFail, Toast.LENGTH_SHORT).show();
             return null;
         }
-        File apkFile = new File(Environment.getExternalStorageDirectory(), "boaishu.apk");
+        File apkFile = new File(getExternalCacheDir(), "update.apk");
         boolean created = true;
         if (!apkFile.exists()) {
             try {
                 created = apkFile.createNewFile();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
                 created = false;
             }
@@ -230,7 +241,9 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
 
     private void installApp() {
         Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                      .setDataAndType(Uri.fromFile(tempFile), AppService.APK_MIME_TYPE);
+                                                      .setDataAndType(FileProvider.getUriForFile(this,
+                                                                                                 BuildConfig.APPLICATION_ID + ".fileprovider",
+                                                                                                 tempFile), AppService.APK_MIME_TYPE);
         startActivityForResult(intent, REQUEST_INSTALL);
     }
 

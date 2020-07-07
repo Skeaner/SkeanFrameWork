@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
     <LinearLayout
-        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="horizontal">
         <LinearLayout
             android:id="@+id/panelInfo"
@@ -32,10 +33,12 @@
                 android:visibility="gone" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/panelProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:visibility="gone">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,11 +46,14 @@
                 android:padding="16dp"
                 android:text="正在下载" />
 
-            <com.daimajia.numberprogressbar.NumberProgressBar
-                android:padding="16dp"
+            <com.qmuiteam.qmui.widget.QMUIProgressBar
                 android:id="@+id/pgbProgress"
+                android:textColor="@color/white"
+                app:qmui_progress_color="@color/colorPrimary"
+                app:qmui_background_color="@color/qmui_config_color_gray_8"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="24dp"
+                app:qmui_type="type_rect" />
 
         </LinearLayout>
     </LinearLayout>

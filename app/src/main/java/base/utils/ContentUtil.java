@@ -2,14 +2,19 @@ package base.utils;
 
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
+
 import androidx.annotation.ColorRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import com.blankj.utilcode.util.RegexUtils;
 
 import java.io.File;
 import java.security.MessageDigest;
@@ -35,11 +40,12 @@ public class ContentUtil {
     public static final String END_BRACE = "}";
     public static final String RMB = "¥";
 
-    public static final SimpleDateFormat DATE_TIME_FORMATER;
-    public static final SimpleDateFormat DATE_TIME_WEEK_FORMATER;
-    public static final SimpleDateFormat DATE_FORMATER;
-    private static final char[] DIGITS_LOWER;
-    private static final char[] DIGITS_UPPER;
+    public static final SimpleDateFormat DATE_HM_FORMATTER;
+    public static final SimpleDateFormat DATE_HM_WEEK_FORMATTER;
+    public static final SimpleDateFormat DATE_HMS_FORMATTER;
+    public static final SimpleDateFormat DATE_HMS_WEEK_FORMATTER;
+    public static final SimpleDateFormat DATE_FORMATTER;
+    public static final SimpleDateFormat DATE_NO_SEPERATOR_FORMATTER;
     public static NumberFormat PRICE_FORMAT;
     public static NumberFormat PRICE_MINIMAL_FORMAT;
     public static NumberFormat DISCOUNT_FORMAT;
@@ -57,11 +63,12 @@ public class ContentUtil {
     }
 
     static {
-        DATE_TIME_FORMATER = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
-        DATE_TIME_WEEK_FORMATER = new SimpleDateFormat("yyyy-MM-dd E HH:mm", Locale.CHINA);
-        DATE_FORMATER = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-        DIGITS_LOWER = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        DIGITS_UPPER = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        DATE_HM_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+        DATE_HM_WEEK_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm E", Locale.CHINA);
+        DATE_HMS_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS", Locale.CHINA);
+        DATE_HMS_WEEK_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS E", Locale.CHINA);
+        DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        DATE_NO_SEPERATOR_FORMATTER = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
         PRICE_FORMAT = NumberFormat.getNumberInstance();
         PRICE_FORMAT.setMaximumFractionDigits(2);
         PRICE_FORMAT.setMinimumFractionDigits(2);
@@ -280,8 +287,6 @@ public class ContentUtil {
         return isEmpty(text) ? "无" : text;
     }
 
-
-
     /**
      * 读取字符串的内容
      *
@@ -360,7 +365,8 @@ public class ContentUtil {
     public static boolean isEqual(float f1, float f2) {
         if (Math.abs(f1 - f2) < 0.00000001) {
             return true;
-        } else return false;
+        }
+        else return false;
     }
 
     /**
@@ -369,7 +375,8 @@ public class ContentUtil {
     public static boolean isEqual(double d1, double d2) {
         if (Math.abs(d1 - d2) < 0.00000001) {
             return true;
-        } else return false;
+        }
+        else return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -416,7 +423,8 @@ public class ContentUtil {
         int value = 0;
         try {
             value = Integer.valueOf(text.toString());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return value;
@@ -450,7 +458,8 @@ public class ContentUtil {
         float value = 0;
         try {
             value = Float.valueOf(text.toString());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return value;
@@ -484,7 +493,8 @@ public class ContentUtil {
         double value = 0;
         try {
             value = Double.valueOf(text.toString());
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return value;
@@ -511,19 +521,31 @@ public class ContentUtil {
         return tag;
     }
 
-    public static String dateTime(long millis) {
-        if (millis == 0) return NO_DATA;
-        else return DATE_TIME_FORMATER.format(new Date(millis));
-    }
 
     public static String date(long millis) {
         if (millis == 0) return NO_DATA;
-        else return DATE_FORMATER.format(new Date(millis));
+        else return DATE_FORMATTER.format(new Date(millis));
+    }
+
+    public static String dateHourMin(long millis) {
+        if (millis == 0) return NO_DATA;
+        else return DATE_HM_FORMATTER.format(new Date(millis));
+    }
+
+
+    public static String dateTime(long millis) {
+        if (millis == 0) return NO_DATA;
+        else return DATE_HMS_FORMATTER.format(new Date(millis));
+    }
+
+    public static String dateHourMinWeek(long millis) {
+        if (millis == 0) return NO_DATA;
+        else return DATE_HM_WEEK_FORMATTER.format(new Date(millis));
     }
 
     public static String dateTimeWeek(long millis) {
         if (millis == 0) return NO_DATA;
-        else return DATE_TIME_WEEK_FORMATER.format(new Date(millis));
+        else return DATE_HMS_WEEK_FORMATTER.format(new Date(millis));
     }
 
     /**
@@ -587,69 +609,60 @@ public class ContentUtil {
         return out;
     }
 
-    public static String validateIdcardCode(String idcardCode) {
-        if (idcardCode == null || idcardCode.length() != 18 || idcardCode.length() != 15) return "身份证长度不符!";
-        if (idcardCode.length() == 18) {
-            int[] weight = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};    //十七位数字本体码权重
-            char[] validate = {'1', '0', 'x', '9', '8', '7', '6', '5', '4', '3', '2'};    //mod11,对应校验码字符值
-            int sum = 0;
-            int mode = 0;
-            for (int i = 0; i < 17; i++) {
-                sum = sum + Integer.parseInt(String.valueOf(idcardCode.charAt(i))) * weight[i];
-            }
-            mode = sum % 11;
-            if (Character.toLowerCase(idcardCode.charAt(17)) != validate[mode]) return "身份证号校验不符!";
+    /**
+     * 根据身份证号码计算年龄
+     *
+     * @param idNumber 考虑到了15位身份证，但不一定存在
+     */
+    public static int getAgeByIDNumber(String idNumber) {
+        if (idNumber == null) {
+            return -1;
         }
-        return null;
+        String dateStr;
+        if (idNumber.length() != 18 || !RegexUtils.isIDCard18(idNumber)) {
+            return -1;
+        }
+        else {//默认是合法身份证号，但不排除有意外发生
+            dateStr = idNumber.substring(6, 14);
+        }
+
+        try {
+            Date birthday =
+                    DATE_NO_SEPERATOR_FORMATTER.parse(dateStr);
+            return getAgeByDate(birthday);
+        }
+        catch (Exception e) {
+            return -1;
+        }
     }
 
-    public static String validateIdcardCode2(String idCode) {
-        if (idCode == null || !(idCode.length() == 18 || idCode.length() == 15)) return "身份证长度不符!";
-        if (idCode.length() == 15) {
-            Pattern p = Pattern.compile("^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$");
-            if (p.matcher(idCode).matches()) {
-                return null;
-            } else return "身份证格式不符!";
-        } else if (idCode.length() == 18) {
-            Pattern pattern = Pattern.compile("^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|[xX])$");
-            if (pattern.matcher(idCode).matches()) {
-                int[] weight = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};    //十七位数字本体码权重
-                char[] validate = {'1', '0', 'x', '9', '8', '7', '6', '5', '4', '3', '2'};    //mod11,对应校验码字符值
-                int sum = 0;
-                int mode = 0;
-                for (int i = 0; i < 17; i++) {
-                    sum = sum + Integer.parseInt(String.valueOf(idCode.charAt(i))) * weight[i];
-                }
-                mode = sum % 11;
-                if (Character.toLowerCase(idCode.charAt(17)) != validate[mode]) return "身份证号校验不符!";
-                else return null;
-            } else return "身份证格式不符!";
-        } else return "身份证长度不符";
+    public static int getAgeByDate(Date birthday) {
+        Calendar calendar = Calendar.getInstance();
+
+        //calendar.before()有的点bug
+        if (calendar.getTimeInMillis() - birthday.getTime() < 0L) {
+            return -1;
+        }
+
+        int yearNow = calendar.get(Calendar.YEAR);
+        int monthNow = calendar.get(Calendar.MONTH);
+        int dayOfMonthNow = calendar.get(Calendar.DAY_OF_MONTH);
+
+        calendar.setTime(birthday);
+
+        int yearBirthday = calendar.get(Calendar.YEAR);
+        int monthBirthday = calendar.get(Calendar.MONTH);
+        int dayOfMonthBirthday = calendar.get(Calendar.DAY_OF_MONTH);
+
+        int age = yearNow - yearBirthday;
+
+        if (monthNow <= monthBirthday && monthNow == monthBirthday && dayOfMonthNow < dayOfMonthBirthday || monthNow < monthBirthday) {
+            age--;
+        }
+
+        return age;
     }
 
-    public static String md5(String text, boolean toLowerCase) {
-        return encodeHexString(text, "MD5", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
-    }
-
-    public static String sha1(String text, boolean toLowerCase) {
-        return encodeHexString(text, "SHA-1", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
-    }
-
-    public static String sha224(String text, boolean toLowerCase) {
-        return encodeHexString(text, "SHA-224", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
-    }
-
-    public static String sha256(String text, boolean toLowerCase) {
-        return encodeHexString(text, "SHA-256", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
-    }
-
-    public static String sha384(String text, boolean toLowerCase) {
-        return encodeHexString(text, "SHA-384", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
-    }
-
-    public static String sha512(String text, boolean toLowerCase) {
-        return encodeHexString(text, "SHA-512", toLowerCase ? DIGITS_LOWER : DIGITS_UPPER);
-    }
 
     private static String encodeHexString(String text, String method, char[] toDigits) {
         String value = null;
@@ -665,7 +678,8 @@ public class ContentUtil {
                 out[j++] = toDigits[15 & data[i]];
             }
             value = new String(out);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         return value;
@@ -700,7 +714,6 @@ public class ContentUtil {
         ca = truncateDate(ca, field);
         return ca.getTime();
     }
-
 
     public static String getColorTextHtmlCode(Context context, @ColorRes int colorRes, String front, String colorText, String back) {
         int color = context.getResources().getColor(colorRes);

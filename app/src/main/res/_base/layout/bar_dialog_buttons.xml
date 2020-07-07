@@ -31,7 +31,7 @@
     <Button
         android:text= "确定"
         android:id="@+id/btnPositive"
-        style="?attr/buttonBarNegativeButtonStyle"
+        style="?attr/buttonBarPositiveButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

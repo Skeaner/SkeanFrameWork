@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.appcompat.widget.ButtonBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="@dimen/appMicroMargin">
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="invisible" />
 
-    <com.afollestad.materialdialogs.internal.button.DialogActionButton
+    <Button
+        android:text= "更新"
         android:id="@+id/btnPositive"
-        style="@style/MD_ActionButton"
-        android:layout_alignParentRight="true"
-        android:text="更新"
-        android:textColor="@color/colorAccent" />
+        style="?attr/buttonBarPositiveButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <com.afollestad.materialdialogs.internal.button.DialogActionButton
+    <Button
+        android:text= "暂不"
         android:id="@+id/btnNegative"
-        style="@style/MD_ActionButton"
-        android:layout_toLeftOf="@id/btnPositive"
-        android:text="暂不"
-        android:textColor="@color/colorAccent" />
+        style="?attr/buttonBarNegativeButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
-    <com.afollestad.materialdialogs.internal.button.DialogActionButton
+    <Button
+        android:text= "取消下载"
         android:id="@+id/btnCenter"
-        style="@style/MD_ActionButton"
-        android:text="取消下载"
-        android:textColor="@color/colorAccent"
+        style="?attr/buttonBarNegativeButtonStyle"
+        android:layout_width="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        android:layout_height="wrap_content" />
 
 
-</RelativeLayout>
+</androidx.appcompat.widget.ButtonBarLayout>

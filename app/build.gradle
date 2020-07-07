@@ -21,6 +21,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     signingConfigs {
         //fixme 修改签名文件
         config {
@@ -67,7 +70,7 @@ android {
         def appTag = "\"" + "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1) + "\""
         def buglyAppIdDebug = "ccced6668f"
         def buglyAppIdRelease = "ccced6668f"
-        def useExternalDatabase = true
+        def useExternalDatabase = false
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -181,17 +184,10 @@ dependencies {
     implementation "fr.avianey.com.viewpagerindicator:library:2.4.1.1@aar"
     //综合工具库utilcode
     implementation 'com.blankj:utilcode:1.25.9'
-    //带进度显示的Webview
-    implementation 'com.daimajia.numberprogressbar:library:1.2@aar'
-    //带数字显示的numberprogressbar
-    implementation 'com.tamic:browse:1.0.0'
     //下拉刷新ultra-ptr
     implementation 'in.srain.cube:ultra-ptr:1.0.11'
     //RecyclerView综合适配器
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.45-androidx'
-    //material design对话框
-    implementation 'com.afollestad.material-dialogs:core:3.1.1'
-    implementation 'com.afollestad.material-dialogs:bottomsheets:3.1.1'
     //material design日期加时间选择器
     implementation 'com.appeaser.sublimepickerlibrary:sublimepickerlibrary:2.1.2'
     //权限提示
@@ -203,4 +199,7 @@ dependencies {
     //butterknife
     implementation 'com.jakewharton:butterknife:10.2.0'
     kapt 'com.jakewharton:butterknife-compiler:10.2.0'
+    //腾讯QMUI
+    implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
+
 }

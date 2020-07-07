@@ -53,8 +53,7 @@
         <!-- 强制更新Dialog-->
         <activity
             android:name="base.widget.ForceUpdateDialog"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Dialog"
+            android:theme="@style/AppTheme.Dialog"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
 
