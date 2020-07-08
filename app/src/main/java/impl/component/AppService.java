@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
@@ -29,7 +30,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import base.net.CommonService;
 import base.net.ProgressInterceptor;
-import base.utils.FileUtil;
 import base.utils.NetworkUtil;
 
 import skean.yzsm.com.framework.R;
@@ -187,7 +187,7 @@ public final class AppService extends Service {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    FileUtil.storeFile(apkFile, response.body().byteStream());
+                    FileIOUtils.writeFileFromIS(apkFile, response.body().byteStream());
                     Intent installIntent = getInstallIntent(apkFile);
                     PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, installIntent, PendingIntent.FLAG_CANCEL_CURRENT);
                     nManager.notify(DOWNLOAD_NOTICE_ID,
@@ -200,7 +200,7 @@ public final class AppService extends Service {
                                                                      .setProgress(100, 100, false)
                                                                      .getNotification());
                     context.startActivity(installIntent);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     onFailure(call, e);
                 }

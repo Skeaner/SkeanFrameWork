@@ -1,2 +1,4 @@
 include ':app'
+include ':skeanframework'
 rootProject.name='Android框架'
+

@@ -5,6 +5,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.tencent.bugly.Bugly;
@@ -19,7 +20,6 @@ import base.db.Migrations;
 import impl.db.entity.DaoMaster;
 import impl.db.entity.DaoSession;
 import base.utils.AppStatusTracker;
-import base.utils.FileUtil;
 import skean.yzsm.com.framework.BuildConfig;
 
 /**
@@ -85,12 +85,14 @@ public final class AppApplication extends MultiDexApplication implements AppStat
     }
 
     public static String getAppExternalStorageDirectory() {
-        File file = FileUtil.initializeFile(new File(Environment.getExternalStorageDirectory(), TAG), true);
+        File file  =new File(Environment.getExternalStorageDirectory(), TAG);
+        FileUtils.createOrExistsDir(file);
         return file.getAbsolutePath();
     }
 
     public static String getAppPicturesDirectory() {
-        File file = FileUtil.initializeFile(new File(String.format("%s/%s/Picture", Environment.getExternalStorageDirectory(), TAG)), true);
+        File file = new File(String.format("%s/%s/Picture", Environment.getExternalStorageDirectory(), TAG));
+        FileUtils.createOrExistsDir(file);
         return file.getAbsolutePath();
     }
 

@@ -327,12 +327,7 @@ public class BaseActivity extends RxAppCompatActivity {
             @Override
             public void onShown(final Snackbar sb) {
                 sb.getView().setVisibility(View.VISIBLE);
-                sb.getView().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        sb.getView().setVisibility(View.GONE);
-                    }
-                }, millis);
+                sb.getView().postDelayed(() -> sb.getView().setVisibility(View.GONE), millis);
             }
 
         });

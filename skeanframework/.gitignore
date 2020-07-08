@@ -1,0 +1,6 @@
+/build
+*.iml
+*.apk
+/release
+/debug
+bintray.properties

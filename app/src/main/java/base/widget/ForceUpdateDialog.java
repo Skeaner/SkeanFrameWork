@@ -3,8 +3,6 @@ package base.widget;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
@@ -16,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
@@ -32,7 +31,6 @@ import base.component.BaseActivity;
 import impl.constant.IntentKey;
 import base.net.CommonService;
 import base.net.ProgressInterceptor;
-import base.utils.FileUtil;
 import base.utils.NetworkUtil;
 import skean.yzsm.com.framework.BuildConfig;
 import skean.yzsm.com.framework.R;
@@ -160,10 +158,10 @@ public class ForceUpdateDialog extends BaseActivity implements View.OnClickListe
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             try {
-                FileUtil.storeFile(tempFile, response.body().byteStream());
+                FileIOUtils.writeFileFromIS(tempFile, response.body().byteStream());
                 installApp();
             }
-            catch (IOException e) {
+            catch (Exception e) {
                 e.printStackTrace();
                 onFailure(call, e);
             }
