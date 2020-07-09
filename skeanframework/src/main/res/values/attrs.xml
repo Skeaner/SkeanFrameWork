@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="indeterminate" format="boolean" />
+    <attr name="icon" format="reference" />
+
+    <declare-styleable name="IndeterminateCheckable">
+        <!-- Additional drawable state. It is merged into the parent CompoundButton states -->
+        <attr name="state_indeterminate" format="boolean" />
+        <attr name="indeterminateCheckBoxStyle" format="reference" />
+        <attr name="indeterminateRadioButtonStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="IndeterminateCheckBox">
+        <attr name="indeterminate" />
+        <attr name="icon" />
+    </declare-styleable>
+
+    <declare-styleable name="IndeterminateRadioButton">
+        <attr name="indeterminate" />
+        <attr name="icon" />
+    </declare-styleable>
+
+
+    <declare-styleable name="AdvanceImageView" parent="android.support.v7.widget.AppCompatImageView">
+        <attr name="scale_type" format="enum">
+            <enum name="matrix" value="0" />
+            <enum name="fit_xy" value="1" />
+            <enum name="fit_start" value="2" />
+            <enum name="fit_center" value="3" />
+            <enum name="fit_end" value="4" />
+            <enum name="center" value="5" />
+            <enum name="center_crop" value="6" />
+            <enum name="center_inside" value="7" />
+            <enum name="left_crop" value="8" />
+            <enum name="top_crop" value="9" />
+            <enum name="right_crop" value="10" />
+            <enum name="bottom_crop" value="11" />
+        </attr>
+    </declare-styleable>
+</resources>

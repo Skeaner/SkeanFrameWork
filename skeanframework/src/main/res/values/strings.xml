@@ -1,0 +1,62 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!--fixme 公司名-->
+    <string name="company_name">广东誉洲数码科技有限公司</string>
+    <string name="app_name">开发框架demo</string>
+    <!--常用字符-->
+    <string name="tips">提示</string>
+    <string name="warning">警告</string>
+    <string name="attention">注意</string>
+    <string name="set">设置</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="back">返回</string>
+    <string name="close">关闭</string>
+    <string name="quit">退出</string>
+    <string name="error">错误</string>
+    <string name="update">更新</string>
+    <string name="later">稍后</string>
+    <string name="delete">删除</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="save">保存</string>
+    <string name="temporarilyNot">暂不</string>
+    <string name="loading">加载中&#8230;</string>-->
+    <string name="refreshing">刷新中&#8230;</string>
+    <string name="uploading">上传中&#8230;</string>
+    <string name="posting">提交中&#8230;</string>
+    <string name="postSuccess">提交成功</string>
+    <string name="downloading">正在下载&#8230;</string>
+    <string name="logining">登录中&#8230;</string>
+    <string name="appInfo">当前版本: <xliff:g id="1">%1$s</xliff:g> \n版权所有: </string>
+    <string name="moreClickQuit">再按一次, 退出程序</string>
+    <string name="confirmExit">确定退出吗?</string>
+    <string name="abortDataConfirm">当前数据还没有保存, 是否放弃已编辑的数据返回吗?</string>
+    <string name="noSelections">没有选中项&#8230;</string>
+    <string name="noMoreData">没有更多数据&#8230;</string>
+    <string name="noSdcardMounted">找不到储存卡</string>
+
+    <!-- 更新-->
+    <string name="findNewVersion">发现新版本<xliff:g id="1">%1$s</xliff:g></string>
+    <string name="changeLog">更新内容:\n<xliff:g id="1">%1$s</xliff:g></string>
+    <string name="updatingApp">更新软件</string>
+    <string name="downloadFinishClickInstall">下载完毕, 点击安装</string>
+    <string name="downloadFailClickRetry">下载失败, 点击重试</string>
+    <string name="downloadProgress">正在下载<xliff:g id="1">%1$d</xliff:g>%%</string>
+    <string name="noSdcardMountedDownloadFail">找不到储存卡, 下载失败</string>
+    <string name="createFileFail">创建文件失败, 下载失败</string>
+
+
+    <!--*******************************************************************-->
+    <!--*下拉刷新的相关字符 -->
+    <!--*******************************************************************-->
+    <string name="app_pull_down">下拉</string>
+    <string name="app_pull_down_to_refresh">下拉刷新</string>
+    <string name="app_release_to_refresh">释放刷新</string>
+    <string name="app_refreshing">刷新中…</string>
+    <string name="app_refresh_complete">刷新完成.</string>
+    <string name="app_last_update">上次刷新:&#160;</string>
+    <string name="app_seconds_ago">&#160;秒前</string>
+    <string name="app_minutes_ago">&#160;分钟前</string>
+    <string name="app_hours_ago">&#160;小时前</string>
+
+</resources>

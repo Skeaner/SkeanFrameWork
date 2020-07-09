@@ -1,5 +1,4 @@
-package base.net;
-
+package me.skean.skeanframework.net;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -13,8 +12,8 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static base.net.GlobalPostParamsInterceptor.PostType.MULTI_PART;
-import static base.net.GlobalPostParamsInterceptor.PostType.FORM;
+import static me.skean.skeanframework.net.GlobalPostParamsInterceptor.PostType.FORM;
+import static me.skean.skeanframework.net.GlobalPostParamsInterceptor.PostType.MULTI_PART;
 
 /**
  * 全局post参数添加的拦截器
