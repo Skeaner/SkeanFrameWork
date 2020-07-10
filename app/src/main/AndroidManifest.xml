@@ -3,12 +3,12 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="skean.yzsm.com.framework">
+    package="me.skean.framework.example">
 
 
 
     <application
-        android:name="impl.component.App"
+        android:name=".component.App"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -25,11 +25,11 @@
             android:value="b46c4981b8e07d4d613867e03c753f4b" />
 
         <!--主页-->
-        <activity android:name="impl.ui.TestActivity_">
+        <activity android:name=".ui.TestActivity_">
 
         </activity>
 
-        <activity android:name="impl.ui.TestActivityKT_">
+        <activity android:name=".ui.TestActivityKT_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,7 +39,7 @@
 
         <!--App后台-->
         <service
-            android:name="impl.component.AppService"
+            android:name=".component.AppService"
             android:exported="false" />
 
         <!--高德的定位后台-->

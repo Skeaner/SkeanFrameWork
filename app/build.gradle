@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         //todo 修改程序ID
-        applicationId "skean.yzsm.com.framework"
+        applicationId "me.skean.framework.example"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1

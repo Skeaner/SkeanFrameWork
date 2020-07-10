@@ -1,4 +1,4 @@
-package impl.ui;
+package me.skean.framework.example.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,10 +13,10 @@ import org.androidannotations.annotations.EActivity;
 
 import java.io.File;
 
-import impl.component.App;
+import me.skean.framework.example.component.App;
 import me.skean.skeanframework.component.BaseActivity;
 import me.skean.skeanframework.utils.ImageUtil;
-import skean.yzsm.com.framework.R;
+import me.skean.framework.example.R;
 
 @EActivity(R.layout.activity_main)
 public class TestActivity extends BaseActivity {

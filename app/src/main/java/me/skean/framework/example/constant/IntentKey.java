@@ -1,6 +1,6 @@
-package impl.constant;
+package me.skean.framework.example.constant;
 
-import skean.yzsm.com.framework.BuildConfig;
+import me.skean.framework.example.BuildConfig;
 
 /**
  * 一些在Intent中使用的Key
@@ -17,9 +17,5 @@ public class IntentKey {
     public static final String ACTION_DOWNLOAD_APP = ACTION_PREFIX + "ACTION_DOWNLOAD_APP";
     public static final String EXTRA_DOWNLOAD_URL = EXTRA_PREFIX + "EXTRA_DOWNLOAD_URL";
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 强制更新退出了
-    ///////////////////////////////////////////////////////////////////////////
-    public static final String ACTION_FORCE_UPDATE_EXIT = ACTION_PREFIX + "ACTION_FORCE_UPDATE_EXIT";
 
 }

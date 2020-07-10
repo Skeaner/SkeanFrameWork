@@ -1,4 +1,4 @@
-package impl.component;
+package me.skean.framework.example.component;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,7 +24,7 @@ import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
 
-import impl.constant.IntentKey;
+import me.skean.framework.example.constant.IntentKey;
 import me.skean.skeanframework.net.FileIOService;
 import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import skean.yzsm.com.framework.R;
+import me.skean.framework.example.R;
 
 /**
  * App的后台基础服务

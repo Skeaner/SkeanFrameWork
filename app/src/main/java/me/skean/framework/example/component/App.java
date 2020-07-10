@@ -1,10 +1,9 @@
-package impl.component;
+package me.skean.framework.example.component;
 
 import android.content.Context;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -13,21 +12,18 @@ import com.tencent.bugly.Bugly;
 
 import org.greenrobot.greendao.database.Database;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 import androidx.multidex.MultiDexApplication;
-import impl.db.entity.DaoMaster;
-import impl.db.entity.DaoSession;
+import example.db.entity.DaoMaster;
+import example.db.entity.DaoSession;
 import me.skean.skeanframework.component.SkeanFrameWork;
 import me.skean.skeanframework.db.Migrations;
 import me.skean.skeanframework.utils.AppStatusTracker;
 import me.skean.skeanframework.utils.LogFileWriter;
 import me.skean.skeanframework.utils.ReportUtils;
-import skean.yzsm.com.framework.BuildConfig;
+import me.skean.framework.example.BuildConfig;
 
 /**
  * App的Application
@@ -37,7 +33,6 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
     private Object tempObject = null;
     private static App instance;
     private DaoSession daoSession;
-
 
     public static final String TAG = BuildConfig.APP_TAG;
 
@@ -50,8 +45,7 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         //初始化上报的工具
         if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
             ReportUtils.getInstance().init(getContext());
-        }
-        else { //外网的使用BUGLY
+        } else { //外网的使用BUGLY
             Bugly.init(getApplicationContext(), BuildConfig.BUGLY_APPID, BuildConfig.DEBUG);
         }
         //GreenDAO初始化
@@ -80,14 +74,13 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
                 .setGlobalTag(TAG)
                 .setLogHeadSwitch(true)
                 .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
-                .setFilePrefix("log")
-                .setFileWriter(new LogFileWriter())
+                .setFilePrefix("new")
+                .setFileWriter(new LogFileWriter(5 * 1024 * 1024)) //log文件最大5M
                 .setSingleTagSwitch(true);
         //AppStatusTracker初始化
         AppStatusTracker.init(this);
         AppStatusTracker.getInstance().setStatusCallback(this);
     }
-
 
     public static App getInstance() {
         return instance;
@@ -102,7 +95,7 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
     }
 
     public static String getAppExternalStorageDirectory() {
-        File file  =new File(Environment.getExternalStorageDirectory(), TAG);
+        File file = new File(Environment.getExternalStorageDirectory(), TAG);
         FileUtils.createOrExistsDir(file);
         return file.getAbsolutePath();
     }
@@ -135,10 +128,7 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
     }
 
     @Override
-    public SQLiteDatabase openOrCreateDatabase(String name,
-                                               int mode,
-                                               SQLiteDatabase.CursorFactory factory,
-                                               DatabaseErrorHandler errorHandler) {
+    public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory, DatabaseErrorHandler errorHandler) {
         return super.openOrCreateDatabase(getDatabasePath(name).getAbsolutePath(), mode, factory, errorHandler);
     }
 

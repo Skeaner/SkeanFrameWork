@@ -23,7 +23,6 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 
-
 /**
  * 提取录入内容的便利工具
  */
@@ -41,7 +40,9 @@ public class ContentUtil {
     public static final SimpleDateFormat DATE_HMS_FORMATTER;
     public static final SimpleDateFormat DATE_HMS_WEEK_FORMATTER;
     public static final SimpleDateFormat DATE_FORMATTER;
-    public static final SimpleDateFormat DATE_NO_SEPERATOR_FORMATTER;
+    public static final SimpleDateFormat DATE_NO_SEP_FORMATTER;
+    public static final SimpleDateFormat DATE_TIME_NO_SEP_FORMATTER;
+    public static final  SimpleDateFormat DATE_TIME_UNDERLINE_SEP_FORMATTER;
     public static NumberFormat PRICE_FORMAT;
     public static NumberFormat PRICE_MINIMAL_FORMAT;
     public static NumberFormat DISCOUNT_FORMAT;
@@ -64,7 +65,9 @@ public class ContentUtil {
         DATE_HMS_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS", Locale.CHINA);
         DATE_HMS_WEEK_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS E", Locale.CHINA);
         DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-        DATE_NO_SEPERATOR_FORMATTER = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        DATE_NO_SEP_FORMATTER = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+        DATE_TIME_NO_SEP_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmSS", Locale.CHINA);
+        DATE_TIME_UNDERLINE_SEP_FORMATTER = new SimpleDateFormat("yyyy_MM_dd_HH_mm_SS", Locale.CHINA);
         PRICE_FORMAT = NumberFormat.getNumberInstance();
         PRICE_FORMAT.setMaximumFractionDigits(2);
         PRICE_FORMAT.setMinimumFractionDigits(2);
@@ -361,8 +364,7 @@ public class ContentUtil {
     public static boolean isEqual(float f1, float f2) {
         if (Math.abs(f1 - f2) < 0.00000001) {
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     /**
@@ -371,8 +373,7 @@ public class ContentUtil {
     public static boolean isEqual(double d1, double d2) {
         if (Math.abs(d1 - d2) < 0.00000001) {
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -419,8 +420,7 @@ public class ContentUtil {
         int value = 0;
         try {
             value = Integer.valueOf(text.toString());
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return value;
@@ -454,8 +454,7 @@ public class ContentUtil {
         float value = 0;
         try {
             value = Float.valueOf(text.toString());
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return value;
@@ -489,8 +488,7 @@ public class ContentUtil {
         double value = 0;
         try {
             value = Double.valueOf(text.toString());
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
         return value;
@@ -517,10 +515,13 @@ public class ContentUtil {
         return tag;
     }
 
-
     public static String date(long millis) {
         if (millis == 0) return NO_DATA;
         else return DATE_FORMATTER.format(new Date(millis));
+    }
+
+    public static String dateNow() {
+        return date(System.currentTimeMillis());
     }
 
     public static String dateHourMin(long millis) {
@@ -528,10 +529,18 @@ public class ContentUtil {
         else return DATE_HM_FORMATTER.format(new Date(millis));
     }
 
+    public static String dateHourMinNow() {
+        return dateHourMin(System.currentTimeMillis());
+    }
 
     public static String dateTime(long millis) {
         if (millis == 0) return NO_DATA;
         else return DATE_HMS_FORMATTER.format(new Date(millis));
+    }
+
+
+    public static String dateTimeNow() {
+        return  dateTime(System.currentTimeMillis());
     }
 
     public static String dateHourMinWeek(long millis) {
@@ -539,9 +548,49 @@ public class ContentUtil {
         else return DATE_HM_WEEK_FORMATTER.format(new Date(millis));
     }
 
+
+    public static String dateHourMinWeekNow() {
+        return dateHourMinWeek(System.currentTimeMillis());
+    }
+
     public static String dateTimeWeek(long millis) {
         if (millis == 0) return NO_DATA;
         else return DATE_HMS_WEEK_FORMATTER.format(new Date(millis));
+    }
+
+
+    public static String dateTimeWeekNow() {
+         return dateTimeWeek(System.currentTimeMillis());
+    }
+
+
+    public static String dateNoSep(long millis) {
+        if (millis == 0) return NO_DATA;
+        else return DATE_NO_SEP_FORMATTER.format(new Date(millis));
+    }
+
+    public static String dateNoSepNow() {
+        return dateNoSep(System.currentTimeMillis());
+    }
+
+
+    public static String dateTimeNoSep(long millis) {
+        if (millis == 0) return NO_DATA;
+        else return DATE_TIME_NO_SEP_FORMATTER.format(new Date(millis));
+    }
+
+    public static String dateTimeNoSepNow() {
+        return dateTimeNoSep(System.currentTimeMillis());
+    }
+
+
+    public static String dateTimeUnderlineSep(long millis) {
+        if (millis == 0) return NO_DATA;
+        else return DATE_TIME_UNDERLINE_SEP_FORMATTER.format(new Date(millis));
+    }
+
+    public static String dateTimeUnderlineSepNow() {
+        return dateTimeUnderlineSep(System.currentTimeMillis());
     }
 
     /**
@@ -617,17 +666,14 @@ public class ContentUtil {
         String dateStr;
         if (idNumber.length() != 18 || !RegexUtils.isIDCard18(idNumber)) {
             return -1;
-        }
-        else {//默认是合法身份证号，但不排除有意外发生
+        } else {//默认是合法身份证号，但不排除有意外发生
             dateStr = idNumber.substring(6, 14);
         }
 
         try {
-            Date birthday =
-                    DATE_NO_SEPERATOR_FORMATTER.parse(dateStr);
+            Date birthday = DATE_NO_SEP_FORMATTER.parse(dateStr);
             return getAgeByDate(birthday);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return -1;
         }
     }
@@ -659,7 +705,6 @@ public class ContentUtil {
         return age;
     }
 
-
     private static String encodeHexString(String text, String method, char[] toDigits) {
         String value = null;
         try {
@@ -674,8 +719,7 @@ public class ContentUtil {
                 out[j++] = toDigits[15 & data[i]];
             }
             value = new String(out);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return value;

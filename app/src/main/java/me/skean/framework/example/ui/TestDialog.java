@@ -1,4 +1,4 @@
-package impl.ui;
+package me.skean.framework.example.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import me.skean.skeanframework.component.FullDialogFragment;
-import skean.yzsm.com.framework.R;
+import me.skean.framework.example.R;
 
 /**
  * Created by Skean on 19/7/3.

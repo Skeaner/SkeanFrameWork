@@ -1,4 +1,4 @@
-package impl.db.entity;
+package me.skean.framework.example.db.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;

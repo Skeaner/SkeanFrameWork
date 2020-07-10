@@ -1,4 +1,4 @@
-package impl.ui
+package me.skean.framework.example.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -12,12 +12,12 @@ import com.blankj.utilcode.util.ToastUtils
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EActivity
 import org.androidannotations.annotations.OnActivityResult
-import impl.component.App
+import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.component.UpdateDialog
 import me.skean.skeanframework.utils.ContentUtil
 import me.skean.skeanframework.utils.ImageUtil
-import skean.yzsm.com.framework.R
+import me.skean.framework.example.R
 import java.io.File
 
 /**

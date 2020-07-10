@@ -2,6 +2,7 @@ package me.skean.skeanframework.utils;
 
 import android.webkit.MimeTypeMap;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
@@ -213,11 +214,13 @@ public class NetworkUtil {
     public static MultipartBody.Part fileMultiPart(String name, File uploadFile) {
         String type = null;
         String filename = uploadFile.getName();
-        String extension = MimeTypeMap.getFileExtensionFromUrl(filename);
-        if (extension != null) {
+        String extension = FileUtils.getFileExtension(uploadFile);
+        if (!ContentUtil.isEmpty(extension)) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
-        if (type == null) type = "text/plain";
+        if (ContentUtil.isEmpty(type)) {
+            type = "application/octet-stream";
+        }
         return MultipartBody.Part.createFormData(name, filename, RequestBody.create(MediaType.parse(type), uploadFile));
     }
 }
