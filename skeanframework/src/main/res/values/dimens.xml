@@ -6,12 +6,12 @@
     <dimen name="appMainMargin">16dp</dimen>
     <dimen name="appHalfMargin">8dp</dimen>
     <dimen name="appMicroMargin">4dp</dimen>
+    <dimen name="appNanoMargin">2dp</dimen>
     <!--控件度量值-->
     <dimen name="preferDrawablePadding">8dp</dimen>
     <dimen name="preferEditTextHeight">48dp</dimen>
     <dimen name="preferEditTextPadding">8dp</dimen>
     <dimen name="preferButtonHeight">36dp</dimen>
     <dimen name="preferButtonMinWidth">88dp</dimen>
-
 
 </resources>

@@ -1,32 +1,3 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.ActionBarOverlay" parent="AppTheme">
-        <item name="windowActionBarOverlay">true</item>
-    </style>
-
-
-    <style name="AppTheme.Dialog" parent="@style/AppTheme">
-        <!--是否悬浮在activity上-->
-        <item name="android:windowIsFloating">true</item>
-        <!--透明是否-->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:background">@null</item>
-        <!--设置没有窗口标题、dialog标题等各种标题-->
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:title">@null</item>
-        <item name="android:dialogTitle">@null</item>
-    </style>
-
 </resources>

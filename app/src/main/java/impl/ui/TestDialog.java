@@ -15,7 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import base.component.FullDialogFragment;
+import me.skean.skeanframework.component.FullDialogFragment;
 import skean.yzsm.com.framework.R;
 
 /**

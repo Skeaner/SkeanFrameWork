@@ -1,20 +1,2 @@
 <resources>
-    <!--公用度量值-->
-    <dimen name="appActionbarHeight">48dp</dimen>
-    <dimen name="appTabHeight">@dimen/appActionbarHeight</dimen>
-    <dimen name="appDoubleMargin">32dp</dimen>
-    <dimen name="appMainMargin">16dp</dimen>
-    <dimen name="appHalfMargin">8dp</dimen>
-    <dimen name="appMicroMargin">4dp</dimen>
-    <!--控件度量值-->
-    <dimen name="preferDrawablePadding">8dp</dimen>
-    <dimen name="preferEditTextHeight">48dp</dimen>
-    <dimen name="preferEditTextPadding">8dp</dimen>
-    <dimen name="preferButtonHeight">36dp</dimen>
-    <dimen name="preferButtonMinWidth">88dp</dimen>
-    <dimen name="preferImageButtonSize">48dp</dimen>
-    <dimen name="titleHorizontalMargin">12dp</dimen>
-    <dimen name="titleVerticalMargin">4dp</dimen>
-
-
 </resources>

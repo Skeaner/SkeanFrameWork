@@ -24,17 +24,9 @@
 
     <application>
 
-
-        <!-- 更新Dialog-->
-        <activity
-            android:name=".widget.UpdateDialog"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dialog"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
-
         <!-- 强制更新Dialog-->
         <activity
-            android:name=".widget.ForceUpdateDialog"
+            android:name=".component.UpdateDialog"
             android:theme="@style/AppTheme.Dialog"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 

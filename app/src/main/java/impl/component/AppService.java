@@ -24,13 +24,13 @@ import java.io.File;
 import java.io.IOException;
 
 import impl.constant.IntentKey;
+import me.skean.skeanframework.net.CommonService;
+import me.skean.skeanframework.net.ProgressInterceptor;
+import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import base.net.CommonService;
-import base.net.ProgressInterceptor;
-import base.utils.NetworkUtil;
 
 import skean.yzsm.com.framework.R;
 
@@ -43,7 +43,7 @@ public final class AppService extends Service {
     protected Context context;
     protected AppServiceBinder binder = new AppServiceBinder();
 
-    AppApplication appApplication;
+    App APP;
     NotificationManager nManager;
 
     int tempProgress = 0;
@@ -70,7 +70,7 @@ public final class AppService extends Service {
     @Override
     public void onCreate() {
         context = this;
-        appApplication = (AppApplication) getApplication();
+        APP = (App) getApplication();
         nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 

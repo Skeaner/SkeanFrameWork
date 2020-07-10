@@ -1,7 +1,4 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!--fixme 公司名-->
-    <string name="company_name">广东誉洲数码科技有限公司</string>
-    <string name="app_name">开发框架demo</string>
     <!--常用字符-->
     <string name="tips">提示</string>
     <string name="warning">警告</string>

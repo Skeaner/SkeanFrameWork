@@ -13,9 +13,9 @@ import org.androidannotations.annotations.EActivity;
 
 import java.io.File;
 
-import impl.component.AppApplication;
-import base.component.BaseActivity;
-import base.utils.ImageUtil;
+import impl.component.App;
+import me.skean.skeanframework.component.BaseActivity;
+import me.skean.skeanframework.utils.ImageUtil;
 import skean.yzsm.com.framework.R;
 
 @EActivity(R.layout.activity_main)
@@ -48,7 +48,7 @@ public class TestActivity extends BaseActivity {
                     if (path != null) {
                         File f = new File(path);
                         selectedImageUri = Uri.fromFile(f);
-                        File file = new File(AppApplication.getAppPicturesDirectory(), "compress.jpg");
+                        File file = new File(App.getAppPicturesDirectory(), "compress.jpg");
                         ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, new ImageUtil.Compressor.FileCallBack() {
                             @Override
                             public void onSuccess(File file) {

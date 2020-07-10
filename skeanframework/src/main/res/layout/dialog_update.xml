@@ -1,16 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:divider="@drawable/divider_1dp_height_gray"
-              android:orientation="vertical"
-              android:showDividers="middle">
-    <TextView
-        android:id="@+id/txvContent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:text="@string/changeLog" />
-    <include layout="@layout/bar_dialog_buttons_holo" />
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/panelInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/txvContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="@string/changeLog" />
+
+            <TextView
+                android:id="@+id/txvForce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="注意: 本次更新为强制更新, 不更新将无法使用app"
+                android:textColor="@color/red"
+                android:visibility="gone" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/panelProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="正在下载" />
+
+            <com.qmuiteam.qmui.widget.QMUIProgressBar
+                android:id="@+id/pgbProgress"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:textColor="@color/white"
+                app:qmui_background_color="@color/qmui_config_color_gray_8"
+                app:qmui_progress_color="@color/colorPrimary"
+                app:qmui_type="type_rect" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/divider_1dp_width_buttons"
+        android:orientation="horizontal"
+        android:showDividers="middle">
+
+        <Button
+            android:id="@+id/btnNegative"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="暂不下载" />
+
+
+        <Button
+            android:id="@+id/btnPositive"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="立刻更新" />
+
+
+        <Button
+            android:id="@+id/btnCenter"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="取消下载"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 </LinearLayout>

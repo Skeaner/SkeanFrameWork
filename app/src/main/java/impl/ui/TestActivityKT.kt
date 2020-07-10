@@ -11,10 +11,10 @@ import com.blankj.utilcode.util.ToastUtils
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EActivity
 import org.androidannotations.annotations.OnActivityResult
-import impl.component.AppApplication
-import base.component.BaseActivity
-import base.utils.ImageUtil
-import base.widget.ForceUpdateDialog
+import impl.component.App
+import me.skean.skeanframework.component.BaseActivity
+import me.skean.skeanframework.component.UpdateDialog
+import me.skean.skeanframework.utils.ImageUtil
 import skean.yzsm.com.framework.R
 import java.io.File
 
@@ -38,7 +38,7 @@ class TestActivityKT : BaseActivity() {
             if (path != null) {
                 val f = File(path)
                 selectedImageUri = Uri.fromFile(f)
-                val file = File(AppApplication.getAppPicturesDirectory(), "compress.jpg")
+                val file = File(App.getAppPicturesDirectory(), "compress.jpg")
                 ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, object : ImageUtil.Compressor.FileCallBack {
                     override fun onSuccess(file: File) {
                         ToastUtils.showShort("成功")
@@ -58,9 +58,9 @@ class TestActivityKT : BaseActivity() {
 //        testDialog.setCustomAnimation(R.style.WindowBottomInOutStyle)
 //        testDialog.isCancelable = false
 //        testDialog.show(supportFragmentManager)
-        ForceUpdateDialog.show(this,"1","测速更新","https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" +
+        UpdateDialog.show(this, "1", "测速更新", "https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" +
                 ".apk?auth_key=1594090321-5be73409e80de07d08483c42d6ffbb9d-0-ef518fef0f677db2e2f1bc6f8a375fb1&response-content" +
-                "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk",true)
+                "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk", true)
     }
 
     fun getPathFromURI(contentUri: Uri): String {
