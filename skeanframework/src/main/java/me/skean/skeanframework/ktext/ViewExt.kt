@@ -1,11 +1,18 @@
 package me.skean.skeanframework.ktext
 
+import android.annotation.SuppressLint
 import android.text.Editable
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Checkable
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.PopupMenu
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.skean.skeanframework.delegate.DefaultTextWatcher
 import kotlin.reflect.KMutableProperty
 
@@ -114,5 +121,25 @@ fun TextView.setDrawableRight(@DrawableRes drawableRight: Int) {
 
 fun TextView.setDrawableBottom(@DrawableRes drawableBottom: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, drawableBottom)
+
+}
+
+
+@SuppressLint("RestrictedApi")
+fun BottomNavigationView.disableShiftMode(){
+    val menuView = this.getChildAt(0) as BottomNavigationMenuView
+    try {
+        val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
+        shiftingMode.isAccessible = true
+        shiftingMode.setBoolean(menuView, false)
+        shiftingMode.isAccessible = false
+        for (i in 0 until menuView.childCount) {
+            val item = menuView.getChildAt(i) as BottomNavigationItemView
+            item.setShifting(false)
+            item.setChecked(item.itemData.isChecked)
+        }
+    }
+    catch (e: Exception) {
+    }
 }
 

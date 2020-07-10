@@ -68,7 +68,7 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.sfw_activity_map);
         showLocationOnly = getIntent().getBooleanExtra(EXTRA_SHOW_LOCATION_ONLY, false);
         latitude = getIntent().getDoubleExtra(EXTRA_LATITUDE, 0);
         longitude = getIntent().getDoubleExtra(EXTRA_LONGITUDE, 0);
@@ -114,7 +114,7 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!showLocationOnly) getMenuInflater().inflate(R.menu.menu_confirm, menu);
+        if (!showLocationOnly) getMenuInflater().inflate(R.menu.sfw_menu_confirm, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -160,7 +160,7 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
             latitude = lc.getLatitude();
             longitude = lc.getLongitude();
             address = lc.getAddress();
-            LogUtils.i(TAG, "定位成功", "纬度", latitude, "经度", longitude, "地址", address);
+            LogUtils.iTag(TAG, "定位成功", "纬度", latitude, "经度", longitude, "地址", address);
             myLcListener.onLocationChanged(lc);
         }
     }
@@ -191,12 +191,8 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
 
     @OnPermissionDenied(LOCATION)
     public void locateDeny() {
-        EasyPermissionDialog.build(this).permissions(PERMISSIONS).typeTemporaryDeny(new EasyPermissionDialog.Callback() {
-            @Override
-            public void onResult(boolean allow) {
-                if (allow) MapActivityPermissionsDispatcher.tryLocateWithPermissionCheck(MapActivity.this);
-            }
-
+        EasyPermissionDialog.build(this).permissions(PERMISSIONS).typeTemporaryDeny(allow -> {
+            if (allow) MapActivityPermissionsDispatcher.tryLocateWithPermissionCheck(MapActivity.this);
         }).show();
     }
 
@@ -211,7 +207,7 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
         // 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         map.getUiSettings().setMyLocationButtonEnabled(true);
         MyLocationStyle style = new MyLocationStyle();
-        style.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.ic_location_point_red)).strokeColor(Color.TRANSPARENT);
+        style.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.sfw_ic_location_point_red)).strokeColor(Color.TRANSPARENT);
         map.setMyLocationStyle(style);
         map.setMyLocationEnabled(true);
     }

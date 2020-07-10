@@ -14,18 +14,18 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+
 import android.util.Log;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
-import java.io.IOException;
 
 import impl.constant.IntentKey;
-import me.skean.skeanframework.net.CommonService;
-import me.skean.skeanframework.net.ProgressInterceptor;
+import me.skean.skeanframework.net.FileIOService;
 import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,13 +43,8 @@ public final class AppService extends Service {
     protected Context context;
     protected AppServiceBinder binder = new AppServiceBinder();
 
-    App APP;
-    NotificationManager nManager;
-
-    int tempProgress = 0;
-    public static final int DOWNLOAD_NOTICE_ID = 1;
-
-    public static final String APK_MIME_TYPE = "application/vnd.android.package-archive";
+    private App app;
+    private NotificationManager nManager;
 
     ///////////////////////////////////////////////////////////////////////////
     // 生命周期
@@ -70,7 +65,7 @@ public final class AppService extends Service {
     @Override
     public void onCreate() {
         context = this;
-        APP = (App) getApplication();
+        app = (App) getApplication();
         nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
@@ -119,78 +114,43 @@ public final class AppService extends Service {
     // 更新
     ///////////////////////////////////////////////////////////////////////////
 
-
-
     private void downloadApp(final String url) {
-        File apkFile;
-        if ((apkFile = createTempApk()) == null) return;
-        NetworkUtil.progressRetrofit(CommonService.BASE_URL, null, getDownloadCallBack())
-                   .create(CommonService.class)
-                   .downLoad(url)
-                   .enqueue(getResponseCallBack(apkFile, url));
-    }
-
-
-    private File createTempApk() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Toast.makeText(this, R.string.noSdcardMountedDownloadFail, Toast.LENGTH_SHORT).show();
-            return null;
+            return;
         }
-        File apkFile = new File(Environment.getExternalStorageDirectory(), "update.apk");
-        boolean created = true;
-        if (!apkFile.exists()) {
-            try {
-                created = apkFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                created = false;
-            }
-        }
-        if (!created) {
+        File apkFile = new File(getExternalCacheDir(), "update.apk");
+        if (!FileUtils.createOrExistsFile(apkFile)) {
             Toast.makeText(this, R.string.createFileFail, Toast.LENGTH_SHORT).show();
-            apkFile = null;
+            return;
         }
-        return apkFile;
-    }
-
-    private ProgressInterceptor.DownloadListener getDownloadCallBack() {
-        return new ProgressInterceptor.DownloadListener() {
-            @Override
-            public void downloadProgress(long bytesRead, long contentLength, int percentage, boolean done) {
-                if (!done) {
-                    nManager.notify(DOWNLOAD_NOTICE_ID,
-                                    new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                     .setContentText(getString(R.string.downloadProgress, percentage))
-                                                                     .setSmallIcon(R.drawable.ic_launcher)
-                                                                     .setOngoing(true)
-                                                                     .setProgress(100, percentage, false)
-                                                                     .getNotification());
-                }
+        NetworkUtil.progressRetrofit(FileIOService.BASE_URL, null, (bytesRead, contentLength, percentage, done) -> {
+            if (!done) {
+                nManager.notify(1,
+                                new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
+                                                                 .setContentText(getString(R.string.downloadProgress, percentage))
+                                                                 .setSmallIcon(R.drawable.ic_launcher)
+                                                                 .setOngoing(true)
+                                                                 .setProgress(100, percentage, false)
+                                                                 .build());
             }
-        };
-    }
-
-    private Intent getInstallIntent(File apkFile) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(context, IntentKey.AUTHORITY + ".fileprovider", apkFile);
-            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-        } else {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).setDataAndType(Uri.fromFile(apkFile), APK_MIME_TYPE);
-        }
-        return intent;
-    }
-
-    private Callback<ResponseBody> getResponseCallBack(final File apkFile, final String url) {
-        return new Callback<ResponseBody>() {
+        }).create(FileIOService.class).downLoad(url).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     FileIOUtils.writeFileFromIS(apkFile, response.body().byteStream());
-                    Intent installIntent = getInstallIntent(apkFile);
+                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        Uri contentUri = FileProvider.getUriForFile(context, IntentKey.AUTHORITY + ".fileprovider", apkFile);
+                        installIntent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                    }
+                    else {
+                        installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                     .setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+                    }
                     PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, installIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-                    nManager.notify(DOWNLOAD_NOTICE_ID,
+                    nManager.notify(1,
                                     new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                      .setContentText(getString(R.string.downloadFinishClickInstall))
                                                                      .setContentIntent(pi)
@@ -198,9 +158,10 @@ public final class AppService extends Service {
                                                                      .setOngoing(false)
                                                                      .setAutoCancel(false)
                                                                      .setProgress(100, 100, false)
-                                                                     .getNotification());
+                                                                     .build());
                     context.startActivity(installIntent);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                     onFailure(call, e);
                 }
@@ -211,16 +172,16 @@ public final class AppService extends Service {
                 Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP)
                                                                              .putExtra(IntentKey.EXTRA_DOWNLOAD_URL, url);
                 PendingIntent pi = PendingIntent.getService(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                nManager.notify(DOWNLOAD_NOTICE_ID,
+                nManager.notify(1,
                                 new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                  .setContentText(getString(R.string.downloadFailClickRetry))
                                                                  .setContentIntent(pi)
                                                                  .setSmallIcon(R.drawable.ic_launcher)
                                                                  .setOngoing(false)
                                                                  .setAutoCancel(false)
-                                                                 .getNotification());
+                                                                 .build());
             }
-        };
+        });
     }
 
 }

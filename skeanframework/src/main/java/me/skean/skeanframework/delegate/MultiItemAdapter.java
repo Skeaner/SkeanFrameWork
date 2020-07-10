@@ -11,12 +11,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
 import androidx.annotation.LayoutRes;
-import me.skean.skeanframework.event.ForceUpdateExitEvent;
 
 public abstract class MultiItemAdapter<T extends MultiItemEntity, K extends BaseViewHolder> extends BaseQuickAdapter<T, K> {
 
@@ -29,7 +27,6 @@ public abstract class MultiItemAdapter<T extends MultiItemEntity, K extends Base
 
     public MultiItemAdapter(List<T> data) {
         super(data);
-        EventBus.getDefault().post(new ForceUpdateExitEvent());
     }
 
     @Override

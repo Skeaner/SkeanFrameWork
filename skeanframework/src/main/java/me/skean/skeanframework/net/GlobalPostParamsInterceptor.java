@@ -12,8 +12,6 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static me.skean.skeanframework.net.GlobalPostParamsInterceptor.PostType.FORM;
-import static me.skean.skeanframework.net.GlobalPostParamsInterceptor.PostType.MULTI_PART;
 
 /**
  * 全局post参数添加的拦截器
@@ -21,37 +19,19 @@ import static me.skean.skeanframework.net.GlobalPostParamsInterceptor.PostType.M
 public class GlobalPostParamsInterceptor implements Interceptor {
 
     private Map<String, String> params;
-    @PostType
-    private int type;
 
-    @IntDef(value = {MULTI_PART, FORM})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface PostType {
-        int MULTI_PART = 1;
-        int FORM = 2;
-    }
-
-    public GlobalPostParamsInterceptor(Map<String, String> params, @PostType int type) {
+    public GlobalPostParamsInterceptor(Map<String, String> params) {
         this.params = params;
-        this.type = type;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        if (type == FORM) {
-            FormBody.Builder builder = new FormBody.Builder();
-            for (String key : params.keySet()) {
-                builder.add(key, params.get(key));
-            }
-            request = request.newBuilder().post(builder.build()).build();
-        } else if (type == MULTI_PART) {
-            MultipartBody.Builder builder = new MultipartBody.Builder();
-            for (String key : params.keySet()) {
-                builder.addFormDataPart(key, params.get(key));
-            }
-            request = request.newBuilder().post(builder.build()).build();
+        FormBody.Builder builder = new FormBody.Builder();
+        for (String key : params.keySet()) {
+            builder.add(key, params.get(key));
         }
+        request = request.newBuilder().post(builder.build()).build();
         return chain.proceed(request);
     }
 }

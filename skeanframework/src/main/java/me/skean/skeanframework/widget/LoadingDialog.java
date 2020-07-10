@@ -42,7 +42,7 @@ public class LoadingDialog extends Dialog {
         params.dimAmount = 0.0f;
         window.setAttributes(params);
         window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        setContentView(R.layout.dialog_loading);
+        setContentView(R.layout.sfw_dialog_loading);
         setCancelable(cancelable);
         text = (TextView) findViewById(R.id.txvLoadingText);
         progressBar = (ProgressBar) findViewById(R.id.pgbProgress);

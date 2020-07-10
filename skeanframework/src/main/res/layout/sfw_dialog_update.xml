@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,6 +24,12 @@
                 android:gravity="center_vertical"
                 android:padding="16dp"
                 android:text="@string/changeLog" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:text="---------------------------------------------------------------------------------------------------------------------------------"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/txvForce"

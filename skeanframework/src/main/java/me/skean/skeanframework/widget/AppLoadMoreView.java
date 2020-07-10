@@ -7,7 +7,7 @@ import me.skean.skeanframework.R;
 public class AppLoadMoreView extends LoadMoreView{
     @Override
     public int getLayoutId() {
-        return R.layout.layout_load_more_group;
+        return R.layout.sfw_layout_load_more_group;
     }
 
     @Override

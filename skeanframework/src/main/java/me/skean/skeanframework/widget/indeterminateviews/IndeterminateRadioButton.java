@@ -59,7 +59,7 @@ public class IndeterminateRadioButton extends AppCompatRadioButton implements In
         try {
             final Drawable d = a.getDrawable(R.styleable.IndeterminateRadioButton_icon);
             if (d != null) {
-                int defaultIcon = R.drawable.ic_indeterminate_radiobutton_selector;
+                int defaultIcon = R.drawable.sfw_ic_indeterminate_radiobutton_selector;
                 int iconId = a.getResourceId(R.styleable.IndeterminateRadioButton_icon, defaultIcon);
                 if (iconId == defaultIcon) {
                     if (Build.VERSION.SDK_INT >= 23) {

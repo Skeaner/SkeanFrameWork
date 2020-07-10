@@ -57,7 +57,7 @@ public class IndeterminateCheckBox extends AppCompatCheckBox implements Indeterm
         try {
             final Drawable d = a.getDrawable(R.styleable.IndeterminateCheckBox_icon);
             if (d != null) {
-                int defaultIcon = R.drawable.ic_indeterminate_checkbox_selector;
+                int defaultIcon = R.drawable.sfw_ic_indeterminate_checkbox_selector;
                 int iconId = a.getResourceId(R.styleable.IndeterminateCheckBox_icon, defaultIcon);
                 if (iconId == defaultIcon) {
                     if (Build.VERSION.SDK_INT >= 23) {

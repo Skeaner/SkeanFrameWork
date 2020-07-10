@@ -11,9 +11,9 @@ import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
- * 一些普通的下载服务
+ * 一些文件IO服务
  */
-public interface CommonService {
+public interface FileIOService {
 
     /**
      * 没有用处, 会被全url替代

@@ -74,7 +74,7 @@ public class LoadingDialog2 extends AlertDialog {
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         }
         mHandler = new Handler(callback);
-        setContentView(R.layout.dialog_loading);
+        setContentView(R.layout.sfw_dialog_loading);
         pgbProgress = (ProgressBar) findViewById(R.id.pgbProgress);
         imvFinish = (ImageView) findViewById(R.id.imvFinish);
         txvLoadingText = (TextView) findViewById(R.id.txvLoadingText);
@@ -89,7 +89,6 @@ public class LoadingDialog2 extends AlertDialog {
 
     @Override
     protected void onStop() {
-        LogUtils.i(TAG, "onStop");
         super.onStop();
         mHasStarted = false;
         mHandler.removeCallbacksAndMessages(null);

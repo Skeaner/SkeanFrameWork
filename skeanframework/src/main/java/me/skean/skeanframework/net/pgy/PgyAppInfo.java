@@ -1,4 +1,4 @@
-package me.skean.skeanframework.net;
+package me.skean.skeanframework.net.pgy;
 
 import java.util.List;
 

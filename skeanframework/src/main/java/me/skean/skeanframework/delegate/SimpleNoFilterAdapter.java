@@ -19,7 +19,7 @@ public class SimpleNoFilterAdapter extends ArrayAdapter<Object> {
     public View createView(Object item, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = getInflater().inflate(R.layout.listitem_no_filter, parent, false);
+            convertView = getInflater().inflate(R.layout.sfw_listitem_no_filter, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else holder = (ViewHolder) convertView.getTag();

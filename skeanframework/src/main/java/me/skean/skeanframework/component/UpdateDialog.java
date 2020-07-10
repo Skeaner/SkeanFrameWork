@@ -1,8 +1,9 @@
 package me.skean.skeanframework.component;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.ContextThemeWrapper;
@@ -12,20 +13,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.IOException;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import me.skean.skeanframework.BuildConfig;
 import me.skean.skeanframework.R;
-import me.skean.skeanframework.event.ForceUpdateExitEvent;
-import me.skean.skeanframework.net.CommonService;
+import me.skean.skeanframework.net.FileIOService;
 import me.skean.skeanframework.net.ProgressInterceptor;
 import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
@@ -70,7 +69,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_update);
+        setContentView(R.layout.sfw_dialog_update);
         getExtra();
         setFinishOnTouchOutside(false);
         setTitle(getString(R.string.findNewVersion, version));
@@ -133,18 +132,18 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
         }
         else if (v == btnNegative) {
             if (force) {
-                EventBus.getDefault().post(new ForceUpdateExitEvent());
+                finishAffinity();
+//                EventBus.getDefault().post(new ForceUpdateExitEvent());
             }
             else finish();
         }
         else if (v == btnCenter) {
-            LogUtils.i("isExecuted", downloadCall.isExecuted());
-            LogUtils.i("isCanceled", downloadCall.isCanceled());
             if (downloadCall != null && downloadCall.isExecuted() && !downloadCall.isCanceled()) {
                 downloadCall.cancel();
             }
             if (force) {
-                EventBus.getDefault().post(new ForceUpdateExitEvent());
+                finishAffinity();
+//                EventBus.getDefault().post(new ForceUpdateExitEvent());
             }
             else finish();
         }
@@ -167,17 +166,12 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(UpdateDialog.this,
                                                                                           R.style.Theme_AppCompat_Light_Dialog_Alert));
-            builder.setTitle(R.string.tips).setMessage("下载出错, 请尝试重新下载").setPositiveButton("重试", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startDownload();
-                }
-            }).setNegativeButton("暂不", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    btnCenter.performClick();
-                }
-            }).setCancelable(false).show();
+            builder.setTitle(R.string.tips)
+                   .setMessage("下载出错, 请尝试重新下载")
+                   .setPositiveButton("重试", (dialog, which) -> startDownload())
+                   .setNegativeButton("暂不", (dialog, which) -> btnCenter.performClick())
+                   .setCancelable(false)
+                   .show();
         }
     };
 
@@ -199,19 +193,9 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             return null;
         }
         File apkFile = new File(getExternalCacheDir(), "update.apk");
-        boolean created = true;
-        if (!apkFile.exists()) {
-            try {
-                created = apkFile.createNewFile();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-                created = false;
-            }
-        }
-        if (!created) {
+        if (!FileUtils.createOrExistsFile(apkFile)) {
             Toast.makeText(this, R.string.createFileFail, Toast.LENGTH_SHORT).show();
-            apkFile = null;
+            return null;
         }
         return apkFile;
     }
@@ -227,19 +211,24 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        downloadCall = NetworkUtil.progressRetrofit(CommonService.BASE_URL, null, progressResponse)
-                                  .create(CommonService.class)
+        downloadCall = NetworkUtil.progressRetrofit(FileIOService.BASE_URL, null, progressResponse)
+                                  .create(FileIOService.class)
                                   .downLoad(url);
         downloadCall.enqueue(downloadResponse);
     }
 
     private void installApp() {
-        Intent intent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                      .setDataAndType(FileProvider.getUriForFile(this,
-                                                                                                 BuildConfig.APPLICATION_ID + ".fileprovider",
-                                                                                                 tempFile),
-                                                                      "application/vnd.android.package-archive");
-        startActivityForResult(intent, REQUEST_INSTALL);
+        Intent installIntent = new Intent(Intent.ACTION_VIEW);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", tempFile);
+            installIntent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        }
+        else {
+            installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                         .setDataAndType(Uri.fromFile(tempFile), "application/vnd.android.package-archive");
+        }
+        startActivityForResult(installIntent, REQUEST_INSTALL);
     }
 
 }

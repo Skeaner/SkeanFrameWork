@@ -62,6 +62,7 @@ android {
                 outputFileName = "${shortAppId}-${variant.versionName}${versionTag}(b${variant.versionCode})-${dateStr}.apk"
             }
         }
+        manifestPlaceholders = [rawApplicationId     : defaultConfig.applicationId]
     }
     buildTypes {
         //todo 通用的配置
@@ -73,12 +74,12 @@ android {
             shrinkResources true
             signingConfig signingConfigs.config
             buildConfigField "String", "APP_TAG", "${appTag}"
-            buildConfigField "boolean", "USE_EXTERNAL_DB", "${useExternalDatabase}"
+            buildConfigField "boolean", "EXTERNAL_DB", "${useExternalDatabase}"
         }
         debug {
             signingConfig signingConfigs.config
             buildConfigField "String", "APP_TAG", "${appTag}"
-            buildConfigField "boolean", "USE_EXTERNAL_DB", "${useExternalDatabase}"
+            buildConfigField "boolean", "EXTERNAL_DB", "${useExternalDatabase}"
         }
     }
 
@@ -88,26 +89,29 @@ android {
         // 发布环境
         production {
             dimension "default"
+            resValue "string", "app_name", 'SFW'
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
-            resValue "string", "app_name", 'SFW'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
+            buildConfigField "boolean", "IS_INTRANET", 'true'
         }
         // 测试环境
         beta {
             dimension "default"
-            applicationId "${defaultConfig.applicationId}.beta" // 测试版
+            applicationId "${defaultConfig.applicationId}.beta"
+            resValue "string", "app_name", 'SFW-beta'
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
-            resValue "string", "app_name", 'SFW-beta'
+            buildConfigField "boolean", "IS_INTRANET", 'false'
         }
         // 开发
         develop {
             dimension "default"
-            applicationId "${defaultConfig.applicationId}.develop" // 开发版
+            applicationId "${defaultConfig.applicationId}.dev"
+            resValue "string", "app_name", 'SFW-dev'
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'false'
-            resValue "string", "app_name", 'SFW-dev'
+            buildConfigField "boolean", "IS_INTRANET", 'false'
         }
     }
 

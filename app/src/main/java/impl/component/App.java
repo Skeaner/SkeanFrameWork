@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.Log;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -12,7 +13,10 @@ import com.tencent.bugly.Bugly;
 
 import org.greenrobot.greendao.database.Database;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import androidx.multidex.MultiDexApplication;
@@ -21,6 +25,8 @@ import impl.db.entity.DaoSession;
 import me.skean.skeanframework.component.SkeanFrameWork;
 import me.skean.skeanframework.db.Migrations;
 import me.skean.skeanframework.utils.AppStatusTracker;
+import me.skean.skeanframework.utils.LogFileWriter;
+import me.skean.skeanframework.utils.ReportUtils;
 import skean.yzsm.com.framework.BuildConfig;
 
 /**
@@ -41,8 +47,13 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         instance = this;
         //初始化框架
         SkeanFrameWork.init(this);
-        //Bugly初始化
-        Bugly.init(getApplicationContext(), BuildConfig.BUGLY_APPID, BuildConfig.DEBUG);
+        //初始化上报的工具
+        if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
+            ReportUtils.getInstance().init(getContext());
+        }
+        else { //外网的使用BUGLY
+            Bugly.init(getApplicationContext(), BuildConfig.BUGLY_APPID, BuildConfig.DEBUG);
+        }
         //GreenDAO初始化
         DaoMaster.OpenHelper helper = new DaoMaster.OpenHelper(this, "db") {
             @Override
@@ -65,15 +76,18 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         //AndroidUtils初始化
         Utils.init(this);
         LogUtils.getConfig()
-                .setLogSwitch(BuildConfig.DEBUG)
+//                .setLogSwitch(BuildConfig.DEBUG)
                 .setGlobalTag(TAG)
                 .setLogHeadSwitch(true)
-                .setLog2FileSwitch(false)
+                .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
+                .setFilePrefix("log")
+                .setFileWriter(new LogFileWriter())
                 .setSingleTagSwitch(true);
         //AppStatusTracker初始化
         AppStatusTracker.init(this);
         AppStatusTracker.getInstance().setStatusCallback(this);
     }
+
 
     public static App getInstance() {
         return instance;
@@ -108,7 +122,7 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         return (Temp) tempObject;
     }
 
-    public void releaseTempObject1() {
+    public void releaseTempObject() {
         this.tempObject = null;
     }
 
@@ -135,7 +149,7 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
 
     @Override
     public File getDatabasePath(String name) {
-        if (BuildConfig.USE_EXTERNAL_DB) {
+        if (BuildConfig.EXTERNAL_DB) {
             return new File(getAppExternalStorageDirectory(), name);
         }
         return super.getDatabasePath(name);
@@ -143,11 +157,11 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
 
     @Override
     public void onToForeground() {
-        LogUtils.i(TAG, "恢复到前台了");
+        LogUtils.iTag(TAG, "恢复到前台了");
     }
 
     @Override
     public void onToBackground() {
-        LogUtils.i(TAG, "进入了后台");
+        LogUtils.iTag(TAG, "进入了后台");
     }
 }

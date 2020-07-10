@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EActivity
@@ -14,6 +15,7 @@ import org.androidannotations.annotations.OnActivityResult
 import impl.component.App
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.component.UpdateDialog
+import me.skean.skeanframework.utils.ContentUtil
 import me.skean.skeanframework.utils.ImageUtil
 import skean.yzsm.com.framework.R
 import java.io.File
@@ -54,13 +56,16 @@ class TestActivityKT : BaseActivity() {
 
     @Click
     fun txvSelectClicked() {
+        LogUtils.i("测试Log到文件:" + ContentUtil.dateTime(System.currentTimeMillis()));
 //        val testDialog = TestDialog()
 //        testDialog.setCustomAnimation(R.style.WindowBottomInOutStyle)
 //        testDialog.isCancelable = false
 //        testDialog.show(supportFragmentManager)
-        UpdateDialog.show(this, "1", "测速更新", "https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" +
-                ".apk?auth_key=1594090321-5be73409e80de07d08483c42d6ffbb9d-0-ef518fef0f677db2e2f1bc6f8a375fb1&response-content" +
-                "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk", true)
+        UpdateDialog.show(this,
+                          "1",
+                          "测速更新",
+                          "https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" + ".apk?auth_key=1594370627-2bf596890f980461d7fb1822f0af1060-0-d42c4680a95dfd25d690876eaee0920f&response-content" + "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk",
+                          true)
     }
 
     fun getPathFromURI(contentUri: Uri): String {
@@ -75,8 +80,7 @@ class TestActivityKT : BaseActivity() {
         // where id is equal to
         val sel = MediaStore.Images.Media._ID + "=?"
 
-        val cursor = context.contentResolver
-                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null)
+        val cursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, column, sel, arrayOf(id), null)
 
         val columnIndex = cursor!!.getColumnIndex(column[0])
 

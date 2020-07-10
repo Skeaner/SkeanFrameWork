@@ -17,9 +17,6 @@ import android.widget.FrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -28,7 +25,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import me.skean.skeanframework.R;
-import me.skean.skeanframework.event.ForceUpdateExitEvent;
 import me.skean.skeanframework.widget.LoadingDialog;
 
 /**
@@ -63,7 +59,6 @@ public class BaseActivity extends RxAppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
         if (loadingDialog != null) {
             loadingDialog.dismiss();
@@ -165,7 +160,6 @@ public class BaseActivity extends RxAppCompatActivity {
     }
 
     protected void onViewCreated() {
-        EventBus.getDefault().register(this);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -285,14 +279,6 @@ public class BaseActivity extends RxAppCompatActivity {
         snackbar.show();
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 强制更新相关
-    ///////////////////////////////////////////////////////////////////////////
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void get(ForceUpdateExitEvent event){
-        finish();
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 便利方法

@@ -1,4 +1,4 @@
-package me.skean.skeanframework.net;
+package me.skean.skeanframework.net.pgy;
 
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
