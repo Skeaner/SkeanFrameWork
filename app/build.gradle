@@ -92,7 +92,6 @@ android {
             resValue "string", "app_name", 'SFW'
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
-            buildConfigField "boolean", "LOG_TO_FILE", 'true'
             buildConfigField "boolean", "IS_INTRANET", 'true'
         }
         // 测试环境
@@ -125,6 +124,11 @@ android {
             ]
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -148,7 +152,7 @@ repositories {
 
 
 dependencies {
-    implementation project(path: ':skeanframework')
+    implementation 'me.skean:skeanframework:1.0-alpha3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"

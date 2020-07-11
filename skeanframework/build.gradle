@@ -3,18 +3,27 @@ apply plugin: 'kotlin-android'
 apply plugin: "kotlin-allopen"
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-kapt"
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.novoda.bintray-release'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.9.2'
+    }
+}
+
 
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
-        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
-        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
-        versionName project.VERSION_NAME
-        versionCode Integer.parseInt(project.VERSION_CODE)
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionName '1.0'
+        versionCode 1
     }
 
     compileOptions {
@@ -115,7 +124,7 @@ dependencies {
     //图片显示subsamplingImageView
     api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     //图片选择器matisse
-    api('com.zhihu.android:matisse:0.5.2-beta4') {
+    api('me.skean:matisse:0.5.2-beta4-extend-1.1') {
         exclude module: "library"
     }
     //ViewPager指示器viewpagerindicator
@@ -142,40 +151,16 @@ dependencies {
     //kotpref
     api 'com.chibatching.kotpref:kotpref:2.11.0'
     api 'com.chibatching.kotpref:preference-screen-dsl:2.11.0'
-
 }
 
-
-apply from: './gradle-bintray-push.gradle'
-
-//下面是几个打包的操作, 照抄即可
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    options {
-        encoding 'utf-8'
-        charSet 'utf-8'
-        links 'http://docs.oracle.com/javase/7/docs/api/'
-        linksOffline "https://developer.android.com/reference", "${android.sdkDirectory}/docs/reference"
-    }
-    exclude '**/BuildConfig.java'
-    exclude '**/R.java'
-    options.encoding = 'utf-8'
-    failOnError false
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives javadocJar
-    archives sourcesJar
+//todo 修改发布的信息
+//上传的指令 gradlew clean build bintrayUpload -PbintrayUser=用户名 -PbintrayKey=密匙 -PdryRun=false
+publish {
+    userOrg = 'skean'                 //bintray注册的用户名
+    groupId = 'me.skean'                //compile引用时的第1部分groupId
+    artifactId = 'skeanframework'        //compile引用时的第2部分项目名
+    publishVersion = '1.0-alpha3'        //compile引用时的第3部分版本号
+    desc = 'Skean的开发框架'
+    website = 'https://gitee.com/skean/SkeanFrameWork'
+    repository="${website}.git"
 }

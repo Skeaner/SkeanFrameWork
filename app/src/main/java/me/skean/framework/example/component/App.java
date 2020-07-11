@@ -16,8 +16,9 @@ import java.io.File;
 import java.util.List;
 
 import androidx.multidex.MultiDexApplication;
-import example.db.entity.DaoMaster;
-import example.db.entity.DaoSession;
+
+import me.skean.framework.example.db.entity.DaoMaster;
+import me.skean.framework.example.db.entity.DaoSession;
 import me.skean.skeanframework.component.SkeanFrameWork;
 import me.skean.skeanframework.db.Migrations;
 import me.skean.skeanframework.utils.AppStatusTracker;
