@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.view.Gravity
+import android.view.Window
+import android.view.WindowManager
 import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.SizeUtils
 import com.blankj.utilcode.util.ToastUtils
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EActivity
@@ -24,7 +28,7 @@ import java.io.File
  * Created by Skean on 19/10/9.
  */
 @EActivity(R.layout.activity_main)
-class TestActivityKT : BaseActivity() {
+class TestActivity : BaseActivity() {
     val REQUEST_GET_SINGLE_FILE = 1
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -56,16 +60,18 @@ class TestActivityKT : BaseActivity() {
 
     @Click
     fun txvSelectClicked() {
-        LogUtils.i("测试Log到文件:" + ContentUtil.dateTime(System.currentTimeMillis()));
-//        val testDialog = TestDialog()
-//        testDialog.setCustomAnimation(R.style.WindowBottomInOutStyle)
-//        testDialog.isCancelable = false
-//        testDialog.show(supportFragmentManager)
-        UpdateDialog.show(this,
-                          "1",
-                          "测速更新",
-                          "https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" + ".apk?auth_key=1594370627-2bf596890f980461d7fb1822f0af1060-0-d42c4680a95dfd25d690876eaee0920f&response-content" + "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk",
-                          true)
+//        LogUtils.i("测试Log到文件:" + ContentUtil.dateTime(System.currentTimeMillis()))
+        TestDialog().setGravity(Gravity.BOTTOM)
+                .setLayout( WindowManager.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(320f))
+                .setDimAmount(0.4f)
+                .apply { this.isCancelable = true }
+                .apply { this.setCustomAnimation(R.style.WindowBottomInOutStyle) }
+                .show(supportFragmentManager)
+//        UpdateDialog.show(this,
+//                          "1",
+//                          "测速更新",
+//                          "https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" + ".apk?auth_key=1594370627-2bf596890f980461d7fb1822f0af1060-0-d42c4680a95dfd25d690876eaee0920f&response-content" + "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk",
+//                          true)
     }
 
     fun getPathFromURI(contentUri: Uri): String {

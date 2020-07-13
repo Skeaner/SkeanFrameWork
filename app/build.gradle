@@ -152,7 +152,8 @@ repositories {
 
 
 dependencies {
-    implementation 'me.skean:skeanframework:1.0-alpha3'
+//    implementation 'me.skean:skeanframework:1.0-alpha3'
+    implementation project(path: ':skeanframework')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     kapt "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"

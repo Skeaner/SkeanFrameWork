@@ -9,3 +9,4 @@
 *.apk
 /freeline
 freeline*
+*.log

@@ -25,11 +25,8 @@
             android:value="b46c4981b8e07d4d613867e03c753f4b" />
 
         <!--主页-->
+
         <activity android:name=".ui.TestActivity_">
-
-        </activity>
-
-        <activity android:name=".ui.TestActivityKT_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

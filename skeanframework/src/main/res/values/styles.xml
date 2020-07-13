@@ -68,4 +68,20 @@
         <item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
     </style>
 
+    <style name="WindowTopInOutStyle">
+        <item name="android:windowEnterAnimation">@anim/slide_top_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_top_out</item>
+    </style>
+
+    <style name="WindowLeftInOutStyle">
+        <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_left_out</item>
+    </style>
+
+    <style name="WindowRightInOutStyle">
+        <item name="android:windowEnterAnimation">@anim/slide_right_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_right_out</item>
+    </style>
+
+
 </resources>
