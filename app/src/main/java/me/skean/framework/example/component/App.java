@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.Utils;
 import com.tencent.bugly.Bugly;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.greendao.database.Database;
 
 import java.io.File;
@@ -17,8 +18,11 @@ import java.util.List;
 
 import androidx.multidex.MultiDexApplication;
 
+import me.skean.framework.example.EventBusIndex;
 import me.skean.framework.example.db.entity.DaoMaster;
 import me.skean.framework.example.db.entity.DaoSession;
+import me.skean.framework.example.event.BackgroundEvent;
+import me.skean.framework.example.event.ForegroundEvent;
 import me.skean.skeanframework.component.SkeanFrameWork;
 import me.skean.skeanframework.db.Migrations;
 import me.skean.skeanframework.utils.AppStatusTracker;
@@ -41,12 +45,28 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
     public void onCreate() {
         super.onCreate();
         instance = this;
+        //AppStatusTracker初始化
+        AppStatusTracker.init(this);
+        AppStatusTracker.getInstance().setStatusCallback(this);
         //初始化框架
         SkeanFrameWork.init(this);
+        //AndroidUtils初始化
+        Utils.init(this);
+        LogUtils.getConfig()
+                //.setLogSwitch(BuildConfig.DEBUG)
+                .setGlobalTag(TAG)
+                .setLogHeadSwitch(true)
+                .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
+                .setFilePrefix("new")
+                .setFileWriter(new LogFileWriter(5 * 1024 * 1024)) //log文件最大5M
+                .setSingleTagSwitch(true);
+        //初始化EventBus
+        EventBus.builder().throwSubscriberException(true).addIndex(new EventBusIndex()).installDefaultEventBus();
         //初始化上报的工具
         if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
             ReportUtils.getInstance().init(getContext());
-        } else { //外网的使用BUGLY
+        }
+        else { //外网的使用BUGLY
             Bugly.init(getApplicationContext(), BuildConfig.BUGLY_APPID, BuildConfig.DEBUG);
         }
         //GreenDAO初始化
@@ -68,19 +88,6 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         };
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
-        //AndroidUtils初始化
-        Utils.init(this);
-        LogUtils.getConfig()
-//                .setLogSwitch(BuildConfig.DEBUG)
-                .setGlobalTag(TAG)
-                .setLogHeadSwitch(true)
-                .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
-                .setFilePrefix("new")
-                .setFileWriter(new LogFileWriter(5 * 1024 * 1024)) //log文件最大5M
-                .setSingleTagSwitch(true);
-        //AppStatusTracker初始化
-        AppStatusTracker.init(this);
-        AppStatusTracker.getInstance().setStatusCallback(this);
     }
 
     public static App getInstance() {
@@ -129,7 +136,10 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
     }
 
     @Override
-    public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory, DatabaseErrorHandler errorHandler) {
+    public SQLiteDatabase openOrCreateDatabase(String name,
+                                               int mode,
+                                               SQLiteDatabase.CursorFactory factory,
+                                               DatabaseErrorHandler errorHandler) {
         return super.openOrCreateDatabase(getDatabasePath(name).getAbsolutePath(), mode, factory, errorHandler);
     }
 
@@ -149,10 +159,12 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
     @Override
     public void onToForeground() {
         LogUtils.iTag(TAG, "恢复到前台了");
+        EventBus.getDefault().post(new ForegroundEvent());
     }
 
     @Override
     public void onToBackground() {
         LogUtils.iTag(TAG, "进入了后台");
+        EventBus.getDefault().post(new BackgroundEvent());
     }
 }

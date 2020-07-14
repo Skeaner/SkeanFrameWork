@@ -50,7 +50,7 @@ android {
 
         kapt {
             arguments {
-                arg('eventBusIndex', 'me.skean.skeanframework.EventBusIndex')
+                arg('eventBusIndex', "${android.defaultConfig.applicationId}.EventBusIndex")
                 arg('resourcePackageName', android.defaultConfig.applicationId)
             }
         }

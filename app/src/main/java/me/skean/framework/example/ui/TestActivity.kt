@@ -22,6 +22,9 @@ import me.skean.skeanframework.component.UpdateDialog
 import me.skean.skeanframework.utils.ContentUtil
 import me.skean.skeanframework.utils.ImageUtil
 import me.skean.framework.example.R
+import me.skean.framework.example.event.BackgroundEvent
+import me.skean.framework.example.event.ForegroundEvent
+import org.greenrobot.eventbus.Subscribe
 import java.io.File
 
 /**
@@ -95,5 +98,16 @@ class TestActivity : BaseActivity() {
         }
         cursor.close()
         return filePath
+    }
+
+    @Subscribe
+    fun getBackgroundEvent(event:BackgroundEvent){
+
+    }
+
+
+    @Subscribe
+    fun getForegroundEvent(event:ForegroundEvent){
+
     }
 }
