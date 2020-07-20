@@ -10,8 +10,11 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -41,6 +44,39 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class NetworkUtil {
     public static final int TIME_OUT = 10;
+
+
+    private static HashMap<Class, String> baseUrlMaps = new HashMap<>();
+
+    public static <T> T buildService(Class<T> clazz) {
+        String baseUrl = getBaseUrlForClass(clazz);
+        Retrofit retrofit = NetworkUtil.baseRetrofit(baseUrl);
+        return retrofit.create(clazz);
+    }
+
+    public static <T> T buildService(Class<T> clazz, Interceptor... interceptors) {
+        String baseUrl = getBaseUrlForClass(clazz);
+        Retrofit retrofit = NetworkUtil.baseRetrofit(baseUrl, interceptors);
+        return retrofit.create(clazz);
+    }
+
+    private static String getBaseUrlForClass(Class clazz) {
+        if (baseUrlMaps.containsKey(clazz)) {
+            return baseUrlMaps.get(clazz);
+        } else {
+            String url = null;
+            try {
+                url = (String) FieldUtils.readStaticField(clazz, "BASE_URL");
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if (url == null) {
+                throw new RuntimeException("请给Service指定一个publish static String BASE_URL 的属性!");
+            }
+            baseUrlMaps.put(clazz, url);
+            return url;
+        }
+    }
 
     /**
      * 生成一个不安全信任全部https证书的okhttpBuilder

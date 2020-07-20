@@ -333,11 +333,11 @@ public class BaseActivity extends RxAppCompatActivity {
     // RX的便捷方法
     ///////////////////////////////////////////////////////////////////////////
 
-    private Scheduler io() {
+    protected Scheduler io() {
         return Schedulers.io();
     }
 
-    private Scheduler mainThread() {
+    protected Scheduler mainThread() {
         return AndroidSchedulers.mainThread();
     }
 

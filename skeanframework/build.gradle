@@ -79,6 +79,10 @@ dependencies {
     api 'androidx.multidex:multidex:2.0.1'
     api 'androidx.recyclerview:recyclerview:1.1.0'
     api 'com.google.android.material:material:1.1.0'
+    api "androidx.navigation:navigation-fragment:2.3.0"
+    api "androidx.navigation:navigation-ui:2.3.0"
+    api 'androidx.navigation:navigation-fragment-ktx:2.3.0'
+    api 'androidx.navigation:navigation-ui-ktx:2.3.0'
     //retrofit2
     api 'com.squareup.retrofit2:retrofit:2.6.2'
     api 'com.squareup.retrofit2:converter-jackson:2.6.2'
@@ -112,6 +116,7 @@ dependencies {
     api 'commons-codec:commons-codec:1.11'
     api 'commons-net:commons-net:3.5'
     api 'org.apache.commons:commons-collections4:4.2'
+    api 'org.apache.commons:commons-lang3:3.9'
     //软引用的handler
     api 'com.badoo.mobile:android-weak-handler:1.1'
     //图片加载Glide
@@ -159,7 +164,7 @@ publish {
     userOrg = 'skean'                 //bintray注册的用户名
     groupId = 'me.skean'                //compile引用时的第1部分groupId
     artifactId = 'skeanframework'        //compile引用时的第2部分项目名
-    publishVersion = '1.0-alpha4'        //compile引用时的第3部分版本号
+    publishVersion = '1.0-alpha6'        //compile引用时的第3部分版本号
     desc = 'Skean的开发框架'
     website = 'https://gitee.com/skean/SkeanFrameWork'
     repository="${website}.git"

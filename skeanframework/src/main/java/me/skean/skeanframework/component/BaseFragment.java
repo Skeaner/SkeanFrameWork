@@ -182,11 +182,11 @@ public abstract class BaseFragment extends RxFragment {
     // RX的便利方法
     ///////////////////////////////////////////////////////////////////////////
 
-    private Scheduler io() {
+    protected Scheduler io() {
         return Schedulers.io();
     }
 
-    private Scheduler mainThread() {
+    protected Scheduler mainThread() {
         return AndroidSchedulers.mainThread();
     }
 
