@@ -36,7 +36,7 @@
 #
 #############################################
 # todo 这里指定需要混淆的包
--keep class !skean.me.base.**,!com.blankj.**  {*;}
+-keep class !me.skean.framework.example.**,!com.blankj.**  {*;}
 -dontwarn **
 
 #############################################
@@ -140,9 +140,9 @@
 #-------------------------------------------项目定义区-------------------------------------------------
 # todo 添加一些类不进行混淆
 #bean
--keep class app.db.entity.** {*;}
+-keep class me.skean.framework.example.db.entity.** {*;}
 #eventbus传递的类
-#-keep class com.juiniot.app.ev.** {*;}
+-keep class me.skean.framework.example.event.** {*;}
 #zxing相关，目前没动过
 #-keep class com.glela.*.zxingjava.** {*;}
 #反射相关
