@@ -1,6 +1,5 @@
 package me.skean.skeanframework.ktext
 
-import me.skean.skeanframework.net.BaseNetService
 import me.skean.skeanframework.utils.NetworkUtil
 import okhttp3.Interceptor
 
@@ -13,7 +12,7 @@ object NetworkUtil {
         return NetworkUtil.buildService<T>(T::class.java)
     }
 
-    inline fun <reified T : BaseNetService> buildService(vararg interceptors: Interceptor): T {
+    inline fun <reified T : Any> buildService(vararg interceptors: Interceptor): T {
         return NetworkUtil.buildService<T>(T::class.java, *interceptors)
     }
 }
