@@ -27,8 +27,10 @@ import me.skean.skeanframework.component.SkeanFrameWork;
 import me.skean.skeanframework.db.Migrations;
 import me.skean.skeanframework.utils.AppStatusTracker;
 import me.skean.skeanframework.utils.LogFileWriter;
+import me.skean.skeanframework.utils.NetworkUtil;
 import me.skean.skeanframework.utils.ReportUtils;
 import me.skean.framework.example.BuildConfig;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * App的Application
@@ -50,6 +52,9 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         AppStatusTracker.getInstance().setStatusCallback(this);
         //初始化框架
         SkeanFrameWork.init(this);
+        if (!BuildConfig.FLAVOR.equals("production")){
+            NetworkUtil.setHttpLogLevel(HttpLoggingInterceptor.Level.BODY);
+        }
         //AndroidUtils初始化
         Utils.init(this);
         LogUtils.getConfig()

@@ -22,7 +22,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import me.skean.skeanframework.BuildConfig;
 import me.skean.skeanframework.component.SkeanFrameWork;
 import me.skean.skeanframework.net.ProgressInterceptor;
 import okhttp3.CookieJar;
@@ -45,6 +44,11 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class NetworkUtil {
     public static final int TIME_OUT = 10;
 
+    private static HttpLoggingInterceptor.Level httpLogLevel = HttpLoggingInterceptor.Level.BASIC;
+
+    public static void setHttpLogLevel(HttpLoggingInterceptor.Level httpLogLevel) {
+        NetworkUtil.httpLogLevel = httpLogLevel;
+    }
 
     private static HashMap<Class, String> baseUrlMaps = new HashMap<>();
 
@@ -108,8 +112,7 @@ public class NetworkUtil {
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier((hostname, session) -> true);
             return builder;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -148,9 +151,9 @@ public class NetworkUtil {
      *
      * @return Interceptor
      */
-    public static Interceptor httpLoggingInterceptor(boolean forceBasic) {
+    public static Interceptor httpLoggingInterceptor(boolean basic) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(forceBasic || !BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(basic ? HttpLoggingInterceptor.Level.BASIC : httpLogLevel);
         return interceptor;
     }
 
@@ -213,7 +216,9 @@ public class NetworkUtil {
                                      .build();
     }
 
-    public static Retrofit progressRetrofit(String baseUrl, ProgressInterceptor.UploadListener uploadListener, ProgressInterceptor.DownloadListener downloadListener) {
+    public static Retrofit progressRetrofit(String baseUrl,
+                                            ProgressInterceptor.UploadListener uploadListener,
+                                            ProgressInterceptor.DownloadListener downloadListener) {
         return new Retrofit.Builder().baseUrl(baseUrl)
                                      .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
                                      .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
