@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
 
@@ -22,7 +21,6 @@ import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
-import me.skean.skeanframework.BuildConfig;
 import me.skean.skeanframework.R;
 import me.skean.skeanframework.net.FileIOService;
 import me.skean.skeanframework.net.ProgressInterceptor;
@@ -211,7 +209,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        downloadCall = NetworkUtil.progressRetrofit(FileIOService.BASE_URL, null, progressResponse)
+        downloadCall = NetworkUtil.INSTANCE.progressRetrofit(FileIOService.BASE_URL, null, progressResponse)
                                   .create(FileIOService.class)
                                   .downLoad(url);
         downloadCall.enqueue(downloadResponse);

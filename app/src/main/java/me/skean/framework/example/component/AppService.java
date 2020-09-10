@@ -124,7 +124,7 @@ public final class AppService extends Service {
             Toast.makeText(this, R.string.createFileFail, Toast.LENGTH_SHORT).show();
             return;
         }
-        NetworkUtil.progressRetrofit(FileIOService.BASE_URL, null, (bytesRead, contentLength, percentage, done) -> {
+        NetworkUtil.INSTANCE.progressRetrofit(FileIOService.BASE_URL, null, (bytesRead, contentLength, percentage, done) -> {
             if (!done) {
                 nManager.notify(1,
                                 new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))

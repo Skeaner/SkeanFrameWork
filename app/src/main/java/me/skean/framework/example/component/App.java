@@ -52,9 +52,8 @@ public final class App extends MultiDexApplication implements AppStatusTracker.S
         AppStatusTracker.getInstance().setStatusCallback(this);
         //初始化框架
         SkeanFrameWork.init(this);
-        if (!BuildConfig.FLAVOR.equals("production")){
-            NetworkUtil.setHttpLogLevel(HttpLoggingInterceptor.Level.BODY);
-        }
+        NetworkUtil.INSTANCE.init(this,
+                                  BuildConfig.FLAVOR.equals("production") ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.BODY);
         //AndroidUtils初始化
         Utils.init(this);
         LogUtils.getConfig()
