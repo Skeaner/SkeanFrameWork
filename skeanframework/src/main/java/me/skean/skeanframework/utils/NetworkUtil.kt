@@ -14,14 +14,12 @@ import me.skean.skeanframework.net.ProgressInterceptor
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.logging.HttpLoggingInterceptor
+import org.apache.commons.lang3.reflect.FieldUtils
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
-import java.lang.invoke.MethodHandles
-import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
-import java.lang.reflect.Proxy
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.*
@@ -37,45 +35,50 @@ object NetworkUtil {
     private const val timeout = 10
     private var httpLogLevel: HttpLoggingInterceptor.Level? = null
     private var context: Context? = null
-    private val baseUrlMaps = HashMap<Class<*>, String?>()
 
     fun init(context: Context, httpLogLevel: HttpLoggingInterceptor.Level?) {
         NetworkUtil.httpLogLevel = httpLogLevel
         this.context = context
     }
 
-    inline fun <reified T> buildService(): T {
+    inline fun <reified T> createService(): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
         val retrofit = baseRetrofit(baseUrl)
         return retrofit.create(T::class.java)
     }
 
-    inline fun <reified T> buildService(vararg interceptors: Interceptor): T {
+    inline fun <reified T> createService(vararg interceptors: Interceptor): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
         val retrofit = baseRetrofit(baseUrl, *interceptors)
         return retrofit.create(T::class.java)
     }
 
     fun getBaseUrlForClass(clazz: Class<*>): String? {
-        if (!baseUrlMaps.containsKey(clazz)) {
-            var implClass: Class<*>? = null
-            var method: Method? = null
+        if (clazz.isAnnotationPresent(kotlin.Metadata::class.java)) { //kotlin的接口
             try {
-                implClass = Class.forName("${clazz.name}\$DefaultImpls")
+                val implClass = Class.forName("${clazz.name}\$DefaultImpls")
+                val method = implClass.getDeclaredMethod("getBaseUrl", clazz)
+                return method.invoke(null, null).toString()
             }
             catch (e: Exception) {
-                throw  java.lang.RuntimeException("请使用kotlin接口定义retrofit的接口, 并且定义一个 var baseUrl: String 的接口属性")
+                throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性!")
             }
-
-            try {
-                method = implClass.getDeclaredMethod("getBaseUrl", clazz)
-            }
-            catch (e: Exception) {
-                throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性")
-            }
-            baseUrlMaps[clazz] = method.invoke(null, null).toString()
         }
-        return baseUrlMaps[clazz]
+        else { //java的接口
+            var url: String? = null
+            try {
+                url = FieldUtils.readStaticField(clazz, "BASE_URL") as String
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
+            if (url == null) {
+                throw RuntimeException("请给接口指定一个public static String BASE_URL 的属性!")
+            }
+            else {
+                return url
+            }
+        }
     }
 
     /**

@@ -72,7 +72,7 @@ class TestActivity : BaseActivity() {
 
     @Click
     fun txvSelectClicked() {
-        NetworkUtil.buildService<PgyerService>()
+        NetworkUtil.createService<PgyerService>()
                 .getAppInfo("", "")
                 .subscribeOn(io())
                 .observeOn(mainThread())
