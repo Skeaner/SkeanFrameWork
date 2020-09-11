@@ -16,7 +16,6 @@ import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.qmuiteam.qmui.widget.QMUIProgressBar;
 
-
 import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
@@ -209,9 +208,9 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        downloadCall = NetworkUtil.INSTANCE.progressRetrofit(FileIOService.BASE_URL, null, progressResponse)
-                                  .create(FileIOService.class)
-                                  .downLoad(url);
+        downloadCall = NetworkUtil.INSTANCE.progressRetrofit(FileIOService.DefaultImpls.getBaseUrl(null), null, progressResponse)
+                                           .create(FileIOService.class)
+                                           .downLoad(url);
         downloadCall.enqueue(downloadResponse);
     }
 

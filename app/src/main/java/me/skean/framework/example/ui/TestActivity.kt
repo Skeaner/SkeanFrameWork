@@ -13,6 +13,7 @@ import android.view.WindowManager
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SizeUtils
 import com.blankj.utilcode.util.ToastUtils
+import io.reactivex.functions.Consumer
 import org.androidannotations.annotations.Click
 import org.androidannotations.annotations.EActivity
 import org.androidannotations.annotations.OnActivityResult
@@ -24,6 +25,8 @@ import me.skean.skeanframework.utils.ImageUtil
 import me.skean.framework.example.R
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
+import me.skean.skeanframework.net.pgy.PgyerService
+import me.skean.skeanframework.utils.NetworkUtil
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
 
@@ -48,28 +51,43 @@ class TestActivity : BaseActivity() {
                 val f = File(path)
                 selectedImageUri = Uri.fromFile(f)
                 val file = File(App.getAppPicturesDirectory(), "compress.jpg")
-                ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, object : ImageUtil.Compressor.FileCallBack {
-                    override fun onSuccess(file: File) {
-                        ToastUtils.showShort("成功")
-                    }
+                ImageUtil.Compressor.toActualSizeFile(getContext(),
+                                                      f,
+                                                      file,
+                                                      50,
+                                                      800,
+                                                      550,
+                                                      object : ImageUtil.Compressor.FileCallBack {
+                                                          override fun onSuccess(file: File) {
+                                                              ToastUtils.showShort("成功")
+                                                          }
 
-                    override fun onFail() {
-                        ToastUtils.showShort("失败")
-                    }
-                })
+                                                          override fun onFail() {
+                                                              ToastUtils.showShort("失败")
+                                                          }
+                                                      })
             }
         }
     }
 
     @Click
     fun txvSelectClicked() {
+        NetworkUtil.buildService<PgyerService>()
+                .getAppInfo("", "")
+                .subscribeOn(io())
+                .observeOn(mainThread())
+                .subscribe(Consumer {
+                    ToastUtils.showShort("成功")
+                }, Consumer {
+                    ToastUtils.showShort(it.localizedMessage)
+                })
 //        LogUtils.i("测试Log到文件:" + ContentUtil.dateTime(System.currentTimeMillis()))
-        TestDialog().setGravity(Gravity.BOTTOM)
-                .setLayout( WindowManager.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(320f))
-                .setDimAmount(0.4f)
-                .apply { this.isCancelable = true }
-                .apply { this.setCustomAnimation(R.style.WindowBottomInOutStyle) }
-                .show(supportFragmentManager)
+//        TestDialog().setGravity(Gravity.BOTTOM)
+//                .setLayout( WindowManager.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(320f))
+//                .setDimAmount(0.4f)
+//                .apply { this.isCancelable = true }
+//                .apply { this.setCustomAnimation(R.style.WindowBottomInOutStyle) }
+//                .show(supportFragmentManager)
 //        UpdateDialog.show(this,
 //                          "1",
 //                          "测速更新",
@@ -101,13 +119,12 @@ class TestActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun getBackgroundEvent(event:BackgroundEvent){
+    fun getBackgroundEvent(event: BackgroundEvent) {
 
     }
 
-
     @Subscribe
-    fun getForegroundEvent(event:ForegroundEvent){
+    fun getForegroundEvent(event: ForegroundEvent) {
 
     }
 }

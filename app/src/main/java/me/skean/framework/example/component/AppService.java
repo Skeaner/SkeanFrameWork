@@ -124,17 +124,23 @@ public final class AppService extends Service {
             Toast.makeText(this, R.string.createFileFail, Toast.LENGTH_SHORT).show();
             return;
         }
-        NetworkUtil.INSTANCE.progressRetrofit(FileIOService.BASE_URL, null, (bytesRead, contentLength, percentage, done) -> {
-            if (!done) {
-                nManager.notify(1,
-                                new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                 .setContentText(getString(R.string.downloadProgress, percentage))
-                                                                 .setSmallIcon(R.drawable.ic_launcher)
-                                                                 .setOngoing(true)
-                                                                 .setProgress(100, percentage, false)
-                                                                 .build());
-            }
-        }).create(FileIOService.class).downLoad(url).enqueue(new Callback<ResponseBody>() {
+        NetworkUtil.INSTANCE.progressRetrofit(FileIOService.DefaultImpls.getBaseUrl(null),
+                                              null,
+                                              (bytesRead, contentLength, percentage, done) -> {
+                                                  if (!done) {
+                                                      nManager.notify(1,
+                                                                      new Notification.Builder(context).setContentTitle(getString(
+                                                                              R.string.updatingApp))
+                                                                                                       .setContentText(getString(R.string.downloadProgress,
+                                                                                                                                 percentage))
+                                                                                                       .setSmallIcon(R.drawable.ic_launcher)
+                                                                                                       .setOngoing(true)
+                                                                                                       .setProgress(100,
+                                                                                                                    percentage,
+                                                                                                                    false)
+                                                                                                       .build());
+                                                  }
+                                              }).create(FileIOService.class).downLoad(url).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
@@ -149,7 +155,10 @@ public final class AppService extends Service {
                         installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                      .setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
                     }
-                    PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, installIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    PendingIntent pi = PendingIntent.getActivity(AppService.this,
+                                                                 0,
+                                                                 installIntent,
+                                                                 PendingIntent.FLAG_CANCEL_CURRENT);
                     nManager.notify(1,
                                     new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                      .setContentText(getString(R.string.downloadFinishClickInstall))

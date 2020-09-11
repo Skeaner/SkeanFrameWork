@@ -14,11 +14,14 @@ import me.skean.skeanframework.net.ProgressInterceptor
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.logging.HttpLoggingInterceptor
-import org.apache.commons.lang3.reflect.FieldUtils
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
+import java.lang.invoke.MethodHandles
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.*
@@ -54,23 +57,25 @@ object NetworkUtil {
     }
 
     fun getBaseUrlForClass(clazz: Class<*>): String? {
-        return if (baseUrlMaps.containsKey(clazz)) {
-            baseUrlMaps[clazz]
-        }
-        else {
-            var url: String? = null
+        if (!baseUrlMaps.containsKey(clazz)) {
+            var implClass: Class<*>? = null
+            var method: Method? = null
             try {
-                url = FieldUtils.readStaticField(clazz, "BASE_URL") as String
+                implClass = Class.forName("${clazz.name}\$DefaultImpls")
             }
-            catch (e: IllegalAccessException) {
-                e.printStackTrace()
+            catch (e: Exception) {
+                throw  java.lang.RuntimeException("请使用kotlin接口定义retrofit的接口, 并且定义一个 var baseUrl: String 的接口属性")
             }
-            if (url == null) {
-                throw RuntimeException("请给Service指定一个publish static String BASE_URL 的属性!")
+
+            try {
+                method = implClass.getDeclaredMethod("getBaseUrl", clazz)
             }
-            baseUrlMaps[clazz] = url
-            url
+            catch (e: Exception) {
+                throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性")
+            }
+            baseUrlMaps[clazz] = method.invoke(null, null).toString()
         }
+        return baseUrlMaps[clazz]
     }
 
     /**
@@ -261,6 +266,5 @@ object NetworkUtil {
         }
         return MultipartBody.Part.createFormData(name, filename, RequestBody.create(type?.toMediaTypeOrNull(), uploadFile))
     }
-
 
 }
