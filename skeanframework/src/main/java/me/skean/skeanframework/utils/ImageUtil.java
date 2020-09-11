@@ -396,7 +396,7 @@ public class ImageUtil {
                 data = new byte[is.available()];
                 is.read(data);
                 is.close();
-                return Base64.encodeToString(data, Base64.DEFAULT);
+                return Base64.encodeToString(data, Base64.NO_WRAP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -415,7 +415,7 @@ public class ImageUtil {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                 byte[] byteArray = bos.toByteArray();
-                return Base64.encodeToString(byteArray, Base64.DEFAULT);
+                return Base64.encodeToString(byteArray, Base64.NO_WRAP);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -439,7 +439,7 @@ public class ImageUtil {
                 data = new byte[is.available()];
                 is.read(data);
                 is.close();
-                result = Base64.encode(data, Base64.DEFAULT);
+                result = Base64.encode(data, Base64.NO_WRAP);
             } catch (IOException e) {
                 e.printStackTrace();
             }
