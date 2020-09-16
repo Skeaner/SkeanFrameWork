@@ -7,6 +7,7 @@ import com.blankj.utilcode.util.FileUtils.getFileExtension
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -15,16 +16,16 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.lang3.reflect.FieldUtils
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
-import java.lang.reflect.Method
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
+import kotlin.reflect.*
 
 //import retrofit2.converter.jackson.JacksonConverterFactory;
 /**
@@ -268,6 +269,39 @@ object NetworkUtil {
             type = "application/octet-stream"
         }
         return MultipartBody.Part.createFormData(name, filename, RequestBody.create(type?.toMediaTypeOrNull(), uploadFile))
+    }
+
+    inline fun <reified T> parseErrorBody(e: Throwable): T? {
+        try {
+            if (e is HttpException) {
+                val errorBody = e.response()?.errorBody()?.charStream()
+                return newObjectMapper().readValue(errorBody!!)
+            }
+            else {
+                return null
+            }
+        }
+        catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    inline fun <reified T> parseErrorBodyMsg(e: Throwable, prop: KMutableProperty1<T, String?>): String? {
+        try {
+            if (e is HttpException) {
+                val errorBody = e.response()?.errorBody()?.charStream()
+                val receiver = newObjectMapper().readValue<T>(errorBody!!)
+                return prop.get(receiver)
+            }
+            else {
+                return e.localizedMessage
+            }
+        }
+        catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return "未知错误"
     }
 
 }
