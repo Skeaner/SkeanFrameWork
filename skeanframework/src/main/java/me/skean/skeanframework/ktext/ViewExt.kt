@@ -2,12 +2,10 @@ package me.skean.skeanframework.ktext
 
 import android.annotation.SuppressLint
 import android.text.Editable
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Checkable
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.PopupMenu
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -126,7 +124,7 @@ fun TextView.setDrawableBottom(@DrawableRes drawableBottom: Int) {
 
 
 @SuppressLint("RestrictedApi")
-fun BottomNavigationView.disableShiftMode(){
+fun BottomNavigationView.disableShiftMode() {
     val menuView = this.getChildAt(0) as BottomNavigationMenuView
     try {
         val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
@@ -138,8 +136,16 @@ fun BottomNavigationView.disableShiftMode(){
             item.setShifting(false)
             item.setChecked(item.itemData.isChecked)
         }
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
     }
 }
 
+fun FrameLayout.setGravoty(gravity: Int) {
+    (this.layoutParams as FrameLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
+}
+
+
+fun LinearLayout.setGravoty(gravity: Int) {
+    (this.layoutParams as LinearLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
+
+}
