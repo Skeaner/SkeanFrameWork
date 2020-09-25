@@ -6,11 +6,14 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
 import kotlin.reflect.KMutableProperty
 
@@ -108,7 +111,6 @@ fun TextView.setDrawableTop(@DrawableRes drawableTop: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, drawableTop, 0, 0)
 }
 
-
 fun TextView.setDrawableLeft(@DrawableRes drawableLeft: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(drawableLeft, 0, 0, 0)
 }
@@ -119,7 +121,10 @@ fun TextView.setDrawableRight(@DrawableRes drawableRight: Int) {
 
 fun TextView.setDrawableBottom(@DrawableRes drawableBottom: Int) {
     this.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, drawableBottom)
+}
 
+fun TextView.setTextColorRes(@ColorRes colorRes: Int) {
+    this.setTextColor(ContextCompat.getColor(SkeanFrameWork.getContext(), colorRes))
 }
 
 
@@ -144,8 +149,6 @@ fun FrameLayout.setGravoty(gravity: Int) {
     (this.layoutParams as FrameLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
 }
 
-
 fun LinearLayout.setGravoty(gravity: Int) {
     (this.layoutParams as LinearLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
-
 }
