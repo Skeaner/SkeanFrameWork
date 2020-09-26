@@ -10,9 +10,12 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
 import kotlin.reflect.KMutableProperty
@@ -151,4 +154,42 @@ fun FrameLayout.setGravoty(gravity: Int) {
 
 fun LinearLayout.setGravoty(gravity: Int) {
     (this.layoutParams as LinearLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
+}
+
+inline fun TabLayout.addOnTabSelectedListener(crossinline onTabSelected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
+                                              crossinline onTabUnselected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
+                                              crossinline onTabReselected: (tab: TabLayout.Tab?) -> Unit = { _ -> }) {
+    this.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab?) {
+            onTabSelected.invoke(tab)
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab?) {
+            onTabUnselected.invoke(tab)
+        }
+
+        override fun onTabReselected(tab: TabLayout.Tab?) {
+            onTabReselected.invoke(tab)
+        }
+
+    })
+}
+
+inline fun ViewPager.addOnPageChangeListener(crossinline onPageScrolled: (position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit = { _, _, _ -> },
+                                             crossinline onPageSelected: (position: Int) -> Unit = { _ -> },
+                                             crossinline onPageScrollStateChanged: (state: Int) -> Unit = { _ -> }) {
+    this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            onPageScrolled.invoke(position, positionOffset, positionOffsetPixels)
+        }
+
+        override fun onPageSelected(position: Int) {
+            onPageSelected.invoke(position)
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            onPageScrollStateChanged.invoke(state)
+        }
+
+    })
 }
