@@ -18,8 +18,8 @@ import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 @RuntimePermissions
 public class UseCameraFragment extends BaseFragment {
 
-    public static final String P = Manifest.permission.CAMERA;
-    public static final int REQUEST_PERMISSION = 99;
+    private static final String P = Manifest.permission.CAMERA;
+    private static final int REQUEST_PERMISSION = 99;
 
     ///////////////////////////////////////////////////////////////////////////
     // 1

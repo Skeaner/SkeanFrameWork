@@ -35,11 +35,11 @@ import static android.app.Activity.RESULT_OK;
 @RuntimePermissions
 public class SelectPictureFragment extends BaseFragment {
 
-    public static final String P1 = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    public static final String P2 = Manifest.permission.READ_EXTERNAL_STORAGE;
-    public static final String P3 = Manifest.permission.CAMERA;
-    public static final int REQUEST_PERMISSION = 98;
-    public static final int REQUEST_CHOOSE_PICTURE = 99;
+    private static final String P1 = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    private static final String P2 = Manifest.permission.READ_EXTERNAL_STORAGE;
+    private static final String P3 = Manifest.permission.CAMERA;
+    private static final int REQUEST_PERMISSION = 98;
+    private static final int REQUEST_CHOOSE_PICTURE = 99;
 
     protected List<String> selectedPicturePaths;
     protected List<Uri> selectedPictureUris;

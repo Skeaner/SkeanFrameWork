@@ -13,12 +13,15 @@ import permissions.dispatcher.RuntimePermissions;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 
 /**
- * 使用相机的基础
+ * 使用OCR功能的基础Activity
  */
 @RuntimePermissions
-public class UseCameraActivity extends BaseActivity {
+public class UseOcrActivity extends BaseActivity {
 
-    private static final String P = Manifest.permission.CAMERA;
+    private static final String P1 = Manifest.permission.CAMERA;
+    private static final String P2 = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    private static final String P3 = Manifest.permission.READ_EXTERNAL_STORAGE;
+    private static final String P4 = Manifest.permission.READ_PHONE_STATE;
     private static final int REQUEST_PERMISSION = 99;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -28,14 +31,14 @@ public class UseCameraActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        UseCameraActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        UseOcrActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION) {
-            UseCameraActivityPermissionsDispatcher.startCameraWithPermissionCheck(this);
+             UseOcrActivityPermissionsDispatcher.onUseOcrWithPermissionCheck(this);
         }
     }
 
@@ -47,32 +50,32 @@ public class UseCameraActivity extends BaseActivity {
     // 3
     ///////////////////////////////////////////////////////////////////////////
 
-    protected final void startCameraWithPermissionCheck() {
-        UseCameraActivityPermissionsDispatcher.startCameraWithPermissionCheck(this);
+    protected final void userCameraAndExternalStorageWithPermissionCheck() {
+        UseOcrActivityPermissionsDispatcher.onUseOcrWithPermissionCheck(this);
     }
 
     protected final boolean hasCameraPermission() {
-        return PermissionUtils.hasSelfPermissions(this, P);
+        return PermissionUtils.hasSelfPermissions(this, P1, P2, P3,P4);
     }
 
-    @NeedsPermission({P})
-    public  void startCamera() {
+    @NeedsPermission({P1, P2, P3})
+    public void onUseOcr() {
     }
 
-    @OnPermissionDenied({P})
+    @OnPermissionDenied({P1, P2, P3})
     public final void permissionDenied() {
-        if (PermissionUtils.hasSelfPermissions(getContext(), P)) {
-            EasyPermissionDialog.build(this).permissions(P).typeTemporaryDeny(allow -> {
+        if (PermissionUtils.hasSelfPermissions(getContext(), P1, P2, P3,P4)) {
+            EasyPermissionDialog.build(this).permissions(P1, P2, P3,P4).typeTemporaryDeny(allow -> {
                 if (allow) {
-                    UseCameraActivityPermissionsDispatcher.startCameraWithPermissionCheck(this);
+                    UseOcrActivityPermissionsDispatcher.onUseOcrWithPermissionCheck(this);
                 }
             }).show();
         }
     }
 
-    @OnNeverAskAgain({P})
+    @OnNeverAskAgain({P1, P2, P3})
     public final void permissionNever() {
-        EasyPermissionDialog.build(this).permissions(P).typeNeverAsk(REQUEST_PERMISSION, null).show();
+        EasyPermissionDialog.build(this).permissions(P1, P2, P3,P4).typeNeverAsk(REQUEST_PERMISSION, null).show();
     }
 
 }
