@@ -38,7 +38,7 @@ public class UseOcrActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION) {
-             UseOcrActivityPermissionsDispatcher.onUseOcrWithPermissionCheck(this);
+            UseOcrActivityPermissionsDispatcher.onUseOcrWithPermissionCheck(this);
         }
     }
 
@@ -55,17 +55,17 @@ public class UseOcrActivity extends BaseActivity {
     }
 
     protected final boolean hasCameraPermission() {
-        return PermissionUtils.hasSelfPermissions(this, P1, P2, P3,P4);
+        return PermissionUtils.hasSelfPermissions(this, P1, P2, P3, P4);
     }
 
-    @NeedsPermission({P1, P2, P3})
+    @NeedsPermission({P1, P2, P3, P4})
     public void onUseOcr() {
     }
 
-    @OnPermissionDenied({P1, P2, P3})
+    @OnPermissionDenied({P1, P2, P3, P4})
     public final void permissionDenied() {
-        if (PermissionUtils.hasSelfPermissions(getContext(), P1, P2, P3,P4)) {
-            EasyPermissionDialog.build(this).permissions(P1, P2, P3,P4).typeTemporaryDeny(allow -> {
+        if (PermissionUtils.hasSelfPermissions(getContext(), P1, P2, P3, P4)) {
+            EasyPermissionDialog.build(this).permissions(P1, P2, P3, P4).typeTemporaryDeny(allow -> {
                 if (allow) {
                     UseOcrActivityPermissionsDispatcher.onUseOcrWithPermissionCheck(this);
                 }
@@ -73,9 +73,9 @@ public class UseOcrActivity extends BaseActivity {
         }
     }
 
-    @OnNeverAskAgain({P1, P2, P3})
+    @OnNeverAskAgain({P1, P2, P3, P4})
     public final void permissionNever() {
-        EasyPermissionDialog.build(this).permissions(P1, P2, P3,P4).typeNeverAsk(REQUEST_PERMISSION, null).show();
+        EasyPermissionDialog.build(this).permissions(P1, P2, P3, P4).typeNeverAsk(REQUEST_PERMISSION, null).show();
     }
 
 }
