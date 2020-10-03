@@ -98,9 +98,14 @@ dependencies {
     api 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.2.0'
     api 'com.jakewharton.rxbinding2:rxbinding-design:2.2.0'
     api 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.2.0'
-    api 'com.trello.rxlifecycle2:rxlifecycle:2.2.2'
-    api 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.2'
-    api 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.2'
+    api 'com.trello.rxlifecycle3:rxlifecycle:3.1.0'
+    api 'com.trello.rxlifecycle3:rxlifecycle-android:3.1.0'
+    api 'com.trello.rxlifecycle3:rxlifecycle-components:3.1.0'
+    api 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle:3.1.0'
+    api 'com.trello.rxlifecycle3:rxlifecycle-kotlin:3.1.0'
+    api 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:3.1.0'
+
+
     //高德地图
     api 'com.amap.api:map2d:5.2.0'
     api 'com.amap.api:location:3.5.0'
@@ -163,7 +168,7 @@ publish {
     userOrg = 'skean'                 //bintray注册的用户名
     groupId = 'me.skean'                //compile引用时的第1部分groupId
     artifactId = 'skeanframework'        //compile引用时的第2部分项目名
-    publishVersion = '1.0.5'        //compile引用时的第3部分版本号
+    publishVersion = '1.0.6'        //compile引用时的第3部分版本号
     desc = 'Skean的开发框架'
     website = 'https://gitee.com/skean/SkeanFrameWork'
     repository="${website}.git"

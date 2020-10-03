@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.trello.rxlifecycle2.RxLifecycle;
+import com.trello.rxlifecycle3.RxLifecycle;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;

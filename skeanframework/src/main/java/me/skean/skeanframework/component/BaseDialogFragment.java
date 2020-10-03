@@ -3,7 +3,7 @@ package me.skean.skeanframework.component;
 import android.app.Dialog;
 import android.content.DialogInterface;
 
-import com.trello.rxlifecycle2.components.support.RxDialogFragment;
+import com.trello.rxlifecycle3.components.support.RxDialogFragment;
 
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;

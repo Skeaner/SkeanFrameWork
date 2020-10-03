@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.trello.rxlifecycle2.components.support.RxFragment;
+import com.trello.rxlifecycle3.components.support.RxFragment;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;

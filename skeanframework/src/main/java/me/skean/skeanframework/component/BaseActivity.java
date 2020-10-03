@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
 
 import androidx.annotation.Nullable;
