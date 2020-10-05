@@ -1,7 +1,6 @@
 import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
-apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-allopen"
@@ -9,9 +8,6 @@ apply plugin: "kotlin-kapt"
 apply plugin: "androidx.navigation.safeargs"
 
 
-greendao {
-    schemaVersion 1
-}
 
 allOpen {
     annotation("org.androidannotations.api.KotlinOpen")
@@ -53,6 +49,7 @@ android {
             arguments {
                 arg('eventBusIndex', "${android.defaultConfig.applicationId}.EventBusIndex")
                 arg('resourcePackageName', android.defaultConfig.applicationId)
+                arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
         applicationVariants.all { variant ->
@@ -68,7 +65,7 @@ android {
     buildTypes {
         //todo 通用的配置
         def appTag = "\"" + "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1) + "\""
-        def useExternalDatabase = false
+        def useExternalDatabase = true
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -119,6 +116,7 @@ android {
     sourceSets {
         main {
             java.srcDirs += 'build/generated/source/greendao'
+            assets.srcDirs+="$projectDir/schemas"
             jniLibs.srcDirs = ['libs']
             res.srcDirs = [
                     'src/main/res/'
@@ -162,4 +160,5 @@ dependencies {
     kapt 'com.github.AleksanderMielczarek:AndroidAnnotationsPermissionsDispatcherPlugin:2.1.1'
     kapt 'org.greenrobot:eventbus-annotation-processor:3.1.1'
     kapt 'com.jakewharton:butterknife-compiler:10.2.0'
+    kapt "androidx.room:room-compiler:2.2.5"
 }

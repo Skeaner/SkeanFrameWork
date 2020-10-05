@@ -84,6 +84,10 @@ dependencies {
     api "androidx.navigation:navigation-ui:2.3.0"
     api 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     api 'androidx.navigation:navigation-ui-ktx:2.3.0'
+    api "androidx.room:room-runtime:2.2.5"
+    api "androidx.room:room-rxjava2:2.2.5"
+    api "androidx.room:room-ktx:2.2.5"
+    api "androidx.sqlite:sqlite:2.1.0"
     //retrofit2
     api 'com.squareup.retrofit2:retrofit:2.6.2'
     api 'com.squareup.retrofit2:converter-jackson:2.6.2'
@@ -104,15 +108,11 @@ dependencies {
     api 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle:3.1.0'
     api 'com.trello.rxlifecycle3:rxlifecycle-kotlin:3.1.0'
     api 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:3.1.0'
-
-
     //高德地图
     api 'com.amap.api:map2d:5.2.0'
     api 'com.amap.api:location:3.5.0'
-    //GreenDAO
-    api 'org.greenrobot:greendao:3.2.2' //
     // sql-cipher支持
-    api 'net.zetetic:android-database-sqlcipher:3.5.7@aar'
+    api 'net.zetetic:android-database-sqlcipher:4.4.0@aar'
     //json解析器
     api 'com.fasterxml.jackson.core:jackson-core:2.11.0'
     api 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
@@ -168,7 +168,7 @@ publish {
     userOrg = 'skean'                 //bintray注册的用户名
     groupId = 'me.skean'                //compile引用时的第1部分groupId
     artifactId = 'skeanframework'        //compile引用时的第2部分项目名
-    publishVersion = '1.0.6'        //compile引用时的第3部分版本号
+    publishVersion = '1.0.7'        //compile引用时的第3部分版本号
     desc = 'Skean的开发框架'
     website = 'https://gitee.com/skean/SkeanFrameWork'
     repository="${website}.git"
