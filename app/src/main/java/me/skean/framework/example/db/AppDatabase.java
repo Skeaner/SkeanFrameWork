@@ -13,6 +13,6 @@ import org.jetbrains.annotations.Nullable;
 @Database(entities = {Dummy.class, DummyChild.class}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
-    @Nullable
+
     public abstract DummyDao getDummyDao();
 }
