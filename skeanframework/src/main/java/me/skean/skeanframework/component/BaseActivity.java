@@ -40,6 +40,7 @@ public class BaseActivity extends RxAppCompatActivity {
     private Handler mainHandler;
 
     protected boolean useHomeAsBack = true;
+    protected boolean useHomeShowTitle = true;
     protected boolean isMenuCreated = false;
     protected boolean backControl = false;
 
@@ -94,6 +95,7 @@ public class BaseActivity extends RxAppCompatActivity {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(useHomeAsBack);
+            actionBar.setDisplayShowTitleEnabled(useHomeShowTitle);
         }
     }
 
