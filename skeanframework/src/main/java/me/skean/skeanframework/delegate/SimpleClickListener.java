@@ -39,7 +39,7 @@ public abstract class SimpleClickListener implements RecyclerView.OnItemTouchLis
     private boolean mIsShowPress = false;
     private View mPressedView = null;
 
-    public static class DefalutSimpleClickListener extends SimpleClickListener{
+    public static class DefaultSimpleClickListener extends SimpleClickListener{
 
         @Override
         public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
