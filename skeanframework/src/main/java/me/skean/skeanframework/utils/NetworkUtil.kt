@@ -48,20 +48,31 @@ object NetworkUtil {
         return retrofit.create(T::class.java)
     }
 
+    fun <T> createService(clazz: Class<T>): T {
+        val baseUrl = getBaseUrlForClass(clazz)
+        val retrofit = baseRetrofit(baseUrl)
+        return retrofit.create(clazz)
+    }
+
     inline fun <reified T> createService(vararg interceptors: Interceptor): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
         val retrofit = baseRetrofit(baseUrl, *interceptors)
         return retrofit.create(T::class.java)
     }
 
+    fun <T> createService(clazz: Class<T>, vararg interceptors: Interceptor): T {
+        val baseUrl = getBaseUrlForClass(clazz)
+        val retrofit = baseRetrofit(baseUrl, *interceptors)
+        return retrofit.create(clazz)
+    }
+
     fun getBaseUrlForClass(clazz: Class<*>): String? {
-        if (clazz.isAnnotationPresent(kotlin.Metadata::class.java)) { //kotlin的接口
+        if (clazz.isAnnotationPresent(Metadata::class.java)) { //kotlin的接口
             try {
                 val implClass = Class.forName("${clazz.name}\$DefaultImpls")
                 val method = implClass.getDeclaredMethod("getBaseUrl", clazz)
                 return method.invoke(null, null).toString()
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性!")
             }
         }
@@ -69,8 +80,7 @@ object NetworkUtil {
             var url: String? = null
             try {
                 url = FieldUtils.readStaticField(clazz, "BASE_URL") as String
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             if (url == null) {
@@ -108,8 +118,7 @@ object NetworkUtil {
             builder.sslSocketFactory(sslSocketFactory, (trustAllCerts[0] as X509TrustManager))
             builder.hostnameVerifier(HostnameVerifier { hostname: String?, session: SSLSession? -> true })
             builder
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
@@ -121,29 +130,29 @@ object NetworkUtil {
      */
     fun newAppHttpBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .cookieJar(persistentCookieJar())
-                .addInterceptor(httpLoggingInterceptor(false))
+            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(false))
     }
 
     fun newAppHttpProgressBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .cookieJar(persistentCookieJar())
-                .addInterceptor(httpLoggingInterceptor(true))
-                .addNetworkInterceptor(ProgressInterceptor())
+            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(true))
+            .addNetworkInterceptor(ProgressInterceptor())
     }
 
     fun newAppHttpProgressBuilder(uploadListener: ProgressInterceptor.UploadListener?,
                                   downloadListener: ProgressInterceptor.DownloadListener?): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .cookieJar(persistentCookieJar())
-                .addInterceptor(httpLoggingInterceptor(true))
-                .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
+            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(true))
+            .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
     }
 
     /**
@@ -168,68 +177,68 @@ object NetworkUtil {
 
     fun newObjectMapper(): ObjectMapper {
         return ObjectMapper().registerModule(KotlinModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
     }
 
     fun baseRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpBuilder().build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpBuilder().build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpBuilder().build())
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpBuilder().build())
+            .addConverterFactory(JacksonConverterFactory.create(mapper))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(builder.build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(builder.build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun progressRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpProgressBuilder().build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpProgressBuilder().build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpProgressBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(builder.build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(builder.build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun progressRetrofit(baseUrl: String?,
                          uploadListener: ProgressInterceptor.UploadListener?,
                          downloadListener: ProgressInterceptor.DownloadListener?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun setUploadListener(retrofit: Retrofit, upLoadListener: ProgressInterceptor.UploadListener?): Retrofit {
@@ -280,8 +289,7 @@ object NetworkUtil {
             else {
                 return null
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
@@ -297,8 +305,7 @@ object NetworkUtil {
             else {
                 return e.localizedMessage
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return "未知错误"
