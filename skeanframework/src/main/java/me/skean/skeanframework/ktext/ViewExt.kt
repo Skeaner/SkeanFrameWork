@@ -58,8 +58,35 @@ fun View.setVisibleOrGone(visibleOrGone: Boolean) {
     this.visibility = if (visibleOrGone) View.VISIBLE else View.GONE
 }
 
+
+fun View.setVisibleOrInvisible(visibleOrGone: Boolean) {
+    this.visibility = if (visibleOrGone) View.VISIBLE else View.GONE
+}
+
+
+fun View.setVisible() {
+    this.visibility = View.VISIBLE
+}
+
 fun View.isVisible(): Boolean {
     return this.visibility == View.VISIBLE
+}
+
+fun View.setGone() {
+    this.visibility = View.GONE
+}
+
+fun View.isGone(): Boolean {
+    return this.visibility == View.GONE
+}
+
+
+fun View.setInvisible() {
+    this.visibility = View.INVISIBLE
+}
+
+fun View.isInvisible(): Boolean {
+    return this.visibility == View.INVISIBLE
 }
 
 fun TextView.textOrBlankNull(): String? {
@@ -148,11 +175,11 @@ fun BottomNavigationView.disableShiftMode() {
     }
 }
 
-fun FrameLayout.setGravoty(gravity: Int) {
+fun FrameLayout.setGravity(gravity: Int) {
     (this.layoutParams as FrameLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
 }
 
-fun LinearLayout.setGravoty(gravity: Int) {
+fun LinearLayout.setGravity(gravity: Int) {
     (this.layoutParams as LinearLayout.LayoutParams).also { it.gravity = gravity }.also { this.layoutParams = it }
 }
 
