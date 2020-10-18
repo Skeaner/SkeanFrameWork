@@ -135,7 +135,7 @@ dependencies {
     //图片显示subsamplingImageView
     api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     //图片选择器matisse
-    api('me.skean:matisse:0.5.2-beta4-extend-1.1') {
+    api('me.skean:Matisse:0.5.3-beta3-extend-1.0') {
         exclude module: "library"
     }
     //ViewPager指示器viewpagerindicator
@@ -168,7 +168,7 @@ publish {
     userOrg = 'skean'                 //bintray注册的用户名
     groupId = 'me.skean'                //compile引用时的第1部分groupId
     artifactId = 'skeanframework'        //compile引用时的第2部分项目名
-    publishVersion = '1.1.1'        //compile引用时的第3部分版本号
+    publishVersion = '1.1.2'        //compile引用时的第3部分版本号
     desc = 'Skean的开发框架'
     website = 'https://gitee.com/skean/SkeanFrameWork'
     repository="${website}.git"
