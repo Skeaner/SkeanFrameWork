@@ -17,7 +17,6 @@ import android.widget.FrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -43,7 +42,6 @@ public class BaseActivity extends RxAppCompatActivity {
     protected boolean useHomeShowTitle = true;
     protected boolean isMenuCreated = false;
     protected boolean backControl = false;
-
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
@@ -117,8 +115,7 @@ public class BaseActivity extends RxAppCompatActivity {
     public void onBackPressed() {
         if (backControl) {
             if (!onBack()) finish();
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -127,8 +124,7 @@ public class BaseActivity extends RxAppCompatActivity {
         boolean result = false;
         try {
             result = (boolean) ActionBar.class.getMethod("collapseActionView").invoke(actionBar);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -217,8 +213,7 @@ public class BaseActivity extends RxAppCompatActivity {
     private LoadingDialog getLoadingDialog(String text, boolean cancelable) {
         if (loadingDialog == null) {
             loadingDialog = new LoadingDialog(context, text, cancelable);
-        }
-        else {
+        } else {
             loadingDialog.setLoadingText(text).setCancelable(cancelable);
         }
         return loadingDialog;
@@ -281,7 +276,6 @@ public class BaseActivity extends RxAppCompatActivity {
         snackbar.show();
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
     // 便利方法
     ///////////////////////////////////////////////////////////////////////////
@@ -301,12 +295,8 @@ public class BaseActivity extends RxAppCompatActivity {
      */
     public boolean hideSoftKeyboard() {
         InputMethodManager kbManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-            if (getCurrentFocus() != null) {
-                return kbManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }
-        return false;
+        kbManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        return true;
     }
 
     /**
