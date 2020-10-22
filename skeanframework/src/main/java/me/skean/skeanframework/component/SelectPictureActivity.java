@@ -99,14 +99,14 @@ public class SelectPictureActivity extends BaseActivity {
     }
 
     @NeedsPermission({P1, P2, P3})
-    public  final void startSelectPicture() {
+    public final void startSelectPicture() {
         Matisse.from(this)
                .choose(EnumSet.of(MimeType.JPEG, MimeType.PNG), false)
                .theme(R.style.Matisse_APP)
                .countable(true)
                .capture(true, true)
                .selectedUri(rememberSelectedPictures ? selectedPictureUris : new ArrayList<>())
-               .captureStrategy(new CaptureStrategy(true, BuildConfig.APPLICATION_ID + ".fileprovider", "test"))
+               .captureStrategy(new CaptureStrategy(true, getPackageName() + ".fileprovider", "test"))
                .maxSelectable(maxSelectCount)
                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                .thumbnailScale(0.85f)
