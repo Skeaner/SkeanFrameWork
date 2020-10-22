@@ -99,7 +99,7 @@ public class SelectPictureActivity extends BaseActivity {
     }
 
     @NeedsPermission({P1, P2, P3})
-    public final void startSelectPicture() {
+    public  final void startSelectPicture() {
         Matisse.from(this)
                .choose(EnumSet.of(MimeType.JPEG, MimeType.PNG), false)
                .theme(R.style.Matisse_APP)

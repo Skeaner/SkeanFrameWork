@@ -109,7 +109,7 @@ public class SelectPictureFragment extends BaseFragment {
                .countable(true)
                .capture(true, true)
                .selectedUri(rememberSelectedPictures ? selectedPictureUris : new ArrayList<>())
-               .captureStrategy(new CaptureStrategy(true, BuildConfig.APPLICATION_ID + ".fileprovider", "test"))
+               .captureStrategy(new CaptureStrategy(true, requireContext().getPackageName() + ".fileprovider", "test"))
                .maxSelectable(maxSelectCount)
                .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                .thumbnailScale(0.85f)
