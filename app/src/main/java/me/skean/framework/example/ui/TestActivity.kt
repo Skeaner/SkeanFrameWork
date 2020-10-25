@@ -24,6 +24,7 @@ import me.skean.framework.example.db.entity.Dummy
 import me.skean.framework.example.db.pojo.NameCount
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
+import me.skean.skeanframework.component.ActivityStarter
 import me.skean.skeanframework.rx.DefaultObserver
 import me.skean.skeanframework.rx.DefaultSingleObserver
 import org.greenrobot.eventbus.Subscribe
@@ -34,6 +35,13 @@ import java.io.File
  */
 @EActivity(R.layout.activity_main)
 class TestActivity : BaseActivity() {
+
+    companion object : ActivityStarter() {
+        fun start(host: Any) {
+            start(host, Intent(getContextFromHost(host), TestActivity::class.java), null)
+        }
+    }
+
     val REQUEST_GET_SINGLE_FILE = 1
 
     private var dummyDao: DummyDao? = null
@@ -53,21 +61,15 @@ class TestActivity : BaseActivity() {
                 val f = File(path)
                 selectedImageUri = Uri.fromFile(f)
                 val file = File(App.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "compress.jpg")
-                ImageUtil.Compressor.toActualSizeFile(getContext(),
-                        f,
-                        file,
-                        50,
-                        800,
-                        550,
-                        object : ImageUtil.Compressor.FileCallBack {
-                            override fun onSuccess(file: File) {
-                                ToastUtils.showShort("成功")
-                            }
+                ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, object : ImageUtil.Compressor.FileCallBack {
+                    override fun onSuccess(file: File) {
+                        ToastUtils.showShort("成功")
+                    }
 
-                            override fun onFail() {
-                                ToastUtils.showShort("失败")
-                            }
-                        })
+                    override fun onFail() {
+                        ToastUtils.showShort("失败")
+                    }
+                })
             }
         }
     }
@@ -76,17 +78,22 @@ class TestActivity : BaseActivity() {
     fun txvSelectClicked() {
         val item = Dummy().apply { fullName = "测试" }
         dummyDao?.let {
-            it.saveAll(item).subscribeOn(io()).observeOn(mainThread()).subscribe(object : DefaultSingleObserver<List<Long>>() {
-                override fun onSuccess2(t: List<Long>) {
-                    ToastUtils.showShort("保存成功")
-                }
-            })
-            it.countName().subscribeOn(io()).observeOn(mainThread()).subscribe(object : DefaultObserver<List<NameCount>>() {
-                override fun onNext2(t: List<NameCount>) {
-                    ToastUtils.showShort("查询成功")
-                }
-            })
-
+            it.saveAll(item)
+                .subscribeOn(io())
+                .observeOn(mainThread())
+                .subscribe(object : DefaultSingleObserver<List<Long>>() {
+                    override fun onSuccess2(t: List<Long>) {
+                        ToastUtils.showShort("保存成功")
+                    }
+                })
+            it.countName()
+                .subscribeOn(io())
+                .observeOn(mainThread())
+                .subscribe(object : DefaultObserver<List<NameCount>>() {
+                    override fun onNext2(t: List<NameCount>) {
+                        ToastUtils.showShort("查询成功")
+                    }
+                })
 
 //        LogUtils.i("测试Log到文件:" + ContentUtil.dateTime(System.currentTimeMillis()))
 //        TestDialog().setGravity(Gravity.BOTTOM)
@@ -108,7 +115,9 @@ class TestActivity : BaseActivity() {
         val wholeID = DocumentsContract.getDocumentId(contentUri)
 
         // Split at colon, use second item in the array
-        val id = wholeID.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+        val id = wholeID.split(":".toRegex())
+            .dropLastWhile { it.isEmpty() }
+            .toTypedArray()[1]
 
         val column = arrayOf(MediaStore.Images.Media.DATA)
 
