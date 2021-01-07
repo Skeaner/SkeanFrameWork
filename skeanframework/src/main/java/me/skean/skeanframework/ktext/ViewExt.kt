@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -18,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
+import org.apache.commons.collections4.map.ListOrderedMap
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -117,6 +120,20 @@ fun View.showSelectionsPopupMenu(selections: List<String>, listener: PopupMenu.O
     }.also {
         it.setOnMenuItemClickListener(listener)
     }.show()
+}
+
+@SuppressLint("RestrictedApi")
+fun View.showSelectionsPopupMenu(selections: ListOrderedMap<String, Int>, listener: PopupMenu.OnMenuItemClickListener?) {
+    PopupMenu(this.context, this).also {
+        val menu = it.menu
+        selections.forEach { selection -> menu.add(selection.key).also { item -> item.setIcon(selection.value) } }
+    }.also {
+        it.setOnMenuItemClickListener(listener)
+        MenuPopupHelper(context, it.menu as MenuBuilder, this).also { helper ->
+            helper.setForceShowIcon(true)
+            helper.show()
+        }
+    }
 }
 
 fun TextView.addTextChangedListenerAndSetValue(setter: (newValue: String) -> Unit) {
