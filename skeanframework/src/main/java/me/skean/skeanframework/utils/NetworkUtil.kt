@@ -33,7 +33,7 @@ import kotlin.reflect.*
  */
 object NetworkUtil {
 
-    private const val timeout = 10
+    var timeout = 10
     private var httpLogLevel: HttpLoggingInterceptor.Level? = null
     private var context: Context? = null
 
