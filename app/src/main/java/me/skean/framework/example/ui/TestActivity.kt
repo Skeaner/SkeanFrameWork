@@ -30,6 +30,9 @@ import me.skean.skeanframework.rx.DefaultSingleObserver
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
 
+import kotlinx.android.synthetic.main.activity_main.*
+
+
 /**
  * Created by Skean on 19/10/9.
  */
