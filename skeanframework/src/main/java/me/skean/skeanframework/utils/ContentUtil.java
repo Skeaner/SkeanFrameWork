@@ -64,12 +64,12 @@ public class ContentUtil {
     static {
         DATE_HM_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
         DATE_HM_WEEK_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm E", Locale.CHINA);
-        DATE_HMS_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS", Locale.CHINA);
-        DATE_HMS_WEEK_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS E", Locale.CHINA);
+        DATE_HMS_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        DATE_HMS_WEEK_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss E", Locale.CHINA);
         DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         DATE_NO_SEP_FORMATTER = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
-        DATE_TIME_NO_SEP_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmSS", Locale.CHINA);
-        DATE_TIME_UNDERLINE_SEP_FORMATTER = new SimpleDateFormat("yyyy_MM_dd_HH_mm_SS", Locale.CHINA);
+        DATE_TIME_NO_SEP_FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
+        DATE_TIME_UNDERLINE_SEP_FORMATTER = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
         HM_FORMATTER = new SimpleDateFormat("HH:mm", Locale.CHINA);
         PRICE_FORMAT = NumberFormat.getNumberInstance();
         PRICE_FORMAT.setMaximumFractionDigits(2);

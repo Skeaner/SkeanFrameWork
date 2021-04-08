@@ -1,6 +1,7 @@
 package me.skean.skeanframework.ktext
 
 import com.blankj.utilcode.util.SizeUtils
+import me.skean.skeanframework.utils.ContentUtil
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -33,4 +34,24 @@ fun Float.toPrice(): Float? {
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.CEILING
     return df.format(this).toFloat()
+}
+
+fun Long.toDateText():String{
+    return ContentUtil.date(this)
+}
+
+fun Long.toDateNoSepText():String{
+    return ContentUtil.dateNoSep(this)
+}
+
+fun Long.toDateTimeText():String{
+    return ContentUtil.dateTime(this)
+}
+
+fun Long.toDateTimeNoSepText():String{
+    return ContentUtil.dateTimeNoSep(this)
+}
+
+fun Long.toDateHourMinText():String{
+    return ContentUtil.dateHourMin(this)
 }
