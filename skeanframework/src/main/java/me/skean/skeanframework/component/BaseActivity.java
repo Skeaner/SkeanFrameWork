@@ -288,6 +288,10 @@ public class BaseActivity extends RxAppCompatActivity {
         mainHandler.postDelayed(r, millis);
     }
 
+    public void postInMainDelayed( long millis,Runnable r) {
+        mainHandler.postDelayed(r, millis);
+    }
+
     /**
      * 隐藏软键盘 <p/>
      *

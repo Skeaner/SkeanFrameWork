@@ -152,6 +152,11 @@ public abstract class BaseFragment extends RxFragment {
         hostActivity.postInMainDelayed(r, delayMillis);
     }
 
+    public void postInMainDelayed(long delayMillis, Runnable r) {
+        hostActivity.postInMainDelayed(r, delayMillis);
+
+    }
+
     /**
      * 隐藏软键盘 <p/>
      *
