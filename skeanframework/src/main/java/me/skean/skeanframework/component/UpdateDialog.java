@@ -9,12 +9,13 @@ import android.os.Environment;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.qmuiteam.qmui.widget.QMUIProgressBar;
+import com.daimajia.numberprogressbar.NumberProgressBar;
 
 import java.io.File;
 
@@ -45,7 +46,8 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
     private TextView txvForce;
     private View panelInfo;
     private View panelProgress;
-    private QMUIProgressBar pgbProgress;
+    // private QMUIProgressBar pgbProgress;
+    private NumberProgressBar pgbProgress;
 
     private String changeLog;
     private String url;
@@ -83,7 +85,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
         btnCenter.setOnClickListener(this);
         tvContent.setText(getString(R.string.changeLog, changeLog));
         if (force) txvForce.setVisibility(View.VISIBLE);
-        pgbProgress.setQMUIProgressBarTextGenerator((progressBar, value, maxValue) -> 100 * value / maxValue + "%");
+        // pgbProgress.setQMUIProgressBarTextGenerator((progressBar, value, maxValue) -> 100 * value / maxValue + "%");
     }
 
     protected void getExtra() {

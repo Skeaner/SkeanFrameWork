@@ -13,6 +13,7 @@
         android:animateLayoutChanges="true"
         android:orientation="horizontal">
         <LinearLayout
+            tools:visibility="gone"
             android:id="@+id/panelInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,6 +47,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical"
+            tools:visibility="visible"
             android:visibility="gone">
             <TextView
                 android:layout_width="match_parent"
@@ -54,14 +56,20 @@
                 android:padding="16dp"
                 android:text="正在下载" />
 
-            <com.qmuiteam.qmui.widget.QMUIProgressBar
+            <com.daimajia.numberprogressbar.NumberProgressBar
                 android:id="@+id/pgbProgress"
-                android:layout_width="match_parent"
-                android:layout_height="24dp"
-                android:textColor="@color/white"
-                app:qmui_background_color="@color/qmui_config_color_gray_8"
-                app:qmui_progress_color="@color/colorPrimary"
-                app:qmui_type="type_rect" />
+                style="@style/NumberProgressBar_Default"
+                />
+
+
+            <!--<com.qmuiteam.qmui.widget.QMUIProgressBar-->
+            <!--    android:id="@+id/pgbProgress"-->
+            <!--    android:layout_width="match_parent"-->
+            <!--    android:layout_height="24dp"-->
+            <!--    android:textColor="@color/white"-->
+            <!--    app:qmui_background_color="@color/qmui_config_color_gray_8"-->
+            <!--    app:qmui_progress_color="@color/colorPrimary"-->
+            <!--    app:qmui_type="type_rect" />-->
 
         </LinearLayout>
     </LinearLayout>
