@@ -3,23 +3,20 @@ package me.skean.skeanframework.component;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.ContextThemeWrapper;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.trello.rxlifecycle3.components.support.RxFragment;
 
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ActionMode;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -37,6 +34,9 @@ public abstract class BaseFragment extends RxFragment {
 
     protected boolean isMenuCreated;
 
+    private final Set<Integer> msgWhats = new HashSet<>();
+    private final Set<String> msgTokens = new HashSet<>();
+
     ///////////////////////////////////////////////////////////////////////////
     // 设置/生命周期/初始化
     ///////////////////////////////////////////////////////////////////////////
@@ -52,6 +52,19 @@ public abstract class BaseFragment extends RxFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         savedInstanceStateCache = savedInstanceState;
+    }
+
+    @Override
+    public void onDestroyView() {
+        for (Integer msgWhat : msgWhats) {
+            removeMainMessages(msgWhat);
+        }
+        msgWhats.clear();
+        for (String msgToken : msgTokens) {
+            removeMainCallbacksAndMessages(msgToken);
+        }
+        msgTokens.clear();
+        super.onDestroyView();
     }
 
     @Override
@@ -144,17 +157,45 @@ public abstract class BaseFragment extends RxFragment {
     // 便利方法
     ///////////////////////////////////////////////////////////////////////////
 
+    public boolean addMainHandlerCallBack(Handler.Callback callback) {
+        return hostActivity.addMainHandlerCallBack(callback);
+    }
+
+    public boolean removeMainHandlerCallBack(Handler.Callback callback) {
+        return hostActivity.removeMainHandlerCallBack(callback);
+    }
+
+    public void sendMessage(int what, Object object) {
+        msgWhats.add(what);
+        hostActivity.sendMessage(what, object);
+    }
+
+    public void sendMessageDelayed(long delayMills, int what, Object object) {
+        msgWhats.add(what);
+        hostActivity.sendMessageDelayed(delayMills, what, object);
+    }
+
     public void postInMain(Runnable r) {
+        msgTokens.add(UUID.randomUUID().toString());
         hostActivity.postInMain(r);
     }
 
-    public void postInMainDelayed(Runnable r, long delayMillis) {
-        hostActivity.postInMainDelayed(r, delayMillis);
+    public void postInMainDelayed(long delayMillis, Runnable r) {
+        msgTokens.add(UUID.randomUUID().toString());
+        hostActivity.postInMainDelayed(delayMillis, r);
     }
 
-    public void postInMainDelayed(long delayMillis, Runnable r) {
-        hostActivity.postInMainDelayed(r, delayMillis);
+    public void postInMainDelayed(long millis, String token, Runnable r) {
+        msgTokens.add(token);
+        hostActivity.postInMainDelayed(millis, token, r);
+    }
 
+    public void removeMainCallbacksAndMessages(String token) {
+        hostActivity.removeMainCallbacksAndMessages(token);
+    }
+
+    public void removeMainMessages(int what) {
+        hostActivity.removeMainMessages(what);
     }
 
     /**

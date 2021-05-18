@@ -1,15 +1,16 @@
 package me.skean.skeanframework.component;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -17,6 +18,11 @@ import android.widget.FrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -30,6 +36,7 @@ import me.skean.skeanframework.widget.LoadingDialog;
  * App的Activity基类 <p/>
  */
 @SuppressWarnings("unused")
+@SuppressLint("HandlerLeak")
 public class BaseActivity extends RxAppCompatActivity {
     protected Bundle savedInstanceStateCache;
     protected Context context = null;
@@ -43,6 +50,8 @@ public class BaseActivity extends RxAppCompatActivity {
     protected boolean isMenuCreated = false;
     protected boolean backControl = false;
 
+    private final Set<Handler.Callback> callbacks = new HashSet<>();
+
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
     ///////////////////////////////////////////////////////////////////////////
@@ -53,16 +62,26 @@ public class BaseActivity extends RxAppCompatActivity {
         savedInstanceStateCache = savedInstanceState;
         context = this;
         initActionBar();
-        mainHandler = new Handler();
+        mainHandler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                for (Callback callback : callbacks) {
+                    callback.handleMessage(msg);
+                }
+            }
+        };
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        mainHandler.removeCallbacksAndMessages(null);
+        callbacks.clear();
         if (loadingDialog != null) {
             loadingDialog.dismiss();
             loadingDialog = null;
         }
+        super.onDestroy();
     }
 
     @Override
@@ -280,16 +299,56 @@ public class BaseActivity extends RxAppCompatActivity {
     // 便利方法
     ///////////////////////////////////////////////////////////////////////////
 
+    public boolean addMainHandlerCallBack(Handler.Callback callback) {
+        return callbacks.add(callback);
+    }
+
+    public boolean removeMainHandlerCallBack(Handler.Callback callback) {
+        return callbacks.remove(callback);
+    }
+
+    public void sendMessage(int what, Object object) {
+        sendMessageDelayed(0, what, object);
+    }
+
+    public void sendMessageDelayed(long delayMills, int what, Object object) {
+        Message m = mainHandler.obtainMessage();
+        m.what = what;
+        m.obj = object;
+        mainHandler.sendMessageDelayed(m, delayMills);
+    }
+
+    private Message obtainMainHandlerMessage(Runnable r, String token) {
+        Message m = mainHandler.obtainMessage();
+        m.obj = token;
+        try {
+            Method method = Message.class.getDeclaredMethod("setCallback", Runnable.class);
+            method.setAccessible(true);
+            method.invoke(m, r);
+        } catch (Exception e) {
+            //
+        }
+        return m;
+    }
+
     public void postInMain(Runnable r) {
         mainHandler.post(r);
     }
 
-    public void postInMainDelayed(Runnable r, long millis) {
-        mainHandler.postDelayed(r, millis);
+    public void postInMainDelayed(long delayMills, Runnable r) {
+        mainHandler.postDelayed(r, delayMills);
     }
 
-    public void postInMainDelayed( long millis,Runnable r) {
-        mainHandler.postDelayed(r, millis);
+    public void postInMainDelayed(long delayMills, String token, Runnable r) {
+        mainHandler.sendMessageDelayed(obtainMainHandlerMessage(r, token), delayMills);
+    }
+
+    public void removeMainCallbacksAndMessages(String token) {
+        mainHandler.removeCallbacksAndMessages(token);
+    }
+
+    public void removeMainMessages(int what) {
+        mainHandler.removeMessages(what);
     }
 
     /**

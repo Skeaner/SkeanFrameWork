@@ -48,10 +48,19 @@ class TestActivity : BaseActivity() {
     val REQUEST_GET_SINGLE_FILE = 1
 
     private var dummyDao: DummyDao? = null
+    private var count = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dummyDao = App.instance?.database?.dummyDao
+        postInMainDelayed(3000, "MSG", TestRunnable())
+    }
+
+    private inner class TestRunnable : Runnable {
+        override fun run() {
+            ToastUtils.showShort("测试第${count++}次")
+            postInMainDelayed(3000, "MSG", TestRunnable())
+        }
     }
 
     @OnActivityResult(1)
@@ -79,25 +88,26 @@ class TestActivity : BaseActivity() {
 
     @Click
     fun txvSelectClicked() {
-        val item = Dummy().apply { fullName = "测试" }
-        dummyDao?.let {
-            it.saveAll(item)
-                .subscribeOn(io())
-                .observeOn(mainThread())
-                .subscribe(object : DefaultSingleObserver<List<Long>>() {
-                    override fun onSuccess2(t: List<Long>) {
-                        ToastUtils.showShort("保存成功")
-                    }
-                })
-            it.countName()
-                .subscribeOn(io())
-                .observeOn(mainThread())
-                .subscribe(object : DefaultObserver<List<NameCount>>() {
-                    override fun onNext2(t: List<NameCount>) {
-                        ToastUtils.showShort("查询成功")
-                    }
-                })
-
+        removeMainCallbacksAndMessages("MSG")
+//        val item = Dummy().apply { fullName = "测试" }
+//        dummyDao?.let {
+//            it.saveAll(item)
+//                .subscribeOn(io())
+//                .observeOn(mainThread())
+//                .subscribe(object : DefaultSingleObserver<List<Long>>() {
+//                    override fun onSuccess2(t: List<Long>) {
+//                        ToastUtils.showShort("保存成功")
+//                    }
+//                })
+//            it.countName()
+//                .subscribeOn(io())
+//                .observeOn(mainThread())
+//                .subscribe(object : DefaultObserver<List<NameCount>>() {
+//                    override fun onNext2(t: List<NameCount>) {
+//                        ToastUtils.showShort("查询成功")
+//                    }
+//                })
+//        }
 //        LogUtils.i("测试Log到文件:" + ContentUtil.dateTime(System.currentTimeMillis()))
 //        TestDialog().setGravity(Gravity.BOTTOM)
 //                .setLayout( WindowManager.LayoutParams.MATCH_PARENT, SizeUtils.dp2px(320f))
@@ -110,7 +120,7 @@ class TestActivity : BaseActivity() {
 //                          "测速更新",
 //                          "https://oss.pgyer.com/5e5f9a3446210fd9309d2fc952493566" + ".apk?auth_key=1594370627-2bf596890f980461d7fb1822f0af1060-0-d42c4680a95dfd25d690876eaee0920f&response-content" + "-disposition=attachment%3B+filename%3Dsmartinquest-1.0d%2528b1%2529-06230020.apk",
 //                          true)
-        }
+
     }
 
     fun getPathFromURI(contentUri: Uri): String {
