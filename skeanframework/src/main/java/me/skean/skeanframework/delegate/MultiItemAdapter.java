@@ -8,9 +8,8 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.List;
 
@@ -26,12 +25,12 @@ public abstract class MultiItemAdapter<T extends MultiItemEntity, K extends Base
     private static final int DEFAULT_VIEW_TYPE = -0xff;
 
     public MultiItemAdapter(List<T> data) {
-        super(data);
+        super(0,data);
     }
 
     @Override
     protected int getDefItemViewType(int position) {
-        Object item = mData.get(position);
+        Object item =  getData().get(position);
         if (item instanceof MultiItemEntity) {
             return ((MultiItemEntity) item).getItemType();
         }

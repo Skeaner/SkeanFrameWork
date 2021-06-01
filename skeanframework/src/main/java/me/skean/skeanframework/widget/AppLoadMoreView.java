@@ -1,27 +1,43 @@
 package me.skean.skeanframework.widget;
 
-import com.chad.library.adapter.base.loadmore.LoadMoreView;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.chad.library.adapter.base.loadmore.BaseLoadMoreView;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import me.skean.skeanframework.R;
 
-public class AppLoadMoreView extends LoadMoreView{
+public class AppLoadMoreView extends BaseLoadMoreView {
+
     @Override
-    public int getLayoutId() {
-        return R.layout.sfw_layout_load_more_group;
+    public View getRootView( ViewGroup viewGroup) {
+        return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sfw_layout_load_more_group,viewGroup,false);
     }
 
     @Override
-    protected int getLoadingViewId() {
-        return R.id.panelLoading;
+    public View getLoadComplete( BaseViewHolder baseViewHolder) {
+        return baseViewHolder.getView(R.id.panelSuccess);
     }
 
     @Override
-    protected int getLoadFailViewId() {
-        return R.id.panelFail;
+    public View getLoadEndView(BaseViewHolder baseViewHolder) {
+        return baseViewHolder.getView(R.id.panelEnd);
     }
 
     @Override
-    protected int getLoadEndViewId() {
-        return R.id.panelEnd;
+    public View getLoadFailView(BaseViewHolder baseViewHolder) {
+        return baseViewHolder.getView(R.id.panelFail);
+
     }
+
+    @Override
+    public View getLoadingView( BaseViewHolder baseViewHolder) {
+        return baseViewHolder.getView(R.id.panelLoading);
+
+    }
+
+
 }
