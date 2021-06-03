@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 
 import androidx.annotation.NonNull;
 
-public  class SimpleClickListener implements OnItemClickListener , OnItemLongClickListener, OnItemChildClickListener, OnItemChildLongClickListener {
+public  class UnionClickListener implements OnItemClickListener , OnItemLongClickListener, OnItemChildClickListener, OnItemChildLongClickListener {
     @Override
     public void onItemChildClick(@NonNull  BaseQuickAdapter<?, ?> adapter,
                                  @NonNull  View view,
