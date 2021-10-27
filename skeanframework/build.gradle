@@ -155,8 +155,6 @@ dependencies {
     //butterknife
     api 'com.jakewharton:butterknife:10.2.0'
     kapt 'com.jakewharton:butterknife-compiler:10.2.0'
-    //腾讯QMUI
-//    api 'com.github.Tencent:QMUI_Android:2.0.0-alpha10'
     //数字进度条
     api  'com.daimajia.numberprogressbar:library:1.4@aar'
     //kotpref
