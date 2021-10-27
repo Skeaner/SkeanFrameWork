@@ -133,7 +133,7 @@ public final class AppService extends Service {
                                                                               R.string.updatingApp))
                                                                                                        .setContentText(getString(R.string.downloadProgress,
                                                                                                                                  percentage))
-                                                                                                       .setSmallIcon(R.drawable.ic_launcher)
+                                                                                                       .setSmallIcon(R.mipmap.ic_launcher)
                                                                                                        .setOngoing(true)
                                                                                                        .setProgress(100,
                                                                                                                     percentage,
@@ -163,7 +163,7 @@ public final class AppService extends Service {
                                     new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                      .setContentText(getString(R.string.downloadFinishClickInstall))
                                                                      .setContentIntent(pi)
-                                                                     .setSmallIcon(R.drawable.ic_launcher)
+                                                                     .setSmallIcon(R.mipmap.ic_launcher)
                                                                      .setOngoing(false)
                                                                      .setAutoCancel(false)
                                                                      .setProgress(100, 100, false)
@@ -185,7 +185,7 @@ public final class AppService extends Service {
                                 new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
                                                                  .setContentText(getString(R.string.downloadFailClickRetry))
                                                                  .setContentIntent(pi)
-                                                                 .setSmallIcon(R.drawable.ic_launcher)
+                                                                 .setSmallIcon(R.mipmap.ic_launcher)
                                                                  .setOngoing(false)
                                                                  .setAutoCancel(false)
                                                                  .build());
