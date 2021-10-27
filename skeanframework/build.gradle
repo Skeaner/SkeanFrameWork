@@ -160,5 +160,7 @@ dependencies {
     //kotpref
     api 'com.chibatching.kotpref:kotpref:2.11.0'
     api 'com.chibatching.kotpref:preference-screen-dsl:2.11.0'
+    //rxpermission
+    api 'com.github.tbruyelle:rxpermissions:0.11'
 }
 
