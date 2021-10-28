@@ -8,7 +8,6 @@ apply plugin: "kotlin-kapt"
 apply plugin: "androidx.navigation.safeargs"
 
 
-
 allOpen {
     annotation("org.androidannotations.api.KotlinOpen")
 }
@@ -60,7 +59,7 @@ android {
                 outputFileName = "${shortAppId}-${variant.versionName}${versionTag}(b${variant.versionCode})-${dateStr}.apk"
             }
         }
-        manifestPlaceholders = [rawApplicationId     : defaultConfig.applicationId]
+        manifestPlaceholders = [rawApplicationId: defaultConfig.applicationId]
     }
     buildTypes {
         //todo 通用的配置
@@ -113,7 +112,7 @@ android {
     sourceSets {
         main {
             java.srcDirs += 'build/generated/source/greendao'
-            assets.srcDirs+="$projectDir/schemas"
+            assets.srcDirs += "$projectDir/schemas"
             jniLibs.srcDirs = ['libs']
             res.srcDirs = [
                     'src/main/res/'
@@ -147,7 +146,7 @@ repositories {
 
 
 dependencies {
-//    implementation 'me.skean:skeanframework:1.0-alpha3'
+//       implementation 'com.github.Skeaner:SkeanFrameWork:1.2.4'
     implementation project(path: ':skeanframework')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
