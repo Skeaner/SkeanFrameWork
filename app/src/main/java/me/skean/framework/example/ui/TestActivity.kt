@@ -5,38 +5,24 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.PersistableBundle
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import com.blankj.utilcode.util.ToastUtils
-import io.reactivex.Observable
-import io.reactivex.SingleObserver
-import io.reactivex.disposables.Disposable
-import org.androidannotations.annotations.Click
-import org.androidannotations.annotations.EActivity
-import org.androidannotations.annotations.OnActivityResult
 import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.utils.ImageUtil
-import me.skean.framework.example.R
+import me.skean.framework.example.databinding.ActivityTestBinding
 import me.skean.framework.example.db.dao.DummyDao
-import me.skean.framework.example.db.entity.Dummy
-import me.skean.framework.example.db.pojo.NameCount
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
-import me.skean.skeanframework.rx.DefaultObserver
-import me.skean.skeanframework.rx.DefaultSingleObserver
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
-
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 /**
  * Created by Skean on 19/10/9.
  */
-@EActivity(R.layout.activity_main)
 class TestActivity : BaseActivity() {
 
     companion object : ActivityStarter() {
@@ -48,10 +34,17 @@ class TestActivity : BaseActivity() {
     val REQUEST_GET_SINGLE_FILE = 1
 
     private var dummyDao: DummyDao? = null
-    private var count = 0;
+    private var count = 0
+
+    private lateinit var vb: ActivityTestBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        vb = ActivityTestBinding.inflate(layoutInflater)
+        setContentView(vb.root)
+        vb.txvSelect.setOnClickListener {
+            txvSelectClicked()
+        }
         dummyDao = App.instance?.database?.dummyDao
         postInMainDelayed(3000, "MSG", TestRunnable())
     }
@@ -63,10 +56,10 @@ class TestActivity : BaseActivity() {
         }
     }
 
-    @OnActivityResult(1)
-    fun resultGet(resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            var selectedImageUri = data.data
+            var selectedImageUri = data?.data
             // Get the path from the Uri
             val path = getPathFromURI(selectedImageUri!!)
             if (path != null) {
@@ -86,8 +79,8 @@ class TestActivity : BaseActivity() {
         }
     }
 
-    @Click
-    fun txvSelectClicked() {
+
+    private fun txvSelectClicked() {
         removeMainCallbacksAndMessages("MSG")
 //        val item = Dummy().apply { fullName = "测试" }
 //        dummyDao?.let {
@@ -129,8 +122,8 @@ class TestActivity : BaseActivity() {
 
         // Split at colon, use second item in the array
         val id = wholeID.split(":".toRegex())
-            .dropLastWhile { it.isEmpty() }
-            .toTypedArray()[1]
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray()[1]
 
         val column = arrayOf(MediaStore.Images.Media.DATA)
 
