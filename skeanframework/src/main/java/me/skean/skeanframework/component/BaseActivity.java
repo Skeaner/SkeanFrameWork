@@ -3,6 +3,7 @@ package me.skean.skeanframework.component;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -30,6 +32,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import me.skean.skeanframework.R;
+import me.skean.skeanframework.utils.BetterActivityResult;
 import me.skean.skeanframework.widget.LoadingDialog;
 
 /**
@@ -51,6 +54,8 @@ public class BaseActivity extends RxAppCompatActivity {
     protected boolean backControl = false;
 
     private final Set<Handler.Callback> callbacks = new HashSet<>();
+
+    protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerActivityForResult(this);
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置

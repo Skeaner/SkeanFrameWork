@@ -3,6 +3,7 @@ package me.skean.skeanframework.component;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,10 +17,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import me.skean.skeanframework.utils.BetterActivityResult;
 import me.skean.skeanframework.widget.LoadingDialog;
 
 /**
@@ -36,6 +39,9 @@ public abstract class BaseFragment extends RxFragment {
 
     private final Set<Integer> msgWhats = new HashSet<>();
     private final Set<String> msgTokens = new HashSet<>();
+
+    protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerActivityForResult(this);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 设置/生命周期/初始化
