@@ -10,6 +10,7 @@ import androidx.room.RoomDatabase
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
+import com.chibatching.kotpref.Kotpref
 import com.tencent.bugly.Bugly
 import me.skean.framework.example.BuildConfig
 import me.skean.framework.example.EventBusIndex
@@ -119,6 +120,8 @@ class App : MultiDexApplication(), StatusCallback {
         }
         //数据库初始化
         initDatabase()
+        //初始化Kotpref
+        Kotpref.init(this)
     }
 
     /**
