@@ -249,6 +249,14 @@ fun TextView.addRequireTagAtStart() {
     setText(builder)
 }
 
+inline fun  TextView.doIfBlankAndReturnText(block: (Unit) -> Unit): String {
+    val text = textOrBlank()
+    if (text.isBlank()) {
+        block.invoke(Unit)
+    }
+    return text
+}
+
 @SuppressLint("RestrictedApi")
 fun BottomNavigationView.disableShiftMode() {
     val menuView = this.getChildAt(0) as BottomNavigationMenuView
