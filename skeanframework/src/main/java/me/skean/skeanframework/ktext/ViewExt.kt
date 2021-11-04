@@ -1,8 +1,11 @@
 package me.skean.skeanframework.ktext
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.text.Editable
-import android.view.Gravity
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -12,7 +15,6 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
@@ -23,7 +25,6 @@ import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
 import org.apache.commons.collections4.map.ListOrderedMap
 import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -94,14 +95,14 @@ fun View.isInvisible(): Boolean {
 
 fun View.setOnClickFilterListener(onClick: ((t: Any) -> Unit)) {
     RxView.clicks(this)
-        .throttleFirst(1, TimeUnit.SECONDS)
-        .subscribe(onClick)
+            .throttleFirst(1, TimeUnit.SECONDS)
+            .subscribe(onClick)
 }
 
 fun View.setOnClickFilterListener(millis: Long, onClick: ((t: Any) -> Unit)) {
     RxView.clicks(this)
-        .throttleFirst(millis, TimeUnit.MILLISECONDS)
-        .subscribe(onClick)
+            .throttleFirst(millis, TimeUnit.MILLISECONDS)
+            .subscribe(onClick)
 }
 
 fun TextView.textOrBlankNull(): String? {
@@ -112,29 +113,55 @@ fun TextView.textOrBlank(): String {
     return if (this.text.isNotBlank()) this.text.toString() else ""
 }
 
+
+fun TextView.showSelectionsPopupMenu(vararg selections: String) {
+    this.showSelectionsPopupMenu(selections.toList())
+}
+
+fun TextView.showSelectionsPopupMenuOnClick(vararg selections: String) {
+    this.setOnClickListener {
+        this.showSelectionsPopupMenu(selections.toList())
+    }
+}
+
+
 fun TextView.showSelectionsPopupMenu(selections: List<String>) {
     PopupMenu(this.context, this).also {
         val menu = it.menu
         selections.forEach { selection -> menu.add(selection) }
     }
-        .also {
-            it.setOnMenuItemClickListener { item ->
-                this.text = item.title
-                return@setOnMenuItemClickListener true
+            .also {
+                it.setOnMenuItemClickListener { item ->
+                    this.text = item.title
+                    return@setOnMenuItemClickListener true
+                }
             }
-        }
-        .show()
+            .show()
 }
+
+fun TextView.showSelectionsPopupMenuOnClick(selections: List<String>) {
+    this.setOnClickListener {
+        this.showSelectionsPopupMenu(selections)
+    }
+}
+
 
 fun View.showSelectionsPopupMenu(selections: List<String>, listener: PopupMenu.OnMenuItemClickListener?) {
     PopupMenu(this.context, this).also {
         val menu = it.menu
         selections.forEach { selection -> menu.add(selection) }
     }
-        .also {
-            it.setOnMenuItemClickListener(listener)
-        }
-        .show()
+            .also {
+                it.setOnMenuItemClickListener(listener)
+            }
+            .show()
+}
+
+
+fun View.showSelectionsPopupMenuOnclick(selections: List<String>, listener: PopupMenu.OnMenuItemClickListener?) {
+    this.setOnClickListener {
+        this.showSelectionsPopupMenu(selections, listener)
+    }
 }
 
 @SuppressLint("RestrictedApi")
@@ -143,16 +170,24 @@ fun View.showSelectionsPopupMenu(selections: ListOrderedMap<String, Int>, listen
         val menu = it.menu
         selections.forEach { selection ->
             menu.add(selection.key)
-                .also { item -> item.setIcon(selection.value) }
+                    .also { item -> item.setIcon(selection.value) }
         }
     }
-        .also {
-            it.setOnMenuItemClickListener(listener)
-            MenuPopupHelper(context, it.menu as MenuBuilder, this).also { helper ->
-                helper.setForceShowIcon(true)
-                helper.show()
+            .also {
+                it.setOnMenuItemClickListener(listener)
+                MenuPopupHelper(context, it.menu as MenuBuilder, this).also { helper ->
+                    helper.setForceShowIcon(true)
+                    helper.show()
+                }
             }
-        }
+}
+
+
+@SuppressLint("RestrictedApi")
+fun View.showSelectionsPopupMenuOnClick(selections: ListOrderedMap<String, Int>, listener: PopupMenu.OnMenuItemClickListener?) {
+    this.setOnClickListener {
+        this.showSelectionsPopupMenu(selections, listener)
+    }
 }
 
 fun TextView.addTextChangedListenerAndSetValue(setter: (newValue: String) -> Unit) {
@@ -167,7 +202,7 @@ fun TextView.addTextChangedListenerAndSetValue(property: KMutableProperty<String
     this.addTextChangedListener(object : DefaultTextWatcher() {
         override fun afterTextChanged(s: Editable?) {
             property.setter.call(s.toString()
-                                     .ifBlank { null })
+                    .ifBlank { null })
         }
     })
 }
@@ -192,6 +227,28 @@ fun TextView.setTextColorRes(@ColorRes colorRes: Int) {
     this.setTextColor(ContextCompat.getColor(SkeanFrameWork.getContext(), colorRes))
 }
 
+
+fun TextView.addRequireTagAtEnd() {
+    val originalText = this.textOrBlank()
+    val requireText = "*"
+    val builder = SpannableStringBuilder(originalText + requireText)
+
+    builder.setSpan(ForegroundColorSpan(Color.RED), originalText.length, builder.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    setText(builder)
+}
+
+
+fun TextView.addRequireTagAtStart() {
+    val originalText = this.textOrBlank()
+    val requireText = "*"
+    val builder = SpannableStringBuilder(requireText + originalText)
+
+    builder.setSpan(ForegroundColorSpan(Color.RED), 0, requireText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    setText(builder)
+}
+
 @SuppressLint("RestrictedApi")
 fun BottomNavigationView.disableShiftMode() {
     val menuView = this.getChildAt(0) as BottomNavigationMenuView
@@ -205,19 +262,18 @@ fun BottomNavigationView.disableShiftMode() {
             item.setShifting(false)
             item.setChecked(item.itemData!!.isChecked)
         }
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
     }
 }
 
 fun FrameLayout.setGravity(gravity: Int) {
     (this.layoutParams as FrameLayout.LayoutParams).also { it.gravity = gravity }
-        .also { this.layoutParams = it }
+            .also { this.layoutParams = it }
 }
 
 fun LinearLayout.setGravity(gravity: Int) {
     (this.layoutParams as LinearLayout.LayoutParams).also { it.gravity = gravity }
-        .also { this.layoutParams = it }
+            .also { this.layoutParams = it }
 }
 
 inline fun TabLayout.addOnTabSelectedListener(crossinline onTabSelected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
