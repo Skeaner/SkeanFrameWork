@@ -31,13 +31,40 @@ android {
     }
     compileSdkVersion 29
     buildToolsVersion '29.0.3'
+    def vcode = Integer.parseInt(VERSION_CODE)
+    def vname = VERSION_NAME
+    def isRelease = gradle.startParameter.taskRequests.any {
+        it.args.any { it.endsWith("Release") }
+    }
+    if (isRelease) {
+        vcode = vcode + 1
+        def versionNameGroup = VERSION_NAME.split("\\.")
+        def versionNamePart1 = Integer.parseInt(versionNameGroup[0])
+        def versionNamePart2 = Integer.parseInt(versionNameGroup[1])
+        def versionNamePart3 = Integer.parseInt(versionNameGroup[2])
+        versionNamePart3 = versionNamePart3 + 1
+        if (versionNamePart3 > 9) {
+            versionNamePart3 = 0
+            versionNamePart2 = versionNamePart2 + 1
+            if (versionNamePart2 > 9) {
+                versionNamePart2 = 0
+                versionNamePart1 = versionNamePart1 + 1
+            }
+        }
+        vname = versionNamePart1 + "." + versionNamePart2 + "." + versionNamePart3
+        ant.propertyfile(file: "../gradle.properties") {
+            entry(key: "VERSION_CODE", value: vcode)
+            entry(key: "VERSION_NAME", value: vname)
+        }
+    }
+
     defaultConfig {
         //todo 修改程序ID
         applicationId "me.skean.framework.example"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode vcode
+        versionName vname
         multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a", "x86"
