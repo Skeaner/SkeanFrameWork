@@ -79,11 +79,18 @@ android {
             }
         }
         applicationVariants.all { variant ->
+            //修改打包的apk名字
             variant.outputs.all {
                 def dateStr = new SimpleDateFormat("MMddHHmm", Locale.US).format(new Date())
                 def shortAppId = "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1)
-                def versionTag = variant.buildType.isDebuggable() ? "d" : "r"
-                outputFileName = "${shortAppId}-${variant.versionName}${versionTag}(b${variant.versionCode})-${dateStr}.apk"
+                def versionTag = variant.buildType.name.charAt(0)
+                outputFileName = "${shortAppId}-${vname}${versionTag}(b${vcode})-${dateStr}.apk"
+            }
+            //删除自动生成的output.json
+            variant.assemble.doLast {
+                variant.outputs.each { output ->
+                    delete "${output.outputFile.parent}/output-metadata.json"
+                }
             }
         }
         manifestPlaceholders = [rawApplicationId: defaultConfig.applicationId]
