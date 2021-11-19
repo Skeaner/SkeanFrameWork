@@ -8,6 +8,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import com.blankj.utilcode.util.ToastUtils
+import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.utils.ImageUtil
@@ -47,6 +48,8 @@ class TestActivity : BaseActivity() {
         }
         dummyDao = App.instance?.database?.dummyDao
         postInMainDelayed(3000, "MSG", TestRunnable())
+        val dm = resources.displayMetrics
+        tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
     }
 
     private inner class TestRunnable : Runnable {
