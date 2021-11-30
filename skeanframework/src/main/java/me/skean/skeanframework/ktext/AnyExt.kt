@@ -6,3 +6,7 @@ package me.skean.skeanframework.ktext
 fun Any?.toStringIfNullEmpty(): String {
     return this?.toString() ?: ""
 }
+
+fun <T> Any?.castTo():T?{
+    return this as? T
+}
