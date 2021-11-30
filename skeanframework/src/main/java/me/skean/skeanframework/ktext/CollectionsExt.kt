@@ -10,3 +10,6 @@ fun <K, V> listOrderedMapOf(vararg pairs: Pair<K, V>): ListOrderedMap<K, V> {
     map.putAll(pairs)
     return map
 }
+
+fun <T> List<T>?.orEmptyMutableiList(): MutableList<T> = this?.toMutableList() ?: mutableListOf()
+
