@@ -1,5 +1,6 @@
 package me.skean.skeanframework.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
@@ -31,6 +32,7 @@ import kotlin.reflect.*
 /**
  * 网络框架工具类
  */
+@SuppressLint("StaticFieldLeak")
 object NetworkUtil {
 
     var timeout = 10
