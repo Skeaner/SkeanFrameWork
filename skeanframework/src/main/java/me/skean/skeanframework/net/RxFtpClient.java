@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -34,7 +35,8 @@ public class RxFtpClient {
                               int port,
                               String user,
                               String password,
-                              String dir) throws IOException {
+                              String dir,
+                              boolean autoCreateDir) throws IOException {
         // 打开FTP服务
         try {
             connect(ftpClient, host, port, user, password);
@@ -47,10 +49,16 @@ public class RxFtpClient {
             boolean result = ftpClient.setFileTransferMode(org.apache.commons.net.ftp.FTP.STREAM_TRANSFER_MODE);
             if (!result) throw new IOException("FTP服务器不支持传输文件");
             // FTP下创建文件夹
-            ftpClient.makeDirectory(dir);
-            // 改变FTP目录
-            result = ftpClient.changeWorkingDirectory(dir);
-            if (!result) throw new IOException("无权限读取FTP目录/该目录不存在");
+            String[] dirs = dir.split("/");
+            if (dirs.length > 1) {
+                dirs = Arrays.copyOfRange(dirs, 1, dirs.length);
+                for (String d : dirs) {
+                    if (autoCreateDir) ftpClient.makeDirectory(d);
+                    // 改变FTP目录
+                    result = ftpClient.changeWorkingDirectory(d);
+                    if (!result) throw new IOException("无权限读取FTP目录/该目录不存在");
+                }
+            }
         }
         catch (IOException e) {
             disconnect(ftpClient);
@@ -130,7 +138,7 @@ public class RxFtpClient {
             if (dir == null || !dir.startsWith("/")) {
                 throw new RuntimeException("文件夹请以/开头");
             }
-            start(ftpClient, host, port, user, password, dir);
+            start(ftpClient, host, port, user, password, dir, true);
             long fileSize = localFile.length();
             ftpClient.setCopyStreamListener(new CopyStreamListener() {
                 int progress = 0;
@@ -210,7 +218,7 @@ public class RxFtpClient {
                     fileName = path;
                 }
             }
-            start(ftpClient, host, port, user, password, dir);
+            start(ftpClient, host, port, user, password, dir, false);
             FTPFile file = findFtpFile(ftpClient, dir, fileName);
             long fileSize = file.getSize();
             ftpClient.setCopyStreamListener(new AsyncFtpClient.DefaultCopyStreamListener() {
@@ -244,7 +252,7 @@ public class RxFtpClient {
         }
         catch (IOException e) {
             disconnect(ftpClient);
-            throw new IOException("读取FTP文件失败");
+            throw new IOException(e.getLocalizedMessage());
         }
     }
 
@@ -289,7 +297,7 @@ public class RxFtpClient {
                     fileName = path;
                 }
             }
-            start(ftpClient, host, port, user, password, dir);
+            start(ftpClient, host, port, user, password, dir, false);
             findFtpFile(ftpClient, dir, fileName);
             ftpClient.changeWorkingDirectory(dir);
             boolean result = ftpClient.deleteFile(dir + fileName);
