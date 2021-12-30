@@ -17,7 +17,7 @@ public abstract class ProgressSubscriber<T> implements Subscriber2<T> {
     private boolean cancelable = true;
     private Subscription subscription;
     private SubscriptionWrapper subscriptionWrapper;
-    private LoadingDialog2 LoadingDialog;
+    private LoadingDialog2 loadingDialog;
 
     private boolean hasNext = false;
     private boolean hasComplete = false;
@@ -50,7 +50,7 @@ public abstract class ProgressSubscriber<T> implements Subscriber2<T> {
         subscription = s;
         subscriptionWrapper = new SubscriptionWrapper();
         onSubscribe2(subscriptionWrapper);
-        LoadingDialog = LoadingDialog2.show(context, message, cancelable, dialog -> {
+        loadingDialog = LoadingDialog2.show(context, message, cancelable, dialog -> {
             if (subscription != null) {
                 subscription.cancel();
             }
@@ -67,14 +67,14 @@ public abstract class ProgressSubscriber<T> implements Subscriber2<T> {
     @Override
     public final void onError(@NonNull Throwable e) {
         e.printStackTrace();
-        LoadingDialog.dismiss();
+        loadingDialog.dismiss();
         onError2(e);
     }
 
     @Override
     public void onComplete() {
         subscription = null;
-        LoadingDialog.dismiss();
+        loadingDialog.dismiss();
         hasComplete = true;
         onComplete2();
     }
@@ -89,6 +89,10 @@ public abstract class ProgressSubscriber<T> implements Subscriber2<T> {
 
     @Override
     public void onComplete2() {
+    }
+
+    public void onProgress(int percentage){
+        loadingDialog.setProgress(percentage);
     }
 
     /**
@@ -107,7 +111,7 @@ public abstract class ProgressSubscriber<T> implements Subscriber2<T> {
                 subscription.cancel();
             }
             subscription = null;
-            if (LoadingDialog != null) LoadingDialog.dismiss();
+            if (loadingDialog != null) loadingDialog.dismiss();
         }
     }
 }

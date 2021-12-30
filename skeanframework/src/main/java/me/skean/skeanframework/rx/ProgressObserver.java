@@ -90,6 +90,10 @@ public abstract class ProgressObserver<T> implements Observer2<T> {
     public void onComplete2() {
     }
 
+    public void onProgress(int percentage){
+        loadingDialog.setProgress(percentage);
+    }
+
     /**
      * Disposable包装类, 以便正确关闭ProgressDialog
      */

@@ -76,6 +76,10 @@ public abstract class ProgressSingleObserver<T> implements SingleObserver2<T> {
     public void onSuccess2(T t) {
     }
 
+    public void onProgress(int percentage){
+        loadingDialog.setProgress(percentage);
+    }
+
     /**
      * Disposable包装类, 以便正确关闭ProgressDialog
      */
