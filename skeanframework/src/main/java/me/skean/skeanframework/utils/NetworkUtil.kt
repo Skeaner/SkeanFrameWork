@@ -5,6 +5,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import com.blankj.utilcode.util.FileUtils.getFileExtension
+import com.blankj.utilcode.util.ToastUtils
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -17,6 +18,7 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.lang3.reflect.FieldUtils
+import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -77,8 +79,7 @@ object NetworkUtil {
             } catch (e: Exception) {
                 throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性!")
             }
-        }
-        else { //java的接口
+        } else { //java的接口
             var url: String? = null
             try {
                 url = FieldUtils.readStaticField(clazz, "BASE_URL") as String
@@ -87,8 +88,7 @@ object NetworkUtil {
             }
             if (url == null) {
                 throw RuntimeException("请给接口指定一个public static String BASE_URL 的属性!")
-            }
-            else {
+            } else {
                 return url
             }
         }
@@ -132,29 +132,29 @@ object NetworkUtil {
      */
     fun newAppHttpBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .cookieJar(persistentCookieJar())
-            .addInterceptor(httpLoggingInterceptor(false))
+                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .cookieJar(persistentCookieJar())
+                .addInterceptor(httpLoggingInterceptor(false))
     }
 
     fun newAppHttpProgressBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .cookieJar(persistentCookieJar())
-            .addInterceptor(httpLoggingInterceptor(true))
-            .addNetworkInterceptor(ProgressInterceptor())
+                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .cookieJar(persistentCookieJar())
+                .addInterceptor(httpLoggingInterceptor(true))
+                .addNetworkInterceptor(ProgressInterceptor())
     }
 
     fun newAppHttpProgressBuilder(uploadListener: ProgressInterceptor.UploadListener?,
                                   downloadListener: ProgressInterceptor.DownloadListener?): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .cookieJar(persistentCookieJar())
-            .addInterceptor(httpLoggingInterceptor(true))
-            .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
+                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .cookieJar(persistentCookieJar())
+                .addInterceptor(httpLoggingInterceptor(true))
+                .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
     }
 
     /**
@@ -179,68 +179,68 @@ object NetworkUtil {
 
     fun newObjectMapper(): ObjectMapper {
         return ObjectMapper().registerModule(KotlinModule())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
     }
 
     fun baseRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(newAppHttpBuilder().build())
-            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+                .baseUrl(baseUrl)
+                .client(newAppHttpBuilder().build())
+                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
     }
 
     fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(newAppHttpBuilder().build())
-            .addConverterFactory(JacksonConverterFactory.create(mapper))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+                .baseUrl(baseUrl)
+                .client(newAppHttpBuilder().build())
+                .addConverterFactory(JacksonConverterFactory.create(mapper))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
     }
 
     fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(builder.build())
-            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+                .baseUrl(baseUrl)
+                .client(builder.build())
+                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
     }
 
     fun progressRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(newAppHttpProgressBuilder().build())
-            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+                .baseUrl(baseUrl)
+                .client(newAppHttpProgressBuilder().build())
+                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
     }
 
     fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpProgressBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(builder.build())
-            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+                .baseUrl(baseUrl)
+                .client(builder.build())
+                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
     }
 
     fun progressRetrofit(baseUrl: String?,
                          uploadListener: ProgressInterceptor.UploadListener?,
                          downloadListener: ProgressInterceptor.DownloadListener?): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
-            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+                .baseUrl(baseUrl)
+                .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
+                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
     }
 
     fun setUploadListener(retrofit: Retrofit, upLoadListener: ProgressInterceptor.UploadListener?): Retrofit {
@@ -287,8 +287,7 @@ object NetworkUtil {
             if (e is HttpException) {
                 val errorBody = e.response()?.errorBody()?.charStream()
                 return newObjectMapper().readValue(errorBody!!)
-            }
-            else {
+            } else {
                 return null
             }
         } catch (e: Exception) {
@@ -297,14 +296,22 @@ object NetworkUtil {
         return null
     }
 
-    inline fun <reified T> parseErrorBodyMsg(e: Throwable, prop: KMutableProperty1<T, String?>): String? {
+
+    fun getErrorBodyMsg(e: Throwable, vararg fieldNames: String): String {
         try {
             if (e is HttpException) {
-                val errorBody = e.response()?.errorBody()?.charStream()
-                val receiver = newObjectMapper().readValue<T>(errorBody!!)
-                return prop.get(receiver)
-            }
-            else {
+                val code = e.code()
+                val errorBody = e.response()?.errorBody()?.string() ?: "{}"
+                val jo = JSONObject(errorBody)
+                var info: String? = null
+                for (fieldName in fieldNames) {
+                    if (!jo.isNull(fieldName)) {
+                        info = jo.getString(fieldName)
+                        break
+                    }
+                }
+                return "$code: $info"
+            } else {
                 return e.localizedMessage
             }
         } catch (e: Exception) {
@@ -313,4 +320,18 @@ object NetworkUtil {
         return "未知错误"
     }
 
+    fun toastErrorBodyMsg(e: Throwable, vararg fieldNames: String) {
+        ToastUtils.showShort(getErrorBodyMsg(e, *fieldNames))
+    }
+
+
+    inline fun <reified T> getErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>): String {
+        val namesArray = props.map { it.name }.toTypedArray()
+        return getErrorBodyMsg(e, *namesArray)
+    }
+
+
+    inline fun <reified T> toastErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>) {
+        ToastUtils.showShort(getErrorBodyMsg(e, *props))
+    }
 }

@@ -16,6 +16,7 @@ import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
+import com.blankj.utilcode.util.ToastUtils
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -247,6 +248,14 @@ fun TextView.addRequireTagAtStart() {
     builder.setSpan(ForegroundColorSpan(Color.RED), 0, requireText.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     setText(builder)
+}
+
+fun  TextView.toastHintShort(){
+    ToastUtils.showShort(this.hint)
+}
+
+fun  TextView.toastHintLong(){
+    ToastUtils.showLong(this.hint)
 }
 
 inline fun  TextView.doIfBlankAndReturnText(block: (Unit) -> Unit): String {
