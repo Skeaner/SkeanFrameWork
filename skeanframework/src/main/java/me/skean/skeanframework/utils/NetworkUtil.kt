@@ -297,7 +297,7 @@ object NetworkUtil {
     }
 
 
-    fun getErrorBodyMsg(e: Throwable, vararg fieldNames: String): String {
+    fun parseErrorBodyMsg(e: Throwable, vararg fieldNames: String): String {
         try {
             if (e is HttpException) {
                 val code = e.code()
@@ -321,17 +321,17 @@ object NetworkUtil {
     }
 
     fun toastErrorBodyMsg(e: Throwable, vararg fieldNames: String) {
-        ToastUtils.showShort(getErrorBodyMsg(e, *fieldNames))
+        ToastUtils.showShort(parseErrorBodyMsg(e, *fieldNames))
     }
 
 
-    inline fun <reified T> getErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>): String {
+    inline fun <reified T> parseErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>): String {
         val namesArray = props.map { it.name }.toTypedArray()
-        return getErrorBodyMsg(e, *namesArray)
+        return parseErrorBodyMsg(e, *namesArray)
     }
 
 
     inline fun <reified T> toastErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>) {
-        ToastUtils.showShort(getErrorBodyMsg(e, *props))
+        ToastUtils.showShort(parseErrorBodyMsg(e, *props))
     }
 }
