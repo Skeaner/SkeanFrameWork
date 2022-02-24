@@ -8,7 +8,7 @@ import retrofit2.http.*
 /**
  * 一些文件IO服务
  */
-interface FileIOService {
+interface FileIOApi {
 
     var baseUrl: String
         get() = "http://useless.com/"

@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +21,7 @@ import java.io.File;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import me.skean.skeanframework.R;
-import me.skean.skeanframework.net.FileIOService;
+import me.skean.skeanframework.net.FileIOApi;
 import me.skean.skeanframework.net.ProgressInterceptor;
 import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
@@ -210,8 +209,8 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        downloadCall = NetworkUtil.INSTANCE.progressRetrofit(FileIOService.DefaultImpls.getBaseUrl(null), null, progressResponse)
-                                           .create(FileIOService.class)
+        downloadCall = NetworkUtil.INSTANCE.progressRetrofit(FileIOApi.DefaultImpls.getBaseUrl(null), null, progressResponse)
+                                           .create(FileIOApi.class)
                                            .downLoad(url);
         downloadCall.enqueue(downloadResponse);
     }

@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import com.blankj.utilcode.util.FileIOUtils
+import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ToastUtils
 import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
@@ -17,7 +19,13 @@ import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
+import me.skean.skeanframework.net.FileIOApi
+import me.skean.skeanframework.utils.NetworkUtil
+import okhttp3.ResponseBody
 import org.greenrobot.eventbus.Subscribe
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 
 
@@ -44,10 +52,11 @@ class TestActivity : BaseActivity() {
         vb = ActivityTestBinding.inflate(layoutInflater)
         setContentView(vb.root)
         vb.txvSelect.setOnClickListener {
-            txvSelectClicked()
+            testUploadFile()
+//            txvSelectClicked()
         }
         dummyDao = App.instance?.database?.dummyDao
-        postInMainDelayed(3000, "MSG", TestRunnable())
+//        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics
         tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
     }
@@ -151,6 +160,28 @@ class TestActivity : BaseActivity() {
 
     @Subscribe
     fun getForegroundEvent(event: ForegroundEvent) {
+
+    }
+
+    private fun testUploadFile() {
+        val file = File(cacheDir, "test.png")
+        if (!file.exists()) {
+            FileUtils.createOrExistsFile(file)
+            FileIOUtils.writeFileFromString(file, "�This is for test�")
+        }
+        NetworkUtil.createService<FileIOApi>().upload(
+                "http://192.168.99.1/testupload",
+                NetworkUtil.fileMultiPart("file", file))
+                .enqueue(object :Callback<ResponseBody?>{
+                    override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
+
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                        t.printStackTrace()
+                    }
+
+                })
 
     }
 }

@@ -10,7 +10,7 @@ import retrofit2.http.*
 /**
  * 蒲公英托管的服务
  */
-interface PgyerService  {
+interface PgyerApi  {
 
      var baseUrl: String
         get() = "http://www.pgyer.com/apiv1/app/"

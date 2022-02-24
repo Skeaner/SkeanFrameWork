@@ -2,6 +2,7 @@ package me.skean.skeanframework.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.provider.Telephony
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import com.blankj.utilcode.util.FileUtils.getFileExtension
@@ -13,17 +14,23 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import me.skean.skeanframework.event.NotAuthorisedEvent
 import me.skean.skeanframework.net.ProgressInterceptor
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.lang3.reflect.FieldUtils
+import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.InputStreamReader
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
@@ -37,7 +44,7 @@ import kotlin.reflect.*
 @SuppressLint("StaticFieldLeak")
 object NetworkUtil {
 
-    var timeout = 10
+    var timeout = 20
     private var httpLogLevel: HttpLoggingInterceptor.Level? = null
     private var context: Context? = null
 
@@ -134,6 +141,7 @@ object NetworkUtil {
         return OkHttpClient.Builder()
                 .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
                 .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .authenticator(tokenAuthenticator())
                 .cookieJar(persistentCookieJar())
                 .addInterceptor(httpLoggingInterceptor(false))
     }
@@ -142,6 +150,7 @@ object NetworkUtil {
         return OkHttpClient.Builder()
                 .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
                 .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .authenticator(tokenAuthenticator())
                 .cookieJar(persistentCookieJar())
                 .addInterceptor(httpLoggingInterceptor(true))
                 .addNetworkInterceptor(ProgressInterceptor())
@@ -152,9 +161,20 @@ object NetworkUtil {
         return OkHttpClient.Builder()
                 .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
                 .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+                .authenticator(tokenAuthenticator())
                 .cookieJar(persistentCookieJar())
                 .addInterceptor(httpLoggingInterceptor(true))
                 .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
+    }
+
+    fun tokenAuthenticator(): Authenticator {
+        return object : Authenticator {
+            override fun authenticate(route: Route?, response: Response): Request {
+                EventBus.getDefault().post(NotAuthorisedEvent(response))
+                return response.request
+            }
+
+        }
     }
 
     /**
@@ -163,7 +183,17 @@ object NetworkUtil {
      * @return Interceptor
      */
     fun httpLoggingInterceptor(basic: Boolean): Interceptor {
-        val interceptor = HttpLoggingInterceptor()
+        val interceptor = HttpLoggingInterceptor(logger = object : HttpLoggingInterceptor.Logger {
+            override fun log(message: String) {
+                message.split("\r\n").forEach {
+                    if (it.contains("�")) {
+                        Platform.get().log("<BINARY DATA>")
+                    } else {
+                        Platform.get().log(it)
+                    }
+                }
+            }
+        })
         interceptor.setLevel(if (basic) HttpLoggingInterceptor.Level.BASIC else httpLogLevel!!)
         return interceptor
     }

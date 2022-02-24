@@ -25,7 +25,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import java.io.File;
 
 import me.skean.framework.example.constant.IntentKey;
-import me.skean.skeanframework.net.FileIOService;
+import me.skean.skeanframework.net.FileIOApi;
 import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -124,7 +124,7 @@ public final class AppService extends Service {
             Toast.makeText(this, R.string.createFileFail, Toast.LENGTH_SHORT).show();
             return;
         }
-        NetworkUtil.INSTANCE.progressRetrofit(FileIOService.DefaultImpls.getBaseUrl(null),
+        NetworkUtil.INSTANCE.progressRetrofit(FileIOApi.DefaultImpls.getBaseUrl(null),
                                               null,
                                               (bytesRead, contentLength, percentage, done) -> {
                                                   if (!done) {
@@ -140,7 +140,7 @@ public final class AppService extends Service {
                                                                                                                     false)
                                                                                                        .build());
                                                   }
-                                              }).create(FileIOService.class).downLoad(url).enqueue(new Callback<ResponseBody>() {
+                                              }).create(FileIOApi.class).downLoad(url).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
