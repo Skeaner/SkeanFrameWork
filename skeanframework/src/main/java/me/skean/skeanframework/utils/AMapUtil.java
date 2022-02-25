@@ -13,7 +13,6 @@ import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
 
-
 import static me.skean.skeanframework.utils.AMapUtil.LType.*;
 
 /**
@@ -226,13 +225,35 @@ public class AMapUtil {
     }
 
     /**
+     * 将GPS坐标系转国标系转换为
+     *
+     * @return 转换后的坐标系 ,第一个是纬度 ,第二个是经度
+     */
+    public static double[] wgsToGcjCoordinate(double lat, double lon) {
+        double pi = 3.1415926535897932384626;
+        double ee = 0.00669342162296594323;
+        double a = 6378245.0;
+        double[] mars_point = new double[2];
+        double dLat = transformLat(lon - 105.0, lat - 35.0, pi);
+        double dLon = transformLon(lon - 105.0, lat - 35.0, pi);
+        double radLat = (lat / 180.0) * pi;
+        double magic = Math.sin(radLat);
+        magic = 1 - ee * magic * magic;
+        double sqrtMagic = Math.sqrt(magic);
+        dLat = (dLat * 180.0) / (((a * (1 - ee)) / (magic * sqrtMagic)) * pi);
+        dLon = (dLon * 180.0) / ((a / sqrtMagic) * Math.cos(radLat) * pi);
+        mars_point[0] = lat + dLat;
+        mars_point[1] = lon + dLon;
+        return mars_point;
+    }
+
+    /**
      * 将百度坐标系为国标系转换
      *
      * @return 转换后的坐标系 ,第一个是纬度 ,第二个是经度
      */
     public static double[] baiduToGcjCoordinate(String latitude, String longitude) {
         return baiduToGcjCoordinate(Double.valueOf(latitude), Double.valueOf(longitude));
-
     }
 
     /**
@@ -249,6 +270,7 @@ public class AMapUtil {
 
     /**
      * 将国标系转换为GPS坐标系
+     *
      * @return 转换后的坐标系 ,第一个是纬度 ,第二个是经度
      */
     public static double[] gcjToWgsCoordinate(String lat, String lon) {
@@ -256,7 +278,17 @@ public class AMapUtil {
     }
 
     /**
+     * 将GPS坐标系转国标系转换为
+     *
+     * @return 转换后的坐标系 ,第一个是纬度 ,第二个是经度
+     */
+    public static double[] wgsToGcjCoordinate(String lat, String lon) {
+        return wgsToGcjCoordinate(Double.valueOf(lat), Double.valueOf(lon));
+    }
+
+    /**
      * 将国标系转换为GPS坐标系
+     *
      * @return 转换后的坐标系 ,第一个是纬度 ,第二个是经度
      */
     public static double[] gcjToWgsCoordinate(double lat, double lon) {
