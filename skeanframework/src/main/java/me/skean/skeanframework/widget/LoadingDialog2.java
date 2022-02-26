@@ -42,7 +42,7 @@ public class LoadingDialog2 extends AlertDialog {
     private Handler mHandler;
 
     public LoadingDialog2(Context context) {
-        super(context, android.R.style.Theme_Black_NoTitleBar);
+        super(context, android.R.style.Theme_Dialog);
     }
 
     public static LoadingDialog2 show(Context context, CharSequence message) {
@@ -72,6 +72,7 @@ public class LoadingDialog2 extends AlertDialog {
             params.dimAmount = 0.0f;
             window.setAttributes(params);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setWindowAnimations(R.style.NullAnimationDialog);
         }
         mHandler = new Handler(callback);
         setContentView(R.layout.sfw_dialog_loading);

@@ -20,7 +20,9 @@ import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
 import me.skean.skeanframework.net.FileIOApi
+import me.skean.skeanframework.rx.ProgressSingleObserver
 import me.skean.skeanframework.utils.NetworkUtil
+import me.skean.skeanframework.widget.LoadingDialog2
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Call
@@ -164,23 +166,25 @@ class TestActivity : BaseActivity() {
     }
 
     private fun testUploadFile() {
-        val file = File(cacheDir, "test.png")
+        val file = File(cacheDir, "test.txt")
         if (!file.exists()) {
             FileUtils.createOrExistsFile(file)
             FileIOUtils.writeFileFromString(file, "�This is for test�")
         }
-        NetworkUtil.createService<FileIOApi>().upload(
+        NetworkUtil.createService<FileIOApi>().uploadSingle(
                 "http://192.168.99.1/testupload",
                 NetworkUtil.fileMultiPart("file", file))
-                .enqueue(object :Callback<ResponseBody?>{
-                    override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
-
+                .subscribeOn(io())
+                .observeOn(mainThread())
+                .subscribe(object : ProgressSingleObserver<ResponseBody?>(context) {
+                    override fun onError2(e: Throwable) {
+                        super.onError2(e)
+                        e.printStackTrace()
                     }
 
-                    override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
-                        t.printStackTrace()
+                    override fun onSuccess2(t: ResponseBody) {
+                        super.onSuccess2(t)
                     }
-
                 })
 
     }
