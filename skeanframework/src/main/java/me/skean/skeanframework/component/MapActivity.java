@@ -198,7 +198,7 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
 
     @OnNeverAskAgain(LOCATION)
     public void locateNever() {
-        EasyPermissionDialog.build(this).permissions(PERMISSIONS).typeNeverAsk(REQUEST_SETTING, null).show();
+        EasyPermissionDialog.build(this).permissions(PERMISSIONS).typeNeverAsk( null).show();
     }
 
     private void startMyLocation() {

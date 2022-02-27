@@ -1,5 +1,6 @@
 package me.skean.framework.example.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -19,6 +20,7 @@ import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
+import me.skean.skeanframework.ktext.requestPermissionEachCombined
 import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.rx.ProgressSingleObserver
 import me.skean.skeanframework.utils.NetworkUtil
@@ -54,8 +56,9 @@ class TestActivity : BaseActivity() {
         vb = ActivityTestBinding.inflate(layoutInflater)
         setContentView(vb.root)
         vb.txvSelect.setOnClickListener {
-            testUploadFile()
-//            txvSelectClicked()
+//            testUploadFile()
+            testPermission()
+        //            txvSelectClicked()
         }
         dummyDao = App.instance?.database?.dummyDao
 //        postInMainDelayed(3000, "MSG", TestRunnable())
@@ -171,6 +174,12 @@ class TestActivity : BaseActivity() {
             FileUtils.createOrExistsFile(file)
             FileIOUtils.writeFileFromString(file, "�This is for test�")
         }
+        requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                onGranted = {
+
+                }, onAllow = {
+
+        })
         NetworkUtil.createService<FileIOApi>().uploadSingle(
                 "http://192.168.99.1/testupload",
                 NetworkUtil.fileMultiPart("file", file))
@@ -187,5 +196,12 @@ class TestActivity : BaseActivity() {
                     }
                 })
 
+    }
+
+    private fun testPermission() {
+        requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
+                onGranted = {
+                            ToastUtils.showShort("得到全部权限")
+                }, onAllow = { testPermission() })
     }
 }

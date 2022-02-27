@@ -72,7 +72,7 @@ public class UseCameraActivity extends BaseActivity {
 
     @OnNeverAskAgain({P})
     public final void permissionNever() {
-        EasyPermissionDialog.build(this).permissions(P).typeNeverAsk(REQUEST_PERMISSION, null).show();
+        EasyPermissionDialog.build(this).permissions(P).typeNeverAsk( null).show();
     }
 
 }

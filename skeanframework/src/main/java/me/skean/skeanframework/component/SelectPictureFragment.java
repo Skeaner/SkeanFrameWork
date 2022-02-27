@@ -132,7 +132,7 @@ public class SelectPictureFragment extends BaseFragment {
 
     @OnNeverAskAgain({P1, P2, P3})
     public final void permissionNever() {
-        EasyPermissionDialog.build(this).permissions(P1, P2, P3).typeNeverAsk(REQUEST_PERMISSION, null).show();
+        EasyPermissionDialog.build(this).permissions(P1, P2, P3).typeNeverAsk( null).show();
     }
 
 }
