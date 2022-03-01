@@ -11,6 +11,8 @@ import android.provider.MediaStore
 import com.blankj.utilcode.util.FileIOUtils
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.tbruyelle.rxpermissions2.Permission
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
@@ -20,16 +22,19 @@ import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
-import me.skean.skeanframework.ktext.requestPermissionEachCombined
+import me.skean.skeanframework.ktext.requestPermissionEach
 import me.skean.skeanframework.net.FileIOApi
+import me.skean.skeanframework.rx.DefaultObserver
 import me.skean.skeanframework.rx.ProgressSingleObserver
 import me.skean.skeanframework.utils.NetworkUtil
 import me.skean.skeanframework.widget.LoadingDialog2
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.Subscribe
+import permissions.dispatcher.PermissionUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog
 import java.io.File
 
 
@@ -57,8 +62,10 @@ class TestActivity : BaseActivity() {
         setContentView(vb.root)
         vb.txvSelect.setOnClickListener {
 //            testUploadFile()
-            testPermission()
-        //            txvSelectClicked()
+            testPermission {
+                ToastUtils.showShort("获取权限成功")
+            }
+            //            txvSelectClicked()
         }
         dummyDao = App.instance?.database?.dummyDao
 //        postInMainDelayed(3000, "MSG", TestRunnable())
@@ -174,12 +181,6 @@ class TestActivity : BaseActivity() {
             FileUtils.createOrExistsFile(file)
             FileIOUtils.writeFileFromString(file, "�This is for test�")
         }
-        requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                onGranted = {
-
-                }, onAllow = {
-
-        })
         NetworkUtil.createService<FileIOApi>().uploadSingle(
                 "http://192.168.99.1/testupload",
                 NetworkUtil.fileMultiPart("file", file))
@@ -198,10 +199,10 @@ class TestActivity : BaseActivity() {
 
     }
 
-    private fun testPermission() {
-        requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,
-                onGranted = {
-                            ToastUtils.showShort("得到全部权限")
-                }, onAllow = { testPermission() })
+    private fun testPermission(onGranted: () -> Unit) {
+        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+        requestPermissionEach(*permissions) {
+            onGranted.invoke()
+        }
     }
 }
