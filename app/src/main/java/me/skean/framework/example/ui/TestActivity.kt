@@ -13,6 +13,8 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.tbruyelle.rxpermissions2.Permission
 import com.tbruyelle.rxpermissions2.RxPermissions
+import io.reactivex.Observable
+import io.reactivex.Observer
 import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
@@ -22,6 +24,7 @@ import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
+import me.skean.skeanframework.ktext.progressObserver
 import me.skean.skeanframework.ktext.requestPermissionEach
 import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.rx.DefaultObserver
@@ -181,6 +184,9 @@ class TestActivity : BaseActivity() {
             FileUtils.createOrExistsFile(file)
             FileIOUtils.writeFileFromString(file, "�This is for test�")
         }
+        Observable.just("1").subscribe(progressObserver(this) {
+            
+        })
         NetworkUtil.createService<FileIOApi>().uploadSingle(
                 "http://192.168.99.1/testupload",
                 NetworkUtil.fileMultiPart("file", file))
