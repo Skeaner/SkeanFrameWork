@@ -169,5 +169,9 @@ dependencies {
     api 'com.afollestad.material-dialogs:core:3.3.0'
     api 'com.afollestad.material-dialogs:input:3.3.0'
     api 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
+    //刷新库
+    api 'io.github.scwang90:refresh-layout-kernel:2.0.5'
+    api 'io.github.scwang90:refresh-header-classics:2.0.5'    //经典刷新头
+    api 'io.github.scwang90:refresh-footer-classics:2.0.5'
 }
 

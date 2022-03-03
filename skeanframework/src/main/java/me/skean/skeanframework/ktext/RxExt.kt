@@ -3,15 +3,31 @@
 package me.skean.skeanframework.ktext
 
 import android.content.Context
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import io.reactivex.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import me.skean.skeanframework.rx.DefaultObserver
-import me.skean.skeanframework.rx.DefaultSingleObserver
-import me.skean.skeanframework.rx.ProgressObserver
-import me.skean.skeanframework.rx.ProgressSingleObserver
+import io.reactivex.schedulers.Schedulers
+import me.skean.skeanframework.rx.*
+import me.skean.skeanframework.widget.LoadingDialog2
 
 /**
  * Created by Skean on 21/4/8.
  */
+
+fun <T> Single<T>.subscribeOnIoObserveOnMainThread(): Single<T> {
+    return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
+fun <T> Observable<T>.subscribeOnIoObserveOnMainThread(): Observable<T> {
+    return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
+fun <T> Flowable<T>.subscribeOnIoObserveOnMainThread(): Flowable<T> {
+    return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
+
 fun Disposable?.isNotNullAndNotDisposed(): Boolean {
     return this != null && !this.isDisposed
 }
@@ -123,3 +139,51 @@ inline fun <T> progressSingleObserver(
     }
 }
 
+
+inline fun <T> applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+        : DialogProgressTransformer<T> {
+    val dialog = LoadingDialog2(context)
+    dialog.setMessage(message)
+    dialog.setCancelable(cancelable)
+    val cancelObservable = DialogCancelObservable(dialog).doOnNext { onCancel.invoke(Unit) }
+    return DialogProgressTransformer<T>(dialog, cancelObservable)
+}
+
+
+inline fun <T> Single<T>.applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+        : Single<T> {
+    return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
+}
+
+
+inline fun <T> Observable<T>.applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+        : Observable<T> {
+    return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
+}
+
+inline fun <T> Flowable<T>.applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+        : Flowable<T> {
+    return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
+}
+
+
+fun <T> applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+        : SmartRefreshLayoutTransformer<T> {
+    return SmartRefreshLayoutTransformer<T>(loader, refresh, checkSuccessAndNoMore)
+}
+
+fun <T> Single<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+        : Single<T> {
+    return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
+}
+
+
+fun <T> Observable<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+        : Observable<T> {
+    return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
+}
+
+fun <T> Flowable<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+        : Flowable<T> {
+    return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
+}

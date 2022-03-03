@@ -8,13 +8,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import com.blankj.utilcode.util.FileIOUtils
-import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ToastUtils
-import com.tbruyelle.rxpermissions2.Permission
-import com.tbruyelle.rxpermissions2.RxPermissions
-import io.reactivex.Observable
-import io.reactivex.Observer
+import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
@@ -24,21 +19,10 @@ import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
-import me.skean.skeanframework.ktext.progressObserver
-import me.skean.skeanframework.ktext.requestPermissionEach
-import me.skean.skeanframework.net.FileIOApi
-import me.skean.skeanframework.rx.DefaultObserver
-import me.skean.skeanframework.rx.ProgressSingleObserver
-import me.skean.skeanframework.utils.NetworkUtil
-import me.skean.skeanframework.widget.LoadingDialog2
-import okhttp3.ResponseBody
+import me.skean.skeanframework.ktext.*
 import org.greenrobot.eventbus.Subscribe
-import permissions.dispatcher.PermissionUtils
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -63,12 +47,16 @@ class TestActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         vb = ActivityTestBinding.inflate(layoutInflater)
         setContentView(vb.root)
+        vb.srlLoader.setEnableLoadMore(true)
+        vb.srlLoader.setEnableRefresh(true)
+        vb.srlLoader.setOnRefreshListener {
+            testRefresh(true)
+        }
+        vb.srlLoader.setOnLoadMoreListener {
+            testRefresh(false)
+        }
         vb.txvSelect.setOnClickListener {
-//            testUploadFile()
-            testPermission {
-                ToastUtils.showShort("获取权限成功")
-            }
-            //            txvSelectClicked()
+            testUploadFile()
         }
         dummyDao = App.instance?.database?.dummyDao
 //        postInMainDelayed(3000, "MSG", TestRunnable())
@@ -179,28 +167,27 @@ class TestActivity : BaseActivity() {
     }
 
     private fun testUploadFile() {
-        val file = File(cacheDir, "test.txt")
-        if (!file.exists()) {
-            FileUtils.createOrExistsFile(file)
-            FileIOUtils.writeFileFromString(file, "�This is for test�")
-        }
-        Observable.just("1").subscribe(progressObserver(this) {
-            
-        })
-        NetworkUtil.createService<FileIOApi>().uploadSingle(
-                "http://192.168.99.1/testupload",
-                NetworkUtil.fileMultiPart("file", file))
-                .subscribeOn(io())
-                .observeOn(mainThread())
-                .subscribe(object : ProgressSingleObserver<ResponseBody?>(context) {
-                    override fun onError2(e: Throwable) {
-                        super.onError2(e)
-                        e.printStackTrace()
-                    }
+        Single.timer(4, TimeUnit.SECONDS)
+                .subscribeOnIoObserveOnMainThread()
+                .applyAutoLoading(this){
+                    ToastUtils.showShort("取消了")
+                }
+                .subscribe(defaultSingleObserver {
+                    ToastUtils.showShort("完毕")
+                })
 
-                    override fun onSuccess2(t: ResponseBody) {
-                        super.onSuccess2(t)
-                    }
+    }
+
+
+    private fun testRefresh( refresh:Boolean) {
+        if (refresh) count=0
+        Single.timer(1, TimeUnit.SECONDS)
+                .subscribeOnIoObserveOnMainThread()
+                .applyAutoRefresh(vb.srlLoader, refresh){
+                    return@applyAutoRefresh true to (count>2)
+                }
+                .subscribe(defaultSingleObserver {
+                    count++
                 })
 
     }

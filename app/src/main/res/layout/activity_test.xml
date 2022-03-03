@@ -1,28 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<com.scwang.smart.refresh.layout.SmartRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    android:id="@+id/srlLoader"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/appMainMargin"
-    android:paddingTop="@dimen/appMainMargin"
-    android:paddingRight="@dimen/appMainMargin"
-    android:paddingBottom="@dimen/appMainMargin"
-    tools:context=".ui.TestActivity">
-
-
-    <TextView
-        android:id="@+id/tvInfo"
-        android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+    <com.scwang.smart.refresh.header.ClassicsHeader
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
+        app:srlAccentColor="@color/colorPrimaryDark" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/txvSelect"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/appMainMargin"
+        android:paddingTop="@dimen/appMainMargin"
+        android:paddingRight="@dimen/appMainMargin"
+        android:paddingBottom="@dimen/appMainMargin"
+        tools:context=".ui.TestActivity">
+
+
+        <TextView
+            android:id="@+id/tvInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/txvSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="点击一下看看" />
+    </RelativeLayout>
+
+
+    <com.scwang.smart.refresh.footer.ClassicsFooter
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:text="点击一下看看" />
-</RelativeLayout>
+        app:srlAccentColor="@color/colorPrimaryDark" />
+</com.scwang.smart.refresh.layout.SmartRefreshLayout>
