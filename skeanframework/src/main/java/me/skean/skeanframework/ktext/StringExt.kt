@@ -22,3 +22,9 @@ fun String?.showAsLongToast() {
         ToastUtils.showLong(this)
     }
 }
+
+fun String.subStringByKey(key: String, startIndex: Int = 0, keySearchStartIndex: Int = 0, ignoreCase: Boolean = false, includeKey: Boolean = false)
+        : String {
+    val appendText = if (includeKey) "" else key
+    return substring(startIndex, indexOf(key, keySearchStartIndex, ignoreCase)) + appendText
+}
