@@ -19,6 +19,7 @@ import me.skean.framework.example.db.Migrations
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.SkeanFrameWork
+import me.skean.skeanframework.component.SkeanFrameworkModules
 import me.skean.skeanframework.utils.AppStatusTracker
 import me.skean.skeanframework.utils.AppStatusTracker.StatusCallback
 import me.skean.skeanframework.utils.LogFileWriter
@@ -28,6 +29,10 @@ import net.sqlcipher.database.SQLiteDatabase.getBytes
 import net.sqlcipher.database.SupportFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.logger.AndroidLogger
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 import java.io.File
 
 
@@ -104,25 +109,34 @@ class App : MultiDexApplication(), StatusCallback {
         //AndroidUtils初始化
         Utils.init(this)
         LogUtils.getConfig() //.setLogSwitch(BuildConfig.DEBUG)
-                .setGlobalTag(TAG)
-                .setLogHeadSwitch(true)
-                .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
-                .setFilePrefix("new")
-                .setFileWriter(LogFileWriter(5 * 1024 * 1024)).isSingleTagSwitch = true
+            .setGlobalTag(TAG)
+            .setLogHeadSwitch(true)
+            .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
+            .setFilePrefix("new")
+            .setFileWriter(LogFileWriter(5 * 1024 * 1024)).isSingleTagSwitch = true
         //初始化EventBus
         EventBus.builder().throwSubscriberException(true).addIndex(EventBusIndex()).installDefaultEventBus()
         //初始化上报的工具
         if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
             ReportUtils.getInstance().init(context)
-        }
-        else { //外网的使用BUGLY
+        } else { //外网的使用BUGLY
             Bugly.init(applicationContext, BuildConfig.BUGLY_APPID, BuildConfig.DEBUG)
         }
         //数据库初始化
         initDatabase()
         //初始化Kotpref
         Kotpref.init(this)
+        //初始化Koin
+        startKoin {
+            androidContext(this@App) //注入context
+            logger(AndroidLogger()) //使用Android的Log
+            modules(SkeanFrameworkModules.module, //传入框架的注入对象模块
+                module {//传入App的注入对象模块
+                    single { database!!.dummyDao }
+                })
+        }
     }
+
 
     /**
      * 数据库初始化
@@ -131,11 +145,11 @@ class App : MultiDexApplication(), StatusCallback {
         //使用加密数据库
         val factory = SupportFactory(getBytes("sjkmm".toCharArray()))
         database = Room.databaseBuilder(this, AppDatabase::class.java, "$TAG.db")
-                .openHelperFactory(factory)
-                .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
-                // .allowMainThreadQueries() //是否允许在主线程进行操作
-                .addMigrations(*Migrations.COLLECTIONS)
-                .build()
+            .openHelperFactory(factory)
+            .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+            // .allowMainThreadQueries() //是否允许在主线程进行操作
+            .addMigrations(*Migrations.COLLECTIONS)
+            .build()
     }
 
     fun <Temp> setTempObject(tempObject: Temp) {
@@ -157,7 +171,12 @@ class App : MultiDexApplication(), StatusCallback {
         return super.openOrCreateDatabase(getDatabasePath(name).absolutePath, mode, factory)
     }
 
-    override fun openOrCreateDatabase(name: String, mode: Int, factory: SQLiteDatabase.CursorFactory, errorHandler: DatabaseErrorHandler?): SQLiteDatabase {
+    override fun openOrCreateDatabase(
+        name: String,
+        mode: Int,
+        factory: SQLiteDatabase.CursorFactory,
+        errorHandler: DatabaseErrorHandler?
+    ): SQLiteDatabase {
         return super.openOrCreateDatabase(getDatabasePath(name).absolutePath, mode, factory, errorHandler)
     }
 
@@ -168,8 +187,7 @@ class App : MultiDexApplication(), StatusCallback {
     override fun getDatabasePath(name: String): File {
         return if (BuildConfig.EXTERNAL_DB) {
             File(appExternalDatabaseDir, name)
-        }
-        else super.getDatabasePath(name)
+        } else super.getDatabasePath(name)
     }
 
     override fun onToForeground() {

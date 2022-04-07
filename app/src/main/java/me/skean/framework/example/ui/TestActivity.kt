@@ -9,6 +9,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import com.blankj.utilcode.util.ToastUtils
+import com.hi.dhl.binding.viewbind
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
@@ -21,6 +22,8 @@ import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
 import me.skean.skeanframework.ktext.*
 import org.greenrobot.eventbus.Subscribe
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -38,15 +41,13 @@ class TestActivity : BaseActivity() {
 
     val REQUEST_GET_SINGLE_FILE = 1
 
-    private var dummyDao: DummyDao? = null
+    private val dummyDao: DummyDao by inject()
     private var count = 0
 
-    private lateinit var vb: ActivityTestBinding
+    private val vb: ActivityTestBinding by viewbind()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vb = ActivityTestBinding.inflate(layoutInflater)
-        setContentView(vb.root)
         vb.srlLoader.setEnableLoadMore(true)
         vb.srlLoader.setEnableRefresh(true)
         vb.srlLoader.setOnRefreshListener {
@@ -58,7 +59,6 @@ class TestActivity : BaseActivity() {
         vb.txvSelect.setOnClickListener {
             testUploadFile()
         }
-        dummyDao = App.instance?.database?.dummyDao
 //        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics
         tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
@@ -137,8 +137,8 @@ class TestActivity : BaseActivity() {
 
         // Split at colon, use second item in the array
         val id = wholeID.split(":".toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .toTypedArray()[1]
+            .dropLastWhile { it.isEmpty() }
+            .toTypedArray()[1]
 
         val column = arrayOf(MediaStore.Images.Media.DATA)
 
@@ -168,27 +168,27 @@ class TestActivity : BaseActivity() {
 
     private fun testUploadFile() {
         Single.timer(4, TimeUnit.SECONDS)
-                .subscribeOnIoObserveOnMainThread()
-                .applyAutoLoading(this){
-                    ToastUtils.showShort("取消了")
-                }
-                .subscribe(defaultSingleObserver {
-                    ToastUtils.showShort("完毕")
-                })
+            .subscribeOnIoObserveOnMainThread()
+            .applyAutoLoading(this) {
+                ToastUtils.showShort("取消了")
+            }
+            .subscribe(defaultSingleObserver {
+                ToastUtils.showShort("完毕")
+            })
 
     }
 
 
-    private fun testRefresh( refresh:Boolean) {
-        if (refresh) count=0
+    private fun testRefresh(refresh: Boolean) {
+        if (refresh) count = 0
         Single.timer(1, TimeUnit.SECONDS)
-                .subscribeOnIoObserveOnMainThread()
-                .applyAutoRefresh(vb.srlLoader, refresh){
-                    return@applyAutoRefresh true to (count>2)
-                }
-                .subscribe(defaultSingleObserver {
-                    count++
-                })
+            .subscribeOnIoObserveOnMainThread()
+            .applyAutoRefresh(vb.srlLoader, refresh) {
+                return@applyAutoRefresh true to (count > 2)
+            }
+            .subscribe(defaultSingleObserver {
+                count++
+            })
 
     }
 

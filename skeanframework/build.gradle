@@ -4,7 +4,10 @@ apply plugin: "kotlin-allopen"
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "kotlin-kapt"
 apply plugin: 'com.github.dcendents.android-maven'
+
 group='com.github.Skeaner'
+def koin_version= "3.1.5"
+
 
 buildscript {
     repositories {
@@ -21,7 +24,7 @@ android {
     buildToolsVersion '29.0.3'
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionName '1.0'
         versionCode 1
@@ -173,5 +176,13 @@ dependencies {
     api 'io.github.scwang90:refresh-layout-kernel:2.0.5'
     api 'io.github.scwang90:refresh-header-classics:2.0.5'    //经典刷新头
     api 'io.github.scwang90:refresh-footer-classics:2.0.5'
+    //koin
+    api "io.insert-koin:koin-android:$koin_version"// Koin main features for Android
+    api "io.insert-koin:koin-android-compat:$koin_version"// Java Compatibility
+    api "io.insert-koin:koin-androidx-workmanager:$koin_version"// Jetpack WorkManager
+    api "io.insert-koin:koin-androidx-navigation:$koin_version"// Navigation Graph
+    api "io.insert-koin:koin-androidx-compose:$koin_version"// Jetpack Compose
+    //viewBinding
+    api 'com.hi-dhl:binding:1.1.3'
 }
 

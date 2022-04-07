@@ -15,6 +15,7 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.viewbinding.ViewBinding
 import androidx.viewpager.widget.ViewPager
 import com.blankj.utilcode.util.ToastUtils
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -96,14 +97,14 @@ fun View.isInvisible(): Boolean {
 
 fun View.setOnClickFilterListener(onClick: ((t: Any) -> Unit)) {
     RxView.clicks(this)
-            .throttleFirst(1, TimeUnit.SECONDS)
-            .subscribe(onClick)
+        .throttleFirst(1, TimeUnit.SECONDS)
+        .subscribe(onClick)
 }
 
 fun View.setOnClickFilterListener(millis: Long, onClick: ((t: Any) -> Unit)) {
     RxView.clicks(this)
-            .throttleFirst(millis, TimeUnit.MILLISECONDS)
-            .subscribe(onClick)
+        .throttleFirst(millis, TimeUnit.MILLISECONDS)
+        .subscribe(onClick)
 }
 
 fun TextView.textOrBlankNull(): String? {
@@ -131,13 +132,13 @@ fun TextView.showSelectionsPopupMenu(selections: List<String>) {
         val menu = it.menu
         selections.forEach { selection -> menu.add(selection) }
     }
-            .also {
-                it.setOnMenuItemClickListener { item ->
-                    this.text = item.title
-                    return@setOnMenuItemClickListener true
-                }
+        .also {
+            it.setOnMenuItemClickListener { item ->
+                this.text = item.title
+                return@setOnMenuItemClickListener true
             }
-            .show()
+        }
+        .show()
 }
 
 fun TextView.showSelectionsPopupMenuOnClick(selections: List<String>) {
@@ -152,10 +153,10 @@ fun View.showSelectionsPopupMenu(selections: List<String>, listener: PopupMenu.O
         val menu = it.menu
         selections.forEach { selection -> menu.add(selection) }
     }
-            .also {
-                it.setOnMenuItemClickListener(listener)
-            }
-            .show()
+        .also {
+            it.setOnMenuItemClickListener(listener)
+        }
+        .show()
 }
 
 
@@ -171,16 +172,16 @@ fun View.showSelectionsPopupMenu(selections: ListOrderedMap<String, Int>, listen
         val menu = it.menu
         selections.forEach { selection ->
             menu.add(selection.key)
-                    .also { item -> item.setIcon(selection.value) }
+                .also { item -> item.setIcon(selection.value) }
         }
     }
-            .also {
-                it.setOnMenuItemClickListener(listener)
-                MenuPopupHelper(context, it.menu as MenuBuilder, this).also { helper ->
-                    helper.setForceShowIcon(true)
-                    helper.show()
-                }
+        .also {
+            it.setOnMenuItemClickListener(listener)
+            MenuPopupHelper(context, it.menu as MenuBuilder, this).also { helper ->
+                helper.setForceShowIcon(true)
+                helper.show()
             }
+        }
 }
 
 
@@ -203,7 +204,7 @@ fun TextView.addTextChangedListenerAndSetValue(property: KMutableProperty<String
     this.addTextChangedListener(object : DefaultTextWatcher() {
         override fun afterTextChanged(s: Editable?) {
             property.setter.call(s.toString()
-                    .ifBlank { null })
+                .ifBlank { null })
         }
     })
 }
@@ -234,8 +235,10 @@ fun TextView.addRequireTagAtEnd() {
     val requireText = "*"
     val builder = SpannableStringBuilder(originalText + requireText)
 
-    builder.setSpan(ForegroundColorSpan(Color.RED), originalText.length, builder.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    builder.setSpan(
+        ForegroundColorSpan(Color.RED), originalText.length, builder.length,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
     setText(builder)
 }
 
@@ -245,20 +248,22 @@ fun TextView.addRequireTagAtStart() {
     val requireText = "*"
     val builder = SpannableStringBuilder(requireText + originalText)
 
-    builder.setSpan(ForegroundColorSpan(Color.RED), 0, requireText.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    builder.setSpan(
+        ForegroundColorSpan(Color.RED), 0, requireText.length,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
     setText(builder)
 }
 
-fun  TextView.toastHintShort(){
+fun TextView.toastHintShort() {
     ToastUtils.showShort(this.hint)
 }
 
-fun  TextView.toastHintLong(){
+fun TextView.toastHintLong() {
     ToastUtils.showLong(this.hint)
 }
 
-inline fun  TextView.doIfBlankAndReturnText(block: (Unit) -> Unit): String {
+inline fun TextView.doIfBlankAndReturnText(block: (Unit) -> Unit): String {
     val text = textOrBlank()
     if (text.isBlank()) {
         block.invoke(Unit)
@@ -285,17 +290,19 @@ fun BottomNavigationView.disableShiftMode() {
 
 fun FrameLayout.setGravity(gravity: Int) {
     (this.layoutParams as FrameLayout.LayoutParams).also { it.gravity = gravity }
-            .also { this.layoutParams = it }
+        .also { this.layoutParams = it }
 }
 
 fun LinearLayout.setGravity(gravity: Int) {
     (this.layoutParams as LinearLayout.LayoutParams).also { it.gravity = gravity }
-            .also { this.layoutParams = it }
+        .also { this.layoutParams = it }
 }
 
-inline fun TabLayout.addOnTabSelectedListener(crossinline onTabSelected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
-                                              crossinline onTabUnselected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
-                                              crossinline onTabReselected: (tab: TabLayout.Tab?) -> Unit = { _ -> }) {
+inline fun TabLayout.addOnTabSelectedListener(
+    crossinline onTabSelected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
+    crossinline onTabUnselected: (tab: TabLayout.Tab?) -> Unit = { _ -> },
+    crossinline onTabReselected: (tab: TabLayout.Tab?) -> Unit = { _ -> }
+) {
     this.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
             onTabSelected.invoke(tab)
@@ -312,9 +319,11 @@ inline fun TabLayout.addOnTabSelectedListener(crossinline onTabSelected: (tab: T
     })
 }
 
-inline fun ViewPager.addOnPageChangeListener(crossinline onPageScrolled: (position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit = { _, _, _ -> },
-                                             crossinline onPageSelected: (position: Int) -> Unit = { _ -> },
-                                             crossinline onPageScrollStateChanged: (state: Int) -> Unit = { _ -> }) {
+inline fun ViewPager.addOnPageChangeListener(
+    crossinline onPageScrolled: (position: Int, positionOffset: Float, positionOffsetPixels: Int) -> Unit = { _, _, _ -> },
+    crossinline onPageSelected: (position: Int) -> Unit = { _ -> },
+    crossinline onPageScrollStateChanged: (state: Int) -> Unit = { _ -> }
+) {
     this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
         override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
             onPageScrolled.invoke(position, positionOffset, positionOffsetPixels)
