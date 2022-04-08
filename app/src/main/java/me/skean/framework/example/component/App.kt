@@ -30,8 +30,10 @@ import net.sqlcipher.database.SupportFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 import org.koin.android.logger.AndroidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 import org.koin.dsl.module
 import java.io.File
 
@@ -129,7 +131,7 @@ class App : MultiDexApplication(), StatusCallback {
         //初始化Koin
         startKoin {
             androidContext(this@App) //注入context
-            logger(AndroidLogger()) //使用Android的Log
+            androidLogger(Level.ERROR) //使用Android的Log
             modules(SkeanFrameworkModules.module, //传入框架的注入对象模块
                 module {//传入App的注入对象模块
                     single { database!!.dummyDao }

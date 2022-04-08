@@ -31,6 +31,9 @@ import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStreamReader
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
@@ -82,8 +85,10 @@ object NetworkUtil {
             try {
                 val implClass = Class.forName("${clazz.name}\$DefaultImpls")
                 val method = implClass.getDeclaredMethod("getBaseUrl", clazz)
-                return method.invoke(null, null).toString()
+                val clazzInstance = Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz)) { proxy, method, args -> null }
+                return method.invoke(null, clazzInstance).toString()
             } catch (e: Exception) {
+                e.printStackTrace()
                 throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性!")
             }
         } else { //java的接口
@@ -139,32 +144,34 @@ object NetworkUtil {
      */
     fun newAppHttpBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .authenticator(tokenAuthenticator())
-                .cookieJar(persistentCookieJar())
-                .addInterceptor(httpLoggingInterceptor(false))
+            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .authenticator(tokenAuthenticator())
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(false))
     }
 
     fun newAppHttpProgressBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .authenticator(tokenAuthenticator())
-                .cookieJar(persistentCookieJar())
-                .addInterceptor(httpLoggingInterceptor(true))
-                .addNetworkInterceptor(ProgressInterceptor())
+            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .authenticator(tokenAuthenticator())
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(true))
+            .addNetworkInterceptor(ProgressInterceptor())
     }
 
-    fun newAppHttpProgressBuilder(uploadListener: ProgressInterceptor.UploadListener?,
-                                  downloadListener: ProgressInterceptor.DownloadListener?): OkHttpClient.Builder {
+    fun newAppHttpProgressBuilder(
+        uploadListener: ProgressInterceptor.UploadListener?,
+        downloadListener: ProgressInterceptor.DownloadListener?
+    ): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-                .authenticator(tokenAuthenticator())
-                .cookieJar(persistentCookieJar())
-                .addInterceptor(httpLoggingInterceptor(true))
-                .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
+            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .authenticator(tokenAuthenticator())
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(true))
+            .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
     }
 
     fun tokenAuthenticator(): Authenticator {
@@ -209,68 +216,70 @@ object NetworkUtil {
 
     fun newObjectMapper(): ObjectMapper {
         return ObjectMapper().registerModule(KotlinModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
     }
 
     fun baseRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpBuilder().build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpBuilder().build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpBuilder().build())
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpBuilder().build())
+            .addConverterFactory(JacksonConverterFactory.create(mapper))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(builder.build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(builder.build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun progressRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpProgressBuilder().build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpProgressBuilder().build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpProgressBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(builder.build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(builder.build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
-    fun progressRetrofit(baseUrl: String?,
-                         uploadListener: ProgressInterceptor.UploadListener?,
-                         downloadListener: ProgressInterceptor.DownloadListener?): Retrofit {
+    fun progressRetrofit(
+        baseUrl: String?,
+        uploadListener: ProgressInterceptor.UploadListener?,
+        downloadListener: ProgressInterceptor.DownloadListener?
+    ): Retrofit {
         return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
-                .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(baseUrl)
+            .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     fun setUploadListener(retrofit: Retrofit, upLoadListener: ProgressInterceptor.UploadListener?): Retrofit {

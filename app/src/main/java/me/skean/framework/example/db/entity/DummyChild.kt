@@ -1,12 +1,10 @@
 package me.skean.framework.example.db.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import java.util.*
 
-@Entity(foreignKeys = [ForeignKey(entity = Dummy::class, parentColumns = ["id"], childColumns = ["pid"])])
+@Entity(foreignKeys = [ForeignKey(entity = Dummy::class, parentColumns = ["id"], childColumns = ["pid"])],
+    indices = [Index(value = ["pid"])])
 class DummyChild {
     @PrimaryKey(autoGenerate = true)
     var id: Long? = null

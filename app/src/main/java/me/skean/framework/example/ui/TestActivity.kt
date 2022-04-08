@@ -21,6 +21,8 @@ import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.component.ActivityStarter
 import me.skean.skeanframework.ktext.*
+import me.skean.skeanframework.net.FileIOApi
+import me.skean.skeanframework.utils.NetworkUtil
 import org.greenrobot.eventbus.Subscribe
 import org.koin.android.ext.android.inject
 import org.koin.java.KoinJavaComponent.inject
@@ -57,7 +59,8 @@ class TestActivity : BaseActivity() {
             testRefresh(false)
         }
         vb.txvSelect.setOnClickListener {
-            testUploadFile()
+//            testUploadFile()
+            ToastUtils.showShort(NetworkUtil.createService<FileIOApi>().downLoad("http://asasa").request().url.toString())
         }
 //        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics

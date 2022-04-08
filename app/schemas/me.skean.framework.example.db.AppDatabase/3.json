@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "fc7f1501c2bed3ff42e413fd703427f2",
+    "identityHash": "051cb17c40c9efe17f935b3dfe899b18",
     "entities": [
       {
         "tableName": "Dummy",
@@ -80,7 +80,16 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_DummyChild_pid",
+            "unique": false,
+            "columnNames": [
+              "pid"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_DummyChild_pid` ON `${TABLE_NAME}` (`pid`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "Dummy",
@@ -99,7 +108,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fc7f1501c2bed3ff42e413fd703427f2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '051cb17c40c9efe17f935b3dfe899b18')"
     ]
   }
 }
