@@ -11,7 +11,6 @@ import android.provider.MediaStore
 import com.blankj.utilcode.util.ToastUtils
 import com.hi.dhl.binding.viewbind
 import io.reactivex.Single
-import kotlinx.android.synthetic.main.activity_test.*
 import me.skean.framework.example.component.App
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.utils.ImageUtil
@@ -59,12 +58,12 @@ class TestActivity : BaseActivity() {
             testRefresh(false)
         }
         vb.txvSelect.setOnClickListener {
-            val baseUrl  = NetworkUtil.getBaseUrlForClass(FileIOApi::class.java)
+            val baseUrl = NetworkUtil.getBaseUrlForClass(FileIOApi::class.java)
             ToastUtils.showShort(baseUrl)
         }
 //        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics
-        tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
+        vb.tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
     }
 
     private inner class TestRunnable : Runnable {
