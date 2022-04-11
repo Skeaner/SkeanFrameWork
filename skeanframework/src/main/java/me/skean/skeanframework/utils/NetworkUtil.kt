@@ -2,7 +2,6 @@ package me.skean.skeanframework.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.provider.Telephony
 import android.text.TextUtils
 import android.webkit.MimeTypeMap
 import com.blankj.utilcode.util.FileUtils.getFileExtension
@@ -27,15 +26,11 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.io.BufferedReader
-import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.InputStreamReader
-import java.lang.reflect.InvocationHandler
-import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 import kotlin.reflect.*
@@ -47,68 +42,79 @@ import kotlin.reflect.*
 @SuppressLint("StaticFieldLeak")
 object NetworkUtil {
 
-    var timeout = 20
+    var timeout = 30
     private var httpLogLevel: HttpLoggingInterceptor.Level? = null
     private var context: Context? = null
 
+    @JvmStatic
     fun init(context: Context, httpLogLevel: HttpLoggingInterceptor.Level?) {
         NetworkUtil.httpLogLevel = httpLogLevel
         this.context = context
     }
 
+    @JvmStatic
     inline fun <reified T> createService(): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
         val retrofit = baseRetrofit(baseUrl)
         return retrofit.create(T::class.java)
     }
 
+    @JvmStatic
     fun <T> createService(clazz: Class<T>): T {
         val baseUrl = getBaseUrlForClass(clazz)
         val retrofit = baseRetrofit(baseUrl)
         return retrofit.create(clazz)
     }
 
+    @JvmStatic
     inline fun <reified T> createService(vararg interceptors: Interceptor): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
         val retrofit = baseRetrofit(baseUrl, *interceptors)
         return retrofit.create(T::class.java)
     }
 
+    @JvmStatic
     fun <T> createService(clazz: Class<T>, vararg interceptors: Interceptor): T {
         val baseUrl = getBaseUrlForClass(clazz)
         val retrofit = baseRetrofit(baseUrl, *interceptors)
         return retrofit.create(clazz)
     }
 
+    @JvmStatic
     fun getBaseUrlForClass(clazz: Class<*>): String? {
         if (clazz.isAnnotationPresent(Metadata::class.java)) { //kotlin的接口
             try {
                 val implClass = Class.forName("${clazz.name}\$DefaultImpls")
-                val method = implClass.getDeclaredMethod("getBaseUrl", clazz)
-                val clazzInstance = Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz)) { proxy, method, args -> null }
-                return method.invoke(null, clazzInstance).toString()
+                for (method in implClass.declaredMethods) {
+                    val methodName = method.name.toLowerCase(Locale.ROOT)
+                    if (methodName == "getbaseurl") {
+                        val clazzInstance = Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz)) { proxy, method, args -> null }
+                        return method.invoke(null, clazzInstance)?.toString()
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                throw  java.lang.RuntimeException("请给接口定义一个 var baseUrl: String 的接口属性!")
             }
+            throw  java.lang.RuntimeException("请给接口定义一个 baseUrl 的接口属性!")
         } else { //java的接口
-            var url: String? = null
             try {
-                url = FieldUtils.readStaticField(clazz, "BASE_URL") as String
+                for (declaredField in clazz.declaredFields) {
+                    val name = declaredField.name.toLowerCase(Locale.ROOT).replace("_", "")
+                    if (name == "baseurl"){
+                        return  declaredField.get(null) as String
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            if (url == null) {
-                throw RuntimeException("请给接口指定一个public static String BASE_URL 的属性!")
-            } else {
-                return url
-            }
+            throw RuntimeException("请给接口指定一个 BASE_URL 的属性!")
         }
     }
 
     /**
      * 生成一个不安全信任全部https证书的okhttpBuilder
      */
+    @JvmStatic
     fun newUnsafeAppHttpBuilder(): OkHttpClient.Builder {
         return try {
             // Create a trust manager that does not validate certificate chains
@@ -142,6 +148,7 @@ object NetworkUtil {
      *
      * @return OkHttpClient
      */
+    @JvmStatic
     fun newAppHttpBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
             .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
@@ -151,6 +158,7 @@ object NetworkUtil {
             .addInterceptor(httpLoggingInterceptor(false))
     }
 
+    @JvmStatic
     fun newAppHttpProgressBuilder(): OkHttpClient.Builder {
         return OkHttpClient.Builder()
             .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
@@ -161,6 +169,7 @@ object NetworkUtil {
             .addNetworkInterceptor(ProgressInterceptor())
     }
 
+    @JvmStatic
     fun newAppHttpProgressBuilder(
         uploadListener: ProgressInterceptor.UploadListener?,
         downloadListener: ProgressInterceptor.DownloadListener?
@@ -174,6 +183,7 @@ object NetworkUtil {
             .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
     }
 
+    @JvmStatic
     fun tokenAuthenticator(): Authenticator {
         return object : Authenticator {
             override fun authenticate(route: Route?, response: Response): Request {
@@ -189,6 +199,7 @@ object NetworkUtil {
      *
      * @return Interceptor
      */
+    @JvmStatic
     fun httpLoggingInterceptor(basic: Boolean): Interceptor {
         val interceptor = HttpLoggingInterceptor(logger = object : HttpLoggingInterceptor.Logger {
             override fun log(message: String) {
@@ -210,16 +221,19 @@ object NetworkUtil {
      *
      * @return CookieJar
      */
+    @JvmStatic
     fun persistentCookieJar(): CookieJar {
         return PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
     }
 
+    @JvmStatic
     fun newObjectMapper(): ObjectMapper {
         return ObjectMapper().registerModule(KotlinModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
     }
 
+    @JvmStatic
     fun baseRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -229,6 +243,7 @@ object NetworkUtil {
             .build()
     }
 
+    @JvmStatic
     fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -238,6 +253,7 @@ object NetworkUtil {
             .build()
     }
 
+    @JvmStatic
     fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
@@ -249,6 +265,7 @@ object NetworkUtil {
             .build()
     }
 
+    @JvmStatic
     fun progressRetrofit(baseUrl: String?): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -258,6 +275,7 @@ object NetworkUtil {
             .build()
     }
 
+    @JvmStatic
     fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
         val builder = newAppHttpProgressBuilder()
         builder.interceptors().addAll(0, interceptors.toList())
@@ -269,6 +287,7 @@ object NetworkUtil {
             .build()
     }
 
+    @JvmStatic
     fun progressRetrofit(
         baseUrl: String?,
         uploadListener: ProgressInterceptor.UploadListener?,
@@ -282,6 +301,7 @@ object NetworkUtil {
             .build()
     }
 
+    @JvmStatic
     fun setUploadListener(retrofit: Retrofit, upLoadListener: ProgressInterceptor.UploadListener?): Retrofit {
         val client = retrofit.callFactory() as OkHttpClient
         for (interceptor in client.networkInterceptors) {
@@ -293,6 +313,7 @@ object NetworkUtil {
         return retrofit
     }
 
+    @JvmStatic
     fun setDownloadListener(retrofit: Retrofit, downLoadListener: ProgressInterceptor.DownloadListener?): Retrofit {
         val client = retrofit.callFactory() as OkHttpClient
         for (interceptor in client.networkInterceptors) {
@@ -304,10 +325,12 @@ object NetworkUtil {
         return retrofit
     }
 
+    @JvmStatic
     fun paramMultiPart(name: String, content: String): MultipartBody.Part {
         return MultipartBody.Part.createFormData(name, content)
     }
 
+    @JvmStatic
     fun fileMultiPart(name: String, uploadFile: File): MultipartBody.Part {
         var type: String? = ""
         val filename = uploadFile.name
@@ -321,6 +344,7 @@ object NetworkUtil {
         return MultipartBody.Part.createFormData(name, filename, RequestBody.create(type?.toMediaTypeOrNull(), uploadFile))
     }
 
+    @JvmStatic
     inline fun <reified T> parseErrorBody(e: Throwable): T? {
         try {
             if (e is HttpException) {
@@ -336,6 +360,7 @@ object NetworkUtil {
     }
 
 
+    @JvmStatic
     fun parseErrorBodyMsg(e: Throwable, vararg fieldNames: String): String {
         try {
             if (e is HttpException) {
@@ -359,17 +384,18 @@ object NetworkUtil {
         return "未知错误"
     }
 
+    @JvmStatic
     fun toastErrorBodyMsg(e: Throwable, vararg fieldNames: String) {
         ToastUtils.showShort(parseErrorBodyMsg(e, *fieldNames))
     }
 
-
+    @JvmStatic
     inline fun <reified T> parseErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>): String {
         val namesArray = props.map { it.name }.toTypedArray()
         return parseErrorBodyMsg(e, *namesArray)
     }
 
-
+    @JvmStatic
     inline fun <reified T> toastErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>) {
         ToastUtils.showShort(parseErrorBodyMsg(e, *props))
     }

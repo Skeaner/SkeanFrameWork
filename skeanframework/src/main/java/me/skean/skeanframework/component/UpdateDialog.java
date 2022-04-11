@@ -209,9 +209,9 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        downloadCall = NetworkUtil.INSTANCE.progressRetrofit(FileIOApi.DefaultImpls.getBaseUrl(null), null, progressResponse)
-                                           .create(FileIOApi.class)
-                                           .downLoad(url);
+        downloadCall = NetworkUtil.progressRetrofit(NetworkUtil.getBaseUrlForClass(FileIOApi.class), null, progressResponse)
+                                  .create(FileIOApi.class)
+                                  .downLoad(url);
         downloadCall.enqueue(downloadResponse);
     }
 

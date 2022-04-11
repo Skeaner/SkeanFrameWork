@@ -59,8 +59,8 @@ class TestActivity : BaseActivity() {
             testRefresh(false)
         }
         vb.txvSelect.setOnClickListener {
-//            testUploadFile()
-            ToastUtils.showShort(NetworkUtil.createService<FileIOApi>().downLoad("http://asasa").request().url.toString())
+            val baseUrl  = NetworkUtil.getBaseUrlForClass(FileIOApi::class.java)
+            ToastUtils.showShort(baseUrl)
         }
 //        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics
