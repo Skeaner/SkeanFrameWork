@@ -12,7 +12,7 @@ import retrofit2.http.*
  */
 interface FileIOApi {
 
-    val baseurl: String get() = "http://useless.com/"
+    val baseUrl get() = "http://useless.com/"
 
     @GET
     fun downLoad(@Url url: String?): Call<ResponseBody?>
