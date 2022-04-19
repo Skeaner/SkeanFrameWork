@@ -169,27 +169,29 @@ class App : MultiDexApplication(), StatusCallback {
     ///////////////////////////////////////////////////////////////////////////
     // 修改app的数据库指向位置, 保存在SD上面
     ///////////////////////////////////////////////////////////////////////////
-    override fun openOrCreateDatabase(name: String, mode: Int, factory: SQLiteDatabase.CursorFactory): SQLiteDatabase {
+    override fun openOrCreateDatabase(name: String?, mode: Int, factory: SQLiteDatabase.CursorFactory?): SQLiteDatabase {
         return super.openOrCreateDatabase(getDatabasePath(name).absolutePath, mode, factory)
     }
 
     override fun openOrCreateDatabase(
-        name: String,
+        name: String?,
         mode: Int,
-        factory: SQLiteDatabase.CursorFactory,
+        factory: SQLiteDatabase.CursorFactory?,
         errorHandler: DatabaseErrorHandler?
     ): SQLiteDatabase {
         return super.openOrCreateDatabase(getDatabasePath(name).absolutePath, mode, factory, errorHandler)
     }
 
-    override fun deleteDatabase(name: String): Boolean {
+
+    override fun deleteDatabase(name: String?): Boolean {
         return super.deleteDatabase(getDatabasePath(name).absolutePath)
     }
 
-    override fun getDatabasePath(name: String): File {
+    override fun getDatabasePath(name: String?): File {
+        val dbName = name ?: "db"
         return if (BuildConfig.EXTERNAL_DB) {
-            File(appExternalDatabaseDir, name)
-        } else super.getDatabasePath(name)
+            File(appExternalDatabaseDir, dbName)
+        } else super.getDatabasePath(dbName)
     }
 
     override fun onToForeground() {
