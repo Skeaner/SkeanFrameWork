@@ -1,11 +1,9 @@
-package me.skean.framework.example.ui
+package me.skean.framework.example.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -13,7 +11,6 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.blankj.utilcode.util.ToastUtils
 import me.skean.framework.example.R
-import me.skean.skeanframework.component.BaseDialogFragment
 import me.skean.skeanframework.component.FullDialogFragment
 
 /**

@@ -1,7 +1,10 @@
 package me.skean.skeanframework.ktext
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -18,14 +21,20 @@ import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import androidx.viewpager.widget.ViewPager
 import com.blankj.utilcode.util.ToastUtils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.jakewharton.rxbinding2.view.RxView
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
+import me.skean.skeanframework.model.AppResponse
+import okhttp3.HttpUrl
 import org.apache.commons.collections4.map.ListOrderedMap
+import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KMutableProperty
 
@@ -338,4 +347,60 @@ inline fun ViewPager.addOnPageChangeListener(
         }
 
     })
+}
+
+fun SmartRefreshLayout.finishLoad(res: AppResponse<*>) {
+    if (res.refresh == true) {
+        val noMore = if (!res.success) true else res.noMore == true
+        this.finishRefresh(0, res.success, noMore)
+    } else if (res.refresh == false) {
+        val noMore = if (!res.success) false else res.noMore == true
+        this.finishLoadMore(0, res.success, noMore)
+    }
+}
+
+inline fun ImageView.load(
+    uri: String?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(uri, action)
+
+inline fun ImageView.load(
+    url: HttpUrl?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(url, action)
+
+inline fun ImageView.load(
+    uri: Uri?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(uri, action)
+
+inline fun ImageView.load(
+    file: File?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(file, action)
+
+inline fun ImageView.load(
+    @DrawableRes drawableResId: Int,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(drawableResId, action)
+
+inline fun ImageView.load(
+    drawable: Drawable?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(drawable, action)
+
+inline fun ImageView.load(
+    bitmap: Bitmap?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) = loadAny(bitmap, action)
+
+@SuppressLint("CheckResult")
+inline fun ImageView.loadAny(
+    data: Any?,
+    action: RequestBuilder<*>.() -> Unit = {}
+) {
+    Glide.with(this)
+        .load(data)
+        .apply(action)
+        .into(this)
 }

@@ -27,7 +27,7 @@ import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
 import me.skean.skeanframework.widget.LoadingDialog2;
 
-import static com.trello.rxlifecycle3.internal.Preconditions.checkNotNull;
+import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
 /**
  * Transformer that continues a subscription until a second Observable emits an event.

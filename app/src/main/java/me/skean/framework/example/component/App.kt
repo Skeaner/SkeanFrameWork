@@ -18,11 +18,14 @@ import me.skean.framework.example.db.AppDatabase
 import me.skean.framework.example.db.Migrations
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
+import me.skean.framework.example.net.DouBanApi
+import me.skean.framework.example.viewmodel.TestMvvmViewModel
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.component.SkeanFrameworkModules
 import me.skean.skeanframework.utils.AppStatusTracker
 import me.skean.skeanframework.utils.AppStatusTracker.StatusCallback
 import me.skean.skeanframework.utils.LogFileWriter
+import me.skean.skeanframework.utils.NetworkUtil
 import me.skean.skeanframework.utils.NetworkUtil.init
 import me.skean.skeanframework.utils.ReportUtils
 import net.sqlcipher.database.SQLiteDatabase.getBytes
@@ -32,6 +35,7 @@ import org.greenrobot.eventbus.EventBus
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.android.logger.AndroidLogger
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.koin.dsl.module
@@ -135,6 +139,7 @@ class App : MultiDexApplication(), StatusCallback {
             modules(SkeanFrameworkModules.module, //传入框架的注入对象模块
                 module {//传入App的注入对象模块
                     single { database!!.dummyDao }
+                    single { NetworkUtil.createService<DouBanApi>() }
                 })
         }
     }

@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.EditText;
 
-import com.trello.rxlifecycle3.components.support.RxFragment;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +18,7 @@ import java.util.UUID;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -29,7 +29,7 @@ import me.skean.skeanframework.widget.LoadingDialog;
  * App的DialogFragment基类 <p/>
  */
 @SuppressWarnings("unused")
-public abstract class BaseFragment extends RxFragment {
+public abstract class BaseFragment extends Fragment {
     protected Bundle savedInstanceStateCache;
     protected BaseActivity hostActivity;
     private Context context;

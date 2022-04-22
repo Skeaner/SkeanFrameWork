@@ -29,8 +29,7 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 31
     def vcode = Integer.parseInt(VERSION_CODE)
     def vname = VERSION_NAME
     def isRelease = gradle.startParameter.taskRequests.any {
@@ -87,13 +86,13 @@ android {
                 outputFileName = "${shortAppId}-${vname}${versionTag}(b${vcode})-${dateStr}.apk"
             }
             //删除自动生成的output.json
-            variant.assemble.doLast {
-                variant.outputs.each { output ->
-                    delete "${output.outputFile.parent}/output-metadata.json"
-                }
-            }
+//            variant.assemble.doLast {
+//                variant.outputs.each { output ->
+//                    delete "${output.outputFile.parent}/output-metadata.json"
+//                }
+//            }
         }
-        manifestPlaceholders = [rawApplicationId: defaultConfig.applicationId]
+        manifestPlaceholders = [rawApplicationId: defaultConfig.applicationId, applicationIcon:"@drawable/ic_launcher"]
     }
     buildTypes {
         //todo 通用的配置
@@ -132,6 +131,7 @@ android {
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
             buildConfigField "boolean", "IS_INTRANET", 'false'
+            manifestPlaceholders = [ applicationIcon:"@drawable/ic_launcher_beta"]
         }
         // 开发
         develop {
@@ -141,6 +141,7 @@ android {
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'false'
             buildConfigField "boolean", "IS_INTRANET", 'false'
+            manifestPlaceholders = [ applicationIcon:"@drawable/ic_launcher_dev"]
         }
     }
     sourceSets {
@@ -182,11 +183,9 @@ repositories {
 dependencies {
 //       implementation 'com.github.Skeaner:SkeanFrameWork:1.2.4'
     implementation project(path: ':skeanframework')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0"
-    kapt "org.androidannotations:androidannotations:4.6.0"
-    kapt 'com.github.AleksanderMielczarek:AndroidAnnotationsPermissionsDispatcherPlugin:2.1.1'
     kapt 'org.greenrobot:eventbus-annotation-processor:3.1.1'
     kapt 'com.jakewharton:butterknife-compiler:10.2.0'
     kapt "androidx.room:room-compiler:2.3.0"

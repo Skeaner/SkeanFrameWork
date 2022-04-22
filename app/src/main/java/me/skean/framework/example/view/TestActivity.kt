@@ -1,4 +1,4 @@
-package me.skean.framework.example.ui
+package me.skean.framework.example.view
 
 import android.Manifest
 import android.app.Activity
@@ -12,9 +12,9 @@ import com.blankj.utilcode.util.ToastUtils
 import com.hi.dhl.binding.viewbind
 import io.reactivex.Single
 import me.skean.framework.example.component.App
+import me.skean.framework.example.databinding.TestActivityBinding
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.utils.ImageUtil
-import me.skean.framework.example.databinding.ActivityTestBinding
 import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
@@ -24,7 +24,6 @@ import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.utils.NetworkUtil
 import org.greenrobot.eventbus.Subscribe
 import org.koin.android.ext.android.inject
-import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +44,7 @@ class TestActivity : BaseActivity() {
     private val dummyDao: DummyDao by inject()
     private var count = 0
 
-    private val vb: ActivityTestBinding by viewbind()
+    private val vb: TestActivityBinding by viewbind()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

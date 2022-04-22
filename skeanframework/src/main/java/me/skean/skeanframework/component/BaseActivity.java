@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -27,6 +26,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,7 +40,7 @@ import me.skean.skeanframework.widget.LoadingDialog;
  */
 @SuppressWarnings("unused")
 @SuppressLint("HandlerLeak")
-public class BaseActivity extends RxAppCompatActivity {
+public class BaseActivity extends AppCompatActivity {
     protected Bundle savedInstanceStateCache;
     protected Context context = null;
     protected ActionBar actionBar;

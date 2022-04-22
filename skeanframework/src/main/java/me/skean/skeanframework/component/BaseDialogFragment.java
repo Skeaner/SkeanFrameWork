@@ -3,10 +3,10 @@ package me.skean.skeanframework.component;
 import android.app.Dialog;
 import android.content.DialogInterface;
 
-import com.trello.rxlifecycle3.components.support.RxDialogFragment;
 
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * App的DialogFragment基类
  */
-public class BaseDialogFragment extends RxDialogFragment {
+public class BaseDialogFragment extends DialogFragment {
 
     private boolean autoDismiss = true;
     private boolean useCustomAnimation = false;

@@ -21,7 +21,7 @@
         android:paddingTop="@dimen/appMainMargin"
         android:paddingRight="@dimen/appMainMargin"
         android:paddingBottom="@dimen/appMainMargin"
-        tools:context=".ui.TestActivity">
+        tools:context=".view.TestActivity">
 
 
         <TextView
