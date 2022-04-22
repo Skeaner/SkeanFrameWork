@@ -7,11 +7,24 @@ plugins {
     id 'maven-publish'
 }
 
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
 publishing {
     publications {
-        release(MavenPublication) {
+        bar(MavenPublication) {
             groupId = 'com.github.Skeaner'
             artifactId = 'SkeanFrameWork'
+            artifact(sourceJar)
+            artifact("$buildDir/outputs/aar/bar-release.aar")
+        }
+    }
+    repositories {
+        maven {
+            url "$buildDir/repo"
         }
     }
 }
