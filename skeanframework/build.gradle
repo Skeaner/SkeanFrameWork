@@ -7,28 +7,6 @@ plugins {
     id 'maven-publish'
 }
 
-
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier "sources"
-}
-
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'com.github.Skeaner'
-            artifactId = 'SkeanFrameWork'
-            artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/skeanframework-release.aar")
-        }
-    }
-    repositories {
-        maven {
-            url "$buildDir/repo"
-        }
-    }
-}
-
 android {
     compileSdkVersion 31
 
@@ -206,6 +184,23 @@ dependencies {
     api 'com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:2.0.5'
     //FlexibleDivider
     implementation 'com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0'
+}
 
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+afterEvaluate{
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.Skeaner'
+                artifactId = 'SkeanFrameWork'
+                artifact(sourceJar)
+            }
+        }
+    }
 }
 
