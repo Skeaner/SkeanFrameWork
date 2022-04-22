@@ -9,7 +9,7 @@ plugins {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        release(MavenPublication) {
             groupId = 'com.github.Skeaner'
             artifactId = 'SkeanFrameWork'
         }
