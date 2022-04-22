@@ -191,15 +191,16 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
-afterEvaluate{
-    publishing {
-        publications {
-            release(MavenPublication) {
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.Skeaner'
+            artifactId = 'SkeanFrameWork'
+            version = '2.0.8'
+            artifact(sourceJar)
+
+            afterEvaluate {
                 from components.release
-                groupId = 'com.github.Skeaner'
-                artifactId = 'SkeanFrameWork'
-                version '2.0.8'
-                artifact(sourceJar)
             }
         }
     }
