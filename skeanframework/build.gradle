@@ -7,6 +7,22 @@ plugins {
     id 'maven-publish'
 }
 
+task androidSourcesJar(type: Jar) {
+    classifier 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifact androidSourcesJar // optional sources
+            }
+        }
+    }
+}
+
 android {
     compileSdkVersion 31
 
@@ -186,23 +202,5 @@ dependencies {
     implementation 'com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0'
 }
 
-task sourceJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier "sources"
-}
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'com.github.Skeaner'
-            artifactId = 'SkeanFrameWork'
-            version = '2.0.9'
-            artifact(sourceJar)
-
-            afterEvaluate {
-                from components.release
-            }
-        }
-    }
-}
 
