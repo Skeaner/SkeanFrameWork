@@ -15,11 +15,11 @@ task sourceJar(type: Jar) {
 
 publishing {
     publications {
-        bar(MavenPublication) {
+        release(MavenPublication) {
             groupId = 'com.github.Skeaner'
             artifactId = 'SkeanFrameWork'
             artifact(sourceJar)
-            artifact("$buildDir/outputs/aar/bar-release.aar")
+            artifact("$buildDir/outputs/aar/skeanframework-release.aar")
         }
     }
     repositories {
