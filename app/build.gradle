@@ -181,8 +181,8 @@ repositories {
 
 
 dependencies {
-//       implementation 'com.github.Skeaner:SkeanFrameWork:2.0.4'
-    implementation project(path: ':skeanframework')
+       implementation 'com.github.Skeaner:SkeanFrameWork:2.1.0'
+//    implementation project(path: ':skeanframework')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0"

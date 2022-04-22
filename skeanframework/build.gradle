@@ -17,7 +17,7 @@ project.afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                artifact androidSourcesJar // optional sources
+//                artifact androidSourcesJar // optional sources
             }
         }
     }
@@ -199,7 +199,7 @@ dependencies {
     api 'com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.0.5'
     api 'com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:2.0.5'
     //FlexibleDivider
-    implementation 'com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0'
+    api 'com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0'
 }
 
 
