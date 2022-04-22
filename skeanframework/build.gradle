@@ -1,11 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-    }
-}
-
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -14,8 +6,15 @@ plugins {
     id "kotlin-kapt"
     id 'maven-publish'
 }
-group = 'com.github.Skeaner'
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'com.github.Skeaner'
+            artifactId = 'SkeanFrameWork'
+        }
+    }
+}
 
 android {
     compileSdkVersion 31
