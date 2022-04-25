@@ -177,12 +177,13 @@ repositories {
         dirs 'libs'
     }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    mavenLocal()
 }
 
 
 dependencies {
-//       implementation 'com.github.Skeaner:SkeanFrameWork:2.1.0'
-    implementation project(path: ':skeanframework')
+       implementation 'com.github.Skeaner:SkeanFrameWork:2.1.3'
+//    implementation project(path: ':skeanframework')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     kapt "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0"
