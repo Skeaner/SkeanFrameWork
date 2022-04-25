@@ -7,6 +7,9 @@ plugins {
     id 'maven-publish'
 }
 
+def kotlin_version = "1.6.0"
+
+
 task androidSourcesJar(type: Jar) {
     classifier 'sources'
     from android.sourceSets.main.java.srcDirs
