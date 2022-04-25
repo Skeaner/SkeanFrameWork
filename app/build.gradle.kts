@@ -1,8 +1,7 @@
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Properties
-import java.io.FileInputStream
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
 plugins {
     id("com.android.application")
@@ -20,8 +19,8 @@ allOpen {
 android {
     compileSdk = 32
     compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_11)
-        targetCompatibility(JavaVersion.VERSION_11)
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -36,35 +35,36 @@ android {
         }
     }
 
-    val properties = Properties()
-    properties.load(FileInputStream(project.rootProject.file("local.properties")))
-    val VERSION_CODE = properties.getProperty("VERSION_CODE")
-    val VERSION_NAME = properties.getProperty("VERSION_NAME")
-    var vcode = Integer.parseInt(VERSION_CODE)
-    var vname = VERSION_NAME
+    var vCode = 1
+    var vName = "1.0.0"
     val isRelease = gradle.startParameter.taskRequests.any {
-        it.args.any { it.endsWith("Release") }
+        it.args.any { s ->
+            s.endsWith("Release") && !s.endsWith("BetaRelease") && !s.endsWith("DevelopRelease")
+        }
     }
     if (isRelease) {
-        vcode += 1
-        val versionNameGroup = VERSION_NAME.split("\\.")
-        var versionNamePart1 = Integer.parseInt(versionNameGroup[0])
-        var versionNamePart2 = Integer.parseInt(versionNameGroup[1])
-        var versionNamePart3 = Integer.parseInt(versionNameGroup[2])
-        versionNamePart3 += 1
-        if (versionNamePart3 > 9) {
-            versionNamePart3 = 0
-            versionNamePart2 += 1
-            if (versionNamePart2 > 9) {
-                versionNamePart2 = 0
-                versionNamePart1 += 1
+        val oldVCode = vCode
+        val oldVName = vName
+        vCode += 1
+        val vNameParts = vName.split(".")
+        var vNamePart1 = Integer.parseInt(vNameParts[0])
+        var vNamePart2 = Integer.parseInt(vNameParts[1])
+        var vNamePart3 = Integer.parseInt(vNameParts[2])
+        vNamePart3 += 1
+        if (vNamePart3 > 9) {
+            vNamePart3 = 0
+            vNamePart2 += 1
+            if (vNamePart2 > 9) {
+                vNamePart2 = 0
+                vNamePart1 += 1
             }
         }
-        vname = "$versionNamePart1.$versionNamePart2.$versionNamePart3"
-//        ant.propertyfile(file: "../gradle.properties") {
-//            entry(key: "VERSION_CODE", value: vcode)
-//            entry(key: "VERSION_NAME", value: vname)
-//        }
+        vName = "$vNamePart1.$vNamePart2.$vNamePart3"
+        val file = project.rootProject.file("/app/build.gradle.kts")
+        var text = file.readText()
+        text = text.replace("var vCode = $oldVCode", "var vCode = $vCode")
+        text = text.replace("var vName = \"${oldVName}\"", "var vName = \"$vName\"")
+        file.writeText(text)
     }
 
     defaultConfig {
@@ -72,8 +72,8 @@ android {
         applicationId = "me.skean.framework.example"
         minSdk = 21
         targetSdk = 28
-        versionCode = vcode
-        versionName = vname
+        versionCode = vCode
+        versionName = vName
         multiDexEnabled = true
         ndk {
             abiFilters.add("armeabi-v7a")
@@ -95,8 +95,8 @@ android {
                 val shortAppId = "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1)
                 val buildTypeName: String = buildType.name
                 val versionTag = buildTypeName.get(0)
-                (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
-                    "${shortAppId}-${vname}${versionTag}(b${vcode})-${dateStr}.apk"
+                (this as BaseVariantOutputImpl).outputFileName =
+                    "${shortAppId}-${vName}${versionTag}(b${vCode})-${dateStr}.apk"
 
             }
             //删除自动生成的output.json
@@ -127,7 +127,7 @@ android {
             buildConfigField("boolean", "EXTERNAL_DB", "$useExternalDatabase")
         }
     }
-    flavorDimensions("default")
+    flavorDimensions.add("default")
     productFlavors {
         //todo 渠道打包配置配置
         // 发布环境
