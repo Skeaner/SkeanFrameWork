@@ -9,12 +9,12 @@ import android.os.Environment;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.daimajia.numberprogressbar.NumberProgressBar;
 
 import java.io.File;
 
@@ -46,7 +46,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
     private View panelInfo;
     private View panelProgress;
     // private QMUIProgressBar pgbProgress;
-    private NumberProgressBar pgbProgress;
+    private ProgressBar pgbProgress;
 
     private String changeLog;
     private String url;

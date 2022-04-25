@@ -56,9 +56,11 @@
                 android:padding="16dp"
                 android:text="正在下载" />
 
-            <com.daimajia.numberprogressbar.NumberProgressBar
+            <ProgressBar
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/pgbProgress"
-                style="@style/NumberProgressBar_Default"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 />
 
 
