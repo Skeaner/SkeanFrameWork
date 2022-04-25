@@ -12,17 +12,16 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-group='com.github.Skeaner'
-version  = "2.1.6"
-project.afterEvaluate {
+afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
                 from components.release
+
                 groupId='com.github.Skeaner'
-                artifactId = "skeanframework"
-                version  = "2.1.6"
-                artifact androidSourcesJar // optional sources
+                artifactId = "SkeanFrameWork"
+                version  = '2.1.7'
+                artifact(androidSourcesJar) // optional sources
             }
         }
     }
