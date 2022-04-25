@@ -17,7 +17,7 @@ allOpen {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 31
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -113,7 +113,7 @@ android {
         //todo 通用的配置
         val appTag = "\"" + "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1) + "\""
         val useExternalDatabase = true
-        getByName("release") {
+        release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isShrinkResources = true
@@ -165,8 +165,8 @@ android {
         jniLibs.srcDirs("libs")
         res.srcDirs("src/main/res/")
     }
-    lintOptions {
-        isAbortOnError = false
+    lint {
+        abortOnError = false
     }
     viewBinding {
         isEnabled = true
