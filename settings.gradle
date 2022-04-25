@@ -1,4 +1,4 @@
 include ':app'
-include ':skeanframework'
+include ':SkeanFrameWork'
 rootProject.name='SkeanFrameWork'
 
