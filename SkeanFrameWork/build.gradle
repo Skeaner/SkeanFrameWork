@@ -13,7 +13,7 @@ task androidSourcesJar(type: Jar) {
 }
 
 group "com.github.Skeaner"
-version "2.0.11"
+version "2.0.10"
 
 afterEvaluate {
     publishing {
@@ -158,7 +158,8 @@ dependencies {
     api("com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.3") {
         exclude module: "library"
     }
-
+    //ViewPager指示器viewpagerindicator
+    api "fr.avianey.com.viewpagerindicator:library:2.4.1.1@aar"
     //综合工具库utilcode
     api "com.blankj:utilcodex:1.30.6"
     //下拉刷新ultra-ptr
@@ -174,6 +175,8 @@ dependencies {
     //butterknife
     api "com.jakewharton:butterknife:10.2.0"
     kapt "com.jakewharton:butterknife-compiler:10.2.0"
+    //数字进度条
+    api "com.daimajia.numberprogressbar:library:1.4@aar"
     //kotpref
     api "com.chibatching.kotpref:kotpref:2.11.0"
     api "com.chibatching.kotpref:preference-screen-dsl:2.11.0"
