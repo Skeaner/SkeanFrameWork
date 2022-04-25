@@ -21,9 +21,9 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
 //
-//                groupId='com.github.Skeaner'
-//                artifactId = "SkeanFrameWork"
-//                version  = '2.1.7'
+                groupId='com.github.Skeaner'
+                artifactId = "SkeanFrameWork"
+                version  = '2.1.8'
                 artifact(androidSourcesJar) // optional sources
             }
         }
