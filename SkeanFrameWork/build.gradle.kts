@@ -1,4 +1,5 @@
 plugins {
+    id( "java")
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-parcelize")
@@ -7,29 +8,26 @@ plugins {
     id("maven-publish")
 }
 
-//
-//
-// task androidSourcesJar (type: Jar) {
-//     classifier 'sources'
-//     from android . sourceSets . main . java . srcDirs
-// }
 val androidSourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
     from(android.sourceSets.getByName("main").java.srcDirs)
 }
 
-group = "com.github.Skeaner"
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release"){
+                for (c in components    ) {
+                    System.out.println("component:${c.name}")
+                }
+                from(components["release"])
+                // artifact(androidSourcesJar.get())
+            }
+        }
+    }
+}
 
-// afterEvaluate {
-//     publishing {
-//         publications {
-//             register("release", MavenPublication::class.java){
-//                 from(components["release"])
-//                 // artifact(androidSourcesJar.get())
-//             }
-//         }
-//     }
-// }
+group = "com.github.Skeaner"
 
 android {
     compileSdk = 31
@@ -75,17 +73,17 @@ repositories {
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
 }
 
-val koin_version = "3.1.5"
-val lifecycle_version = "2.4.1"
-val navigation_version = "2.3.5"
-val room_version = "2.3.0"
-val jackson_version = "2.11.0"
-val kotlin_version = rootProject.extra["kotlin_version"]
+val koinVersion = "3.1.5"
+val lifecycleVersion = "2.4.1"
+val navigationVersion = "2.3.5"
+val roomVersion = "2.3.0"
+val jacksonVersion = "2.11.0"
+val kotlinVersion = rootProject.extra["kotlin_version"]
 
 dependencies {
     api(fileTree("libs") { include("*.jar") })
-    api ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    api ("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlin_version")
+    api ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    api ("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinVersion")
     api ("com.github.permissions-dispatcher:permissionsdispatcher:4.8.0")
     kapt( "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
     api ("org.greenrobot:eventbus:3.1.1")
@@ -96,22 +94,22 @@ dependencies {
     api ("androidx.multidex:multidex:2.0.1")
     api ("androidx.recyclerview:recyclerview:1.2.1")
     api ("com.google.android.material:material:1.4.0")
-    api ("androidx.navigation:navigation-fragment-ktx:$navigation_version")
-    api ("androidx.navigation:navigation-ui-ktx:$navigation_version")
-    api ("androidx.navigation:navigation-fragment-ktx:$navigation_version")
-    api ("androidx.navigation:navigation-ui-ktx:$navigation_version")
-    api ("androidx.room:room-runtime:$room_version")
-    api ("androidx.room:room-rxjava2:$room_version")
-    api ("androidx.room:room-ktx:$room_version")
+    api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    api ("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+    api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
+    api ("androidx.navigation:navigation-ui-ktx:$navigationVersion")
+    api ("androidx.room:room-runtime:$roomVersion")
+    api ("androidx.room:room-rxjava2:$roomVersion")
+    api ("androidx.room:room-ktx:$roomVersion")
     api ("androidx.sqlite:sqlite-ktx:2.1.0")
-    api ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-service:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-process:$lifecycle_version")
-    api ("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+    api ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-service:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-process:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
     //retrofit2
     api ("com.squareup.retrofit2:retrofit:2.6.2")
     api ("com.squareup.retrofit2:converter-jackson:2.6.2")
@@ -133,10 +131,10 @@ dependencies {
     // sql-cipher支持
     api ("net.zetetic:android-database-sqlcipher:4.4.0@aar")
     //json解析器
-    api ("com.fasterxml.jackson.core:jackson-core:$jackson_version")
-    api ("com.fasterxml.jackson.core:jackson-databind:$jackson_version")
-    api ("com.fasterxml.jackson.core:jackson-annotations:$jackson_version")
-    api ("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version")
+    api ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    api ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    api ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    api ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     //Apache的常用库
     api ("commons-codec:commons-codec:1.11")
     api ("commons-net:commons-net:3.5")
@@ -193,12 +191,12 @@ dependencies {
     api ("io.github.scwang90:refresh-header-classics:2.0.5"  )  //经典刷新头
     api ("io.github.scwang90:refresh-footer-classics:2.0.5")
     //koin
-    api ("io.insert-koin:koin-core:$koin_version")
-    api ("io.insert-koin:koin-android:$koin_version")// Koin main features for Android
-    api ("io.insert-koin:koin-android-compat:$koin_version")// Java Compatibility
-    api ("io.insert-koin:koin-androidx-workmanager:$koin_version")// Jetpack WorkManager
-    api ("io.insert-koin:koin-androidx-navigation:$koin_version")// Navigation Graph
-    api ("io.insert-koin:koin-androidx-compose:$koin_version")// Jetpack Compose
+    api ("io.insert-koin:koin-core:$koinVersion")
+    api ("io.insert-koin:koin-android:$koinVersion")// Koin main features for Android
+    api ("io.insert-koin:koin-android-compat:$koinVersion")// Java Compatibility
+    api ("io.insert-koin:koin-androidx-workmanager:$koinVersion")// Jetpack WorkManager
+    api ("io.insert-koin:koin-androidx-navigation:$koinVersion")// Navigation Graph
+    api ("io.insert-koin:koin-androidx-compose:$koinVersion")// Jetpack Compose
     //viewBinding快速库
     api ("com.hi-dhl:binding:1.1.3")
     api ("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.0.5")
@@ -206,6 +204,4 @@ dependencies {
     //FlexibleDivider
     api ("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")
 }
-
-
 
