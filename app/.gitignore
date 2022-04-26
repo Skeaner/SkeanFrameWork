@@ -3,3 +3,4 @@
 *.apk
 /release
 /debug
+*output-metadata.json
