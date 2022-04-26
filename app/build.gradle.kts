@@ -174,21 +174,22 @@ android {
         isEnabled = true
     }
     packagingOptions {
-        exclude("META-INF/DEPENDENCIES")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/LICENSE")
-        exclude("META-INF/LICENSE.txt")
-        exclude("META-INF/NOTICE.txt")
-        exclude("META-INF/rxjava.properties")
-        exclude("META-INF/androidx.exifinterface_exifinterface.version")
-        exclude("META-INF/proguard/androidx-annotations.pro")
+        resources.excludes.apply {
+            add("META-INF/DEPENDENCIES")
+            add("META-INF/NOTICE")
+            add("META-INF/LICENSE")
+            add("META-INF/LICENSE.txt")
+            add("META-INF/NOTICE.txt")
+            add("META-INF/rxjava.properties")
+            add("META-INF/androidx.exifinterface_exifinterface.version")
+            add("META-INF/proguard/androidx-annotations.pro")
+        }
+
     }
 }
 
 repositories {
-    flatDir {
-        dirs("libs")
-    }
+    flatDir { dirs("libs") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     mavenLocal()
 }
