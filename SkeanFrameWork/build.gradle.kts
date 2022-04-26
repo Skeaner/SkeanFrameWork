@@ -1,6 +1,5 @@
 plugins {
-    id( "java")
-    id("com.android.application")
+    id("com.android.library")
     id("kotlin-android")
     id("kotlin-parcelize")
     id("kotlin-allopen")
@@ -8,26 +7,23 @@ plugins {
     id("maven-publish")
 }
 
+group = "com.github.Skeaner"
+
+//打包操作
 val androidSourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
     from(android.sourceSets.getByName("main").java.srcDirs)
 }
-
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release"){
-                for (c in components    ) {
-                    System.out.println("component:${c.name}")
-                }
                 from(components["release"])
-                // artifact(androidSourcesJar.get())
+                 artifact(androidSourcesJar.get())
             }
         }
     }
 }
-
-group = "com.github.Skeaner"
 
 android {
     compileSdk = 31
@@ -37,14 +33,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-        // freeCompilerArgs += '-Xjvm-default=compatibility'
+         freeCompilerArgs += "-Xjvm-default=compatibility"
     }
 
     defaultConfig {
         minSdk = 21
         targetSdk = 28
-        versionName = "1.0"
-        versionCode = 1
     }
 
     kapt {
@@ -73,12 +67,14 @@ repositories {
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
 }
 
+val eventbusVersion ="3.1.1"
+val retrofitVersion ="2.6.4"
 val koinVersion = "3.1.5"
 val lifecycleVersion = "2.4.1"
 val navigationVersion = "2.3.5"
 val roomVersion = "2.3.0"
 val jacksonVersion = "2.11.0"
-val kotlinVersion = rootProject.extra["kotlin_version"]
+val kotlinVersion = rootProject.extra["kotlinVersion"]
 
 dependencies {
     api(fileTree("libs") { include("*.jar") })
@@ -86,14 +82,14 @@ dependencies {
     api ("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinVersion")
     api ("com.github.permissions-dispatcher:permissionsdispatcher:4.8.0")
     kapt( "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
-    api ("org.greenrobot:eventbus:3.1.1")
-    kapt( "org.greenrobot:eventbus-annotation-processor:3.1.1")
+    api ("org.greenrobot:eventbus:$eventbusVersion")
+    kapt( "org.greenrobot:eventbus-annotation-processor:$eventbusVersion")
     //谷歌库
     api ("androidx.core:core-ktx:1.7.0")
     api ("androidx.appcompat:appcompat:1.4.1")
     api ("androidx.multidex:multidex:2.0.1")
     api ("androidx.recyclerview:recyclerview:1.2.1")
-    api ("com.google.android.material:material:1.4.0")
+    api ("com.google.android.material:material:1.5.0")
     api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     api ("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
@@ -101,7 +97,7 @@ dependencies {
     api ("androidx.room:room-runtime:$roomVersion")
     api ("androidx.room:room-rxjava2:$roomVersion")
     api ("androidx.room:room-ktx:$roomVersion")
-    api ("androidx.sqlite:sqlite-ktx:2.1.0")
+    api ("androidx.sqlite:sqlite-ktx:2.2.0")
     api ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     api ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
     api ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
@@ -111,9 +107,9 @@ dependencies {
     api ("androidx.lifecycle:lifecycle-process:$lifecycleVersion")
     api ("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
     //retrofit2
-    api ("com.squareup.retrofit2:retrofit:2.6.2")
-    api ("com.squareup.retrofit2:converter-jackson:2.6.2")
-    api ("com.squareup.retrofit2:adapter-rxjava2:2.6.2")
+    api ("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    api ("com.squareup.retrofit2:converter-jackson:$retrofitVersion")
+    api ("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
     api ("com.squareup.okhttp3:logging-interceptor:4.8.1")
     api ("com.github.franmontiel:PersistentCookieJar:v1.0.1")
     //RxJava的库
@@ -162,7 +158,7 @@ dependencies {
     //下拉刷新ultra-ptr
     api ("in.srain.cube:ultra-ptr:1.0.11")
     //RecyclerView综合适配器
-    api ("com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6")
+    api ("com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7")
     //material design日期加时间选择器
     api ("com.github.Skeaner:SublimePicker:2.1.2")
     //权限提示
@@ -204,4 +200,3 @@ dependencies {
     //FlexibleDivider
     api ("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")
 }
-

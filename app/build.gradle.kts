@@ -37,11 +37,13 @@ android {
 
     var vCode = 1
     var vName = "1.0.0"
+    //判断是否发布任务
     val isRelease = gradle.startParameter.taskRequests.any {
         it.args.any { s ->
             s.endsWith("Release") && !s.endsWith("BetaRelease") && !s.endsWith("DevelopRelease")
         }
     }
+    //发布的环境自动增加版本号
     if (isRelease) {
         val oldVCode = vCode
         val oldVName = vName
@@ -100,11 +102,11 @@ android {
 
             }
             //删除自动生成的output.json
-//            variant.assemble.doLast {
-//                variant.outputs.each { output ->
-//                    delete "${output.outputFile.parent}/output-metadata.json"
-//                }
-//            }
+            assembleProvider.get().doLast {
+                val jsonFilePath  = "${packageApplicationProvider.get().outputDirectory.get()}/output-metadata.json"
+                System.out.println("删除文件:$jsonFilePath")
+                delete(jsonFilePath)
+            }
         }
         manifestPlaceholders["rawApplicationId"] = "$applicationId"
         manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher"
@@ -195,7 +197,7 @@ repositories {
 dependencies {
     implementation("com.github.Skeaner:SkeanFrameWork:2.2.0")
 //    implementation project(path: ":SkeanFrameWork")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlin_version"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
     implementation(fileTree("libs") { include("*.jar") })
     kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
     kapt("org.greenrobot:eventbus-annotation-processor:3.1.1")
