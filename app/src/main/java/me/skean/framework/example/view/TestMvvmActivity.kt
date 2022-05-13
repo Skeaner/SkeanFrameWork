@@ -1,9 +1,6 @@
 package me.skean.framework.example.view
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,20 +11,14 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.dylanc.viewbinding.getBinding
 import com.hi.dhl.binding.viewbind
 import com.rxjava.rxlife.life
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
-import com.zhihu.matisse.internal.entity.CaptureStrategy
 import me.skean.framework.example.R
+import me.skean.framework.example.component.AppActivityLauncher
 import me.skean.framework.example.databinding.TestMvvmActivityBinding
 import me.skean.framework.example.databinding.TestMvvmItemBinding
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.viewmodel.TestMvvmViewModel
 import me.skean.skeanframework.component.BaseActivity
-import me.skean.skeanframework.component.SelectPictureActivity
 import me.skean.skeanframework.ktext.*
-import me.skean.skeanframework.utils.CoilEngine
-import me.skean.skeanframework.utils.Glide4Engine
-import java.util.*
 
 /**
  * Created by Skean on 2022/4/20.
@@ -35,6 +26,7 @@ import java.util.*
 class TestMvvmActivity() : BaseActivity() {
 
     private val vb: TestMvvmActivityBinding by viewbind()
+    private val launcher: AppActivityLauncher? by launcher()
     private val vm: TestMvvmViewModel by viewModels()
     private lateinit var itemAdapter: ItemAdapter
 
@@ -49,19 +41,20 @@ class TestMvvmActivity() : BaseActivity() {
             setSupportActionBar(toolbar)
             itemAdapter = ItemAdapter()
             itemAdapter.setOnItemClickListener { adapter, view, position ->
-                requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE){
-                    Matisse.from(this@TestMvvmActivity)
-                        .choose(EnumSet.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF), false)
-                        .theme(R.style.Matisse_APP)
-                        .countable(true)
-                        .maxSelectable(1)
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                        .thumbnailScale(0.85f)
-                        .imageEngine(CoilEngine()) // for glide-V4
-                        .originalEnable(false)
-                        .autoHideToolbarOnSingleTap(true)
-                        .forResult(1)
-                }
+//                requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE){
+//                    Matisse.from(this@TestMvvmActivity)
+//                        .choose(EnumSet.of(MimeType.JPEG, MimeType.PNG, MimeType.GIF), false)
+//                        .theme(R.style.Matisse_APP)
+//                        .countable(true)
+//                        .maxSelectable(1)
+//                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+//                        .thumbnailScale(0.85f)
+//                        .imageEngine(CoilEngine()) // for glide-V4
+//                        .originalEnable(false)
+//                        .autoHideToolbarOnSingleTap(true)
+//                        .forResult(1)
+//                }
+                launcher?.launch<TestActivity>()
             }
             rvItems.layoutManager = LinearLayoutManager(context)
             rvItems.adapter = itemAdapter

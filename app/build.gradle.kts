@@ -102,11 +102,11 @@ android {
 
             }
             //删除自动生成的output.json
-            assembleProvider.get().doLast {
-                val jsonFilePath  = "${packageApplicationProvider.get().outputDirectory.get()}/output-metadata.json"
-                System.out.println("删除文件:$jsonFilePath")
-                delete(jsonFilePath)
-            }
+//            assembleProvider.get().doLast {
+//                val jsonFilePath  = "${packageApplicationProvider.get().outputDirectory.get()}/output-metadata.json"
+//                System.out.println("删除文件:$jsonFilePath")
+//                delete(jsonFilePath)
+//            }
         }
         manifestPlaceholders["rawApplicationId"] = "$applicationId"
         manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher"
@@ -196,8 +196,8 @@ repositories {
 
 
 dependencies {
-    implementation("com.github.Skeaner:SkeanFrameWork:2.2.0")
-//    implementation project(path: ":SkeanFrameWork")
+//    implementation("com.github.Skeaner:SkeanFrameWork:2.2.0")
+    implementation (project( ":SkeanFrameWork"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
     implementation(fileTree("libs") { include("*.jar") })
     kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")

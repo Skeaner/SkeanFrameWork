@@ -199,4 +199,7 @@ dependencies {
     api ("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:2.0.5")
     //FlexibleDivider
     api ("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")
+    //快速ActivityLauncher
+    api ("com.github.DylanCaiCoding:ActivityResultLauncher:1.1.2")
+
 }

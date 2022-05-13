@@ -9,6 +9,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import com.blankj.utilcode.util.ToastUtils
+import com.dylanc.activityresult.launcher.StartActivityLauncher
 import com.hi.dhl.binding.viewbind
 import io.reactivex.Single
 import me.skean.framework.example.component.App
@@ -45,6 +46,7 @@ class TestActivity : BaseActivity() {
     private var count = 0
 
     private val vb: TestActivityBinding by viewbind()
+    private val navigator: StartActivityLauncher by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
