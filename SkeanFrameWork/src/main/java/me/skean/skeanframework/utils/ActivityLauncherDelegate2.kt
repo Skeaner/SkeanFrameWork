@@ -13,20 +13,15 @@ import me.skean.skeanframework.ktext.observe
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/**
- * <pre>
- *     author: dhl
- *     date  : 2020/12/15
- *     desc  :
- * </pre>
- */
 
-class ActivityLauncherDelegate<T : BaseActivityResultLauncher<*, *>>(
-    classes: Class<T>,
-    activity: Activity
-) : ReadOnlyProperty<Activity, T> {
+class ActivityLauncherDelegate2<T : BaseActivityResultLauncher<*, *>>(
+        classes: Class<T>,
+        activity: Activity
+) : Lazy<T> {
 
-    private var launcher: T? = null
+    override val value: T
+        get() = launcher
+    private lateinit var launcher: T
 
     init {
         when (activity) {
@@ -44,8 +39,6 @@ class ActivityLauncherDelegate<T : BaseActivityResultLauncher<*, *>>(
 
     }
 
-    override fun getValue(thisRef: Activity, property: KProperty<*>): T {
-        return launcher!!
-    }
+    override fun isInitialized(): Boolean = this::launcher.isInitialized
 
 }

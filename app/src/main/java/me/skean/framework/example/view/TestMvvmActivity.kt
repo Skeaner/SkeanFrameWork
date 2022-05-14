@@ -26,7 +26,7 @@ import me.skean.skeanframework.ktext.*
 class TestMvvmActivity() : BaseActivity() {
 
     private val vb: TestMvvmActivityBinding by viewbind()
-    private val launcher: AppActivityLauncher? by launcher()
+    private val launcher: AppActivityLauncher by launcher()
     private val vm: TestMvvmViewModel by viewModels()
     private lateinit var itemAdapter: ItemAdapter
 
@@ -54,7 +54,9 @@ class TestMvvmActivity() : BaseActivity() {
 //                        .autoHideToolbarOnSingleTap(true)
 //                        .forResult(1)
 //                }
-                launcher?.launch<TestActivity>()
+                launcher.launch<TestActivity>{ code, data ->
+                    ToastUtils.showShort("返回了")
+                }
             }
             rvItems.layoutManager = LinearLayoutManager(context)
             rvItems.adapter = itemAdapter
@@ -67,12 +69,12 @@ class TestMvvmActivity() : BaseActivity() {
 
     private fun load(refresh: Boolean) {
         vm.requestData(refresh)
-            .life(this)
-            .subscribe(defaultSingleObserver {
-                vb.srlLoader.finishLoad(it)
-                if (refresh) itemAdapter.setNewInstance(it.result) else itemAdapter.addData(it.result.orEmpty())
-                if (!it.success) ToastUtils.showShort(it.msg)
-            })
+                .life(this)
+                .subscribe(defaultSingleObserver {
+                    vb.srlLoader.finishLoad(it)
+                    if (refresh) itemAdapter.setNewInstance(it.result) else itemAdapter.addData(it.result.orEmpty())
+                    if (!it.success) ToastUtils.showShort(it.msg)
+                })
     }
 
     @SuppressLint("CheckResult")
