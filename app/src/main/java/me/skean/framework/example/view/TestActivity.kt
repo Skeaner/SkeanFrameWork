@@ -19,7 +19,6 @@ import me.skean.skeanframework.utils.ImageUtil
 import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
-import me.skean.skeanframework.component.ActivityStarter
 import me.skean.skeanframework.ktext.*
 import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.utils.NetworkUtil
@@ -34,11 +33,6 @@ import java.util.concurrent.TimeUnit
  */
 class TestActivity : BaseActivity() {
 
-    companion object : ActivityStarter() {
-        fun start(host: Any) {
-            start(host, Intent(getContextFromHost(host), TestActivity::class.java), null)
-        }
-    }
 
     val REQUEST_GET_SINGLE_FILE = 1
 
@@ -50,6 +44,7 @@ class TestActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setResult(Activity.RESULT_OK)
         vb.srlLoader.setEnableLoadMore(true)
         vb.srlLoader.setEnableRefresh(true)
         vb.srlLoader.setOnRefreshListener {

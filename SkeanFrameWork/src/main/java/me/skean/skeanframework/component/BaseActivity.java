@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PersistableBundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +33,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import me.skean.skeanframework.R;
-import me.skean.skeanframework.utils.BetterActivityResult;
+
 import me.skean.skeanframework.widget.LoadingDialog;
 
 /**
@@ -55,7 +56,6 @@ public class BaseActivity extends AppCompatActivity {
 
     private final Set<Handler.Callback> callbacks = new HashSet<>();
 
-    protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerActivityForResult(this);
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
@@ -77,6 +77,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         };
     }
+
 
     @Override
     protected void onDestroy() {
@@ -356,38 +357,7 @@ public class BaseActivity extends AppCompatActivity {
         mainHandler.removeMessages(what);
     }
 
-    /**
-     * 隐藏软键盘 <p/>
-     *
-     * @return 是否有执行隐藏软键盘的操作
-     */
-    public boolean hideSoftKeyboard() {
-        InputMethodManager kbManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        kbManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        return true;
-    }
 
-    /**
-     * 展示软键盘
-     * <p/>
-     * * @return 是否有执行展示软键盘的操作
-     */
-    public boolean showSoftKeyboard(EditText target) {
-        InputMethodManager kbManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        target.requestFocus();
-        return kbManager.showSoftInput(target, 0);
-    }
-
-    /**
-     * 展示软键盘, 并且光标移到最后面
-     * * @return 是否有执行展示软键盘的操作
-     */
-    public boolean showSoftKeyboardAndMoveToEnd(EditText target) {
-        InputMethodManager kbManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        target.requestFocus();
-        target.setSelection(target.length());
-        return kbManager.showSoftInput(target, 0);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // RX的便捷方法

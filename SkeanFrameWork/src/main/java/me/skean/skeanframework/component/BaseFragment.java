@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import me.skean.skeanframework.utils.BetterActivityResult;
 import me.skean.skeanframework.widget.LoadingDialog;
 
 /**
@@ -40,7 +39,6 @@ public abstract class BaseFragment extends Fragment {
     private final Set<Integer> msgWhats = new HashSet<>();
     private final Set<String> msgTokens = new HashSet<>();
 
-    protected final BetterActivityResult<Intent, ActivityResult> activityLauncher = BetterActivityResult.registerActivityForResult(this);
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -204,31 +202,6 @@ public abstract class BaseFragment extends Fragment {
         hostActivity.removeMainMessages(what);
     }
 
-    /**
-     * 隐藏软键盘 <p/>
-     *
-     * @return 是否有执行隐藏软键盘的操作
-     */
-    public boolean hideSoftInput() {
-        return hostActivity.hideSoftKeyboard();
-    }
-
-    /**
-     * 展示软键盘
-     * <p/>
-     * * @return 是否有执行展示软键盘的操作
-     */
-    public boolean showSoftKeyboard(EditText target) {
-        return hostActivity.showSoftKeyboard(target);
-    }
-
-    /**
-     * 展示软键盘, 并且光标移到最后面
-     * * @return 是否有执行展示软键盘的操作
-     */
-    public boolean showSoftKeyboardAndMoveToEnd(EditText target) {
-        return hostActivity.showSoftKeyboardAndMoveToEnd(target);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // RX的便利方法

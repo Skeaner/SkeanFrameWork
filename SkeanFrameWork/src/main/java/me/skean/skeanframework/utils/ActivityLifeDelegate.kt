@@ -13,39 +13,30 @@ import me.skean.skeanframework.ktext.observe
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/**
- * <pre>
- *     author: dhl
- *     date  : 2020/12/15
- *     desc  :
- * </pre>
- */
 
-class ActivityLauncherDelegate<T : BaseActivityResultLauncher<*, *>>(
+class ActivityLifeDelegate<T : Any>(
     classes: Class<T>,
     activity: Activity
-) : ReadOnlyProperty<Activity, T> {
+) : Lazy<T> {
 
-    private var launcher: T? = null
+    override val value: T
+        get() = launcher
+    private lateinit var launcher: T
 
     init {
         when (activity) {
             is ComponentActivity -> activity.lifecycle.observe(create = {
-                launcher = classes.getConstructor(ActivityResultCaller::class.java).newInstance(activity)
+                launcher = classes.getConstructor(Activity::class.java).newInstance(activity)
             })
             else -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     activity.observe(create = {
-                        launcher = classes.getConstructor(ActivityResultCaller::class.java).newInstance(activity)
+                        launcher = classes.getConstructor(Activity::class.java).newInstance(activity)
                     })
                 }
             }
         }
-
     }
 
-    override fun getValue(thisRef: Activity, property: KProperty<*>): T {
-        return launcher!!
-    }
-
+    override fun isInitialized(): Boolean = this::launcher.isInitialized
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -26,12 +27,15 @@ import me.skean.skeanframework.ktext.*
 class TestMvvmActivity() : BaseActivity() {
 
     private val vb: TestMvvmActivityBinding by viewbind()
-    private val launcher: AppActivityLauncher by launcher()
+    private val launcher: AppActivityLauncher by injectLauncher()
     private val vm: TestMvvmViewModel by viewModels()
     private lateinit var itemAdapter: ItemAdapter
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LogUtils.i("Activity onCreate");
         initViews()
     }
 
@@ -54,8 +58,8 @@ class TestMvvmActivity() : BaseActivity() {
 //                        .autoHideToolbarOnSingleTap(true)
 //                        .forResult(1)
 //                }
-                launcher.launch<TestActivity>{ code, data ->
-                    ToastUtils.showShort("返回了")
+                launcher.launchForResultOK<TestActivity> {
+                    ToastUtils.showShort("OK")
                 }
             }
             rvItems.layoutManager = LinearLayoutManager(context)
@@ -69,12 +73,12 @@ class TestMvvmActivity() : BaseActivity() {
 
     private fun load(refresh: Boolean) {
         vm.requestData(refresh)
-                .life(this)
-                .subscribe(defaultSingleObserver {
-                    vb.srlLoader.finishLoad(it)
-                    if (refresh) itemAdapter.setNewInstance(it.result) else itemAdapter.addData(it.result.orEmpty())
-                    if (!it.success) ToastUtils.showShort(it.msg)
-                })
+            .life(this)
+            .subscribe(defaultSingleObserver {
+                vb.srlLoader.finishLoad(it)
+                if (refresh) itemAdapter.setNewInstance(it.result) else itemAdapter.addData(it.result.orEmpty())
+                if (!it.success) ToastUtils.showShort(it.msg)
+            })
     }
 
     @SuppressLint("CheckResult")

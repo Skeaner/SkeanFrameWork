@@ -89,7 +89,7 @@ dependencies {
     api ("androidx.appcompat:appcompat:1.4.1")
     api ("androidx.multidex:multidex:2.0.1")
     api ("androidx.recyclerview:recyclerview:1.2.1")
-    api ("com.google.android.material:material:1.5.0")
+    api ("com.google.android.material:material:1.6.0")
     api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     api ("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")

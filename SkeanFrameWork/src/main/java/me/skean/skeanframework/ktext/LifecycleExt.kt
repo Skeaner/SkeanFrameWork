@@ -63,6 +63,10 @@ class LifecycleObserver(
             lifecycle = null
         }
         create = null
+        start = null
+        resume = null
+        pause = null
+        stop = null
         destroyed = null
     }
 }
@@ -117,23 +121,11 @@ class LifecycleCallbacks(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             activity.unregisterActivityLifecycleCallbacks(this)
         }
-        destroyed = null
-    }
-}
-
-class LifecycleFragment : Fragment {
-    var destroyed: (() -> Unit)? = null
-
-    constructor()
-
-    @SuppressLint("ValidFragment")
-    constructor(destroyed: () -> Unit) : this() {
-        this.destroyed = destroyed
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        destroyed?.invoke()
+        create = null
+        start = null
+        resume = null
+        pause = null
+        stop = null
         destroyed = null
     }
 }
