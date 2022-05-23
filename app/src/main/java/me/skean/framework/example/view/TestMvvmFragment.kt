@@ -3,9 +3,13 @@ package me.skean.framework.example.view
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.blankj.utilcode.util.LogUtils
@@ -23,12 +27,13 @@ import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.viewmodel.TestMvvmViewModel
 import me.skean.materialdialogs.MaterialDialog
 import me.skean.skeanframework.component.BaseActivity
+import me.skean.skeanframework.component.BaseFragment
 import me.skean.skeanframework.ktext.*
 
 /**
  * Created by Skean on 2022/4/20.
  */
-class TestMvvmActivity() : BaseActivity() {
+class TestMvvmFragment() : BaseFragment() {
 
     private val vb: TestMvvmActivityBinding by viewbind()
     private val launcher: AppActivityLauncher by injectLauncher()
@@ -38,15 +43,19 @@ class TestMvvmActivity() : BaseActivity() {
     private val tv: Dialog by autoInject()
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return vb.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initViews()
     }
 
+
+
     private fun initViews() {
         vb.apply {
-            useHomeShowTitle = false
-            setSupportActionBar(toolbar)
             itemAdapter = ItemAdapter()
             itemAdapter.setOnItemClickListener { adapter, view, position ->
 //                requestPermissionEachCombined(Manifest.permission.WRITE_EXTERNAL_STORAGE){
@@ -62,7 +71,7 @@ class TestMvvmActivity() : BaseActivity() {
 //                        .autoHideToolbarOnSingleTap(true)
 //                        .forResult(1)
 //                }
-                launcher.launchForResultOK<TestMvvmFragmentActivity> {
+                launcher.launchForResultOK<TestActivity> {
                     ToastUtils.showShort("OK")
                 }
             }
