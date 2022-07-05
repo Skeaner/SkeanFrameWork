@@ -139,7 +139,9 @@ fun TextView.showSelectionsPopupMenuOnClick(vararg selections: String) {
 fun TextView.showSelectionsPopupMenu(selections: List<String>) {
     PopupMenu(this.context, this).also {
         val menu = it.menu
-        selections.forEach { selection -> menu.add(selection) }
+        selections.forEachIndexed { index, selection ->
+            menu.add(0, 0, index, selection)
+        }
     }
         .also {
             it.setOnMenuItemClickListener { item ->
@@ -191,7 +193,9 @@ fun TextView.makeLinks(vararg links: Pair<String, View.OnClickListener>) {
 fun View.showSelectionsPopupMenu(selections: List<String>, listener: PopupMenu.OnMenuItemClickListener?) {
     PopupMenu(this.context, this).also {
         val menu = it.menu
-        selections.forEach { selection -> menu.add(selection) }
+        selections.forEachIndexed { index, selection ->
+            menu.add(0, 0, index, selection)
+        }
     }
         .also {
             it.setOnMenuItemClickListener(listener)
@@ -210,9 +214,9 @@ fun View.showSelectionsPopupMenuOnclick(selections: List<String>, listener: Popu
 fun View.showSelectionsPopupMenu(selections: ListOrderedMap<String, Int>, listener: PopupMenu.OnMenuItemClickListener?) {
     PopupMenu(this.context, this).also {
         val menu = it.menu
-        selections.forEach { selection ->
-            menu.add(selection.key)
-                .also { item -> item.setIcon(selection.value) }
+        for (i in 0 until selections.size) {
+            menu.add(0, 0, i, selections.get(i))
+                .also { item -> item.setIcon(selections.getValue(i)) }
         }
     }
         .also {

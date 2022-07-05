@@ -24,6 +24,10 @@ fun Number.px2sp(): Int {
     return SizeUtils.px2sp(this.toFloat())
 }
 
+val Number.dp :Int get() = SizeUtils.dp2px(this.toFloat())
+val Number.sp :Int get() = SizeUtils.sp2px(this.toFloat())
+
+
 fun Double.toPrice(): Double? {
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.CEILING
