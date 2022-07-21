@@ -52,10 +52,10 @@ public class BaseActivity extends AppCompatActivity {
     protected boolean useHomeAsBack = true;
     protected boolean useHomeShowTitle = true;
     protected boolean isMenuCreated = false;
-    protected boolean backControl = false;
 
     private final Set<Handler.Callback> callbacks = new HashSet<>();
 
+    private OnBackPressedListener onBackPressedListener;
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
@@ -77,7 +77,6 @@ public class BaseActivity extends AppCompatActivity {
             }
         };
     }
-
 
     @Override
     protected void onDestroy() {
@@ -127,32 +126,17 @@ public class BaseActivity extends AppCompatActivity {
         initActionBar();
     }
 
-    /**
-     * 返回键的行为 <p/>
-     *
-     * @return true:当前Activity执行了返回键相关操作,  false:当前Activity没有执行任何操作, 将会执行默认的操作(如finish())
-     */
-    public boolean onBack() {
-        return actionBar != null && collapseActionView(actionBar);
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        this.onBackPressedListener = onBackPressedListener;
     }
 
     @Override
     public void onBackPressed() {
-        if (backControl) {
-            if (!onBack()) finish();
-        } else {
-            super.onBackPressed();
+        boolean consumed = false;
+        if (onBackPressedListener != null) {
+            consumed = onBackPressedListener.onBackPressed();
         }
-    }
-
-    protected boolean collapseActionView(ActionBar actionBar) {
-        boolean result = false;
-        try {
-            result = (boolean) ActionBar.class.getMethod("collapseActionView").invoke(actionBar);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+        if (!consumed) super.onBackPressed();
     }
 
     @Override
@@ -238,7 +222,8 @@ public class BaseActivity extends AppCompatActivity {
     private LoadingDialog getLoadingDialog(String text, boolean cancelable) {
         if (loadingDialog == null) {
             loadingDialog = new LoadingDialog(context, text, cancelable);
-        } else {
+        }
+        else {
             loadingDialog.setLoadingText(text).setCancelable(cancelable);
         }
         return loadingDialog;
@@ -331,7 +316,8 @@ public class BaseActivity extends AppCompatActivity {
             Method method = Message.class.getDeclaredMethod("setCallback", Runnable.class);
             method.setAccessible(true);
             method.invoke(m, r);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             //
         }
         return m;
@@ -356,8 +342,6 @@ public class BaseActivity extends AppCompatActivity {
     public void removeMainMessages(int what) {
         mainHandler.removeMessages(what);
     }
-
-
 
     ///////////////////////////////////////////////////////////////////////////
     // RX的便捷方法

@@ -89,8 +89,8 @@ public abstract class BaseFragment extends Fragment {
         isMenuCreated = true;
     }
 
-    public boolean onBack() {
-        return false;
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        hostActivity.setOnBackPressedListener(onBackPressedListener);
     }
 
     ///////////////////////////////////////////////////////////////////////////

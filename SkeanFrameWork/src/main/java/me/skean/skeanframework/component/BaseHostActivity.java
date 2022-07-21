@@ -21,6 +21,8 @@ public abstract class BaseHostActivity extends BaseActivity {
     protected boolean useDefaultAnimation = true;
     protected boolean ignoreSameTagFragment = true;
 
+    private OnBackPressedListener onBackPressedListenerBackup;
+
     ///////////////////////////////////////////////////////////////////////////
     // 设置/声明周期
     ///////////////////////////////////////////////////////////////////////////
@@ -43,7 +45,18 @@ public abstract class BaseHostActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentManager = getSupportFragmentManager();
+        super.setOnBackPressedListener(() -> {
+            boolean consumed = onBackPressedListenerBackup != null && onBackPressedListenerBackup.onBackPressed();
+            if (!consumed) {
+                fragmentManager = getSupportFragmentManager();
+                if (fragmentManager.popBackStackImmediate()) {
+                    currentTag = fragmentTagStack.pop();
+                    return true;
+                }
+                return false;
+            }
+            else return true;
+        });
     }
 
     public void setUseDefaultAnimation(boolean useDefaultAnimation) {
@@ -55,18 +68,8 @@ public abstract class BaseHostActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onBack() {
-        if (super.onBack()) {
-            return true;
-        } else if (currentTag != null) {
-            Fragment currentFragment = fragmentManager.findFragmentByTag(currentTag);
-            if (currentFragment instanceof BaseFragment && ((BaseFragment) currentFragment).onBack()) return true;
-            else if (fragmentManager.popBackStackImmediate()) {
-                currentTag = fragmentTagStack.pop();
-                return true;
-            }
-        }
-        return false;
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        this.onBackPressedListenerBackup = onBackPressedListener;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -119,7 +122,8 @@ public abstract class BaseHostActivity extends BaseActivity {
             targetFragment = createFragment(targetTag);
             setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
             trans.add(getContainerId(), targetFragment, targetTag);
-        } else {
+        }
+        else {
             setTransAnimator(trans, fragmentManager.findFragmentByTag(currentTag), targetFragment);
             trans.attach(targetFragment);
         }
@@ -203,13 +207,21 @@ public abstract class BaseHostActivity extends BaseActivity {
         if (!useDefaultAnimation) return;
         if (current == null) {
             trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
-        } else {
+        }
+        else {
             if (!(current instanceof BaseFragment && target instanceof BaseFragment)) {
                 trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
-            } else {
+            }
+            else {
                 if (((BaseFragment) current).getFragmentIndex() > ((BaseFragment) target).getFragmentIndex())
-                    trans.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_right_out, R.anim.slide_right_in, R.anim.slide_left_out);
-                else trans.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_left_out, R.anim.slide_left_in, R.anim.slide_right_out);
+                    trans.setCustomAnimations(R.anim.slide_left_in,
+                                              R.anim.slide_right_out,
+                                              R.anim.slide_right_in,
+                                              R.anim.slide_left_out);
+                else trans.setCustomAnimations(R.anim.slide_right_in,
+                                               R.anim.slide_left_out,
+                                               R.anim.slide_left_in,
+                                               R.anim.slide_right_out);
             }
         }
     }
