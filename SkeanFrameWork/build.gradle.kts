@@ -150,7 +150,7 @@ dependencies {
     //图片显示subsamplingImageView
     api ("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
     //图片选择器matisse
-    api("com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.3") {
+    api("com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.4") {
         exclude( module = "library")
     }
     //综合工具库utilcode
