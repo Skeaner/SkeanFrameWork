@@ -137,8 +137,8 @@ android {
             dimension = "default"
             resValue("string", "app_name", "SFW")
             buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
-            buildConfigField("boolean", "LOG_TO_FILE", "true")
-            buildConfigField("boolean", "IS_INTRANET", "true")
+            buildConfigField("boolean", "LOG_TO_FILE", "false")
+            buildConfigField("boolean", "IS_INTRANET", "false")
         }
         // 测试环境
         create("beta") {
@@ -146,7 +146,7 @@ android {
             applicationId = "${defaultConfig.applicationId}.dev"
             resValue("string", "app_name", "SFW-beta")
             buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
-            buildConfigField("boolean", "LOG_TO_FILE", "true")
+            buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_beta"
         }

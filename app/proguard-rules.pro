@@ -137,6 +137,11 @@
     @org.greenrobot.eventbus.Subscribe <methods>;
 }
 
+#XmlResourceParser的一些保留
+-keep class org.xmlpull.** {*;}
+-keep public class * extends org.xmlpull.**
+-keep interface org.xmlpull.** {*;}
+
 #-------------------------------------------项目定义区-------------------------------------------------
 # todo 添加一些类不进行混淆
 #bean
