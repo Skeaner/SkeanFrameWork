@@ -36,7 +36,7 @@
 #
 #############################################
 # todo 这里指定需要混淆的包
--keep class !me.skean.framework.example.**,!com.blankj.**  {*;}
+-keep class !com.zswantong.apcollection.**, !com.blankj.**, ** {*;}
 -dontwarn **
 
 #############################################
