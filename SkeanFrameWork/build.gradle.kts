@@ -87,7 +87,6 @@ dependencies {
     //谷歌库
     api ("androidx.core:core-ktx:1.7.0")
     api ("androidx.appcompat:appcompat:1.4.1")
-    api ("androidx.multidex:multidex:2.0.1")
     api ("androidx.recyclerview:recyclerview:1.2.1")
     api ("com.google.android.material:material:1.6.0")
     api ("androidx.navigation:navigation-fragment-ktx:$navigationVersion")

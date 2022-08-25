@@ -1,10 +1,10 @@
 package me.skean.framework.example.component
 
+import android.app.Application
 import android.content.Context
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import androidx.multidex.MultiDexApplication
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.blankj.utilcode.util.FileUtils
@@ -45,7 +45,7 @@ import java.io.File
 /**
  * App的Application
  */
-class App : MultiDexApplication(), StatusCallback {
+class App : Application(), StatusCallback {
 
     companion object {
         @JvmStatic

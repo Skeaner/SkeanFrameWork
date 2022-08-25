@@ -76,7 +76,6 @@ android {
         targetSdk = 28
         versionCode = vCode
         versionName = vName
-        multiDexEnabled = true
         ndk {
             abiFilters.add("armeabi-v7a")
             abiFilters.add("x86")
