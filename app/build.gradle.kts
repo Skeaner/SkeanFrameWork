@@ -172,6 +172,9 @@ android {
     viewBinding {
         isEnabled = true
     }
+    dataBinding {
+        isEnabled = true
+    }
     packagingOptions {
         resources.excludes.apply {
             add("META-INF/DEPENDENCIES")
