@@ -72,12 +72,12 @@ fun RadioGroup.getChecedRadioButton(): RadioButton? {
     return null
 }
 
-fun View.setVisibleOrGone(visibleOrGone: Boolean) {
-    this.visibility = if (visibleOrGone) View.VISIBLE else View.GONE
+fun View.setGone(isGone: Boolean) {
+    this.visibility = if (isGone) View.GONE else View.VISIBLE
 }
 
-fun View.setVisibleOrInvisible(visibleOrGone: Boolean) {
-    this.visibility = if (visibleOrGone) View.VISIBLE else View.GONE
+fun View.setInvisible(isInvisible: Boolean) {
+    this.visibility = if (isInvisible) View.INVISIBLE else View.VISIBLE
 }
 
 fun View.setVisible() {

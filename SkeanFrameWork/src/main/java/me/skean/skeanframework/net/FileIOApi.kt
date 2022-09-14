@@ -18,7 +18,10 @@ interface FileIOApi {
     fun downLoad(@Url url: String?): Call<ResponseBody?>
 
     @GET
-    fun downLoadSingle(@Url url: String?): Single<ResponseBody?>
+    suspend fun downLoad2(@Url url: String?): ResponseBody?
+
+    @GET
+    fun downLoadReactive(@Url url: String?): Single<ResponseBody?>
 
     @POST
     @Multipart
@@ -29,6 +32,6 @@ interface FileIOApi {
     @POST
     @Multipart
     @Streaming
-    fun uploadSingle(@Url url: String?, @Part file: MultipartBody.Part?): Single<ResponseBody?>
+    fun uploadReactive(@Url url: String?, @Part file: MultipartBody.Part?): Single<ResponseBody?>
 
 }

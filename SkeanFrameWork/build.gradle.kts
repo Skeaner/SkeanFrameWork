@@ -79,7 +79,7 @@ val kotlinVersion = rootProject.extra["kotlinVersion"]
 dependencies {
     api(fileTree("libs") { include("*.jar") })
     api ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    api ("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinVersion")
+    api ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinVersion")
     api ("com.github.permissions-dispatcher:permissionsdispatcher:4.8.0")
     kapt( "com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
     api ("org.greenrobot:eventbus:$eventbusVersion")
@@ -105,6 +105,7 @@ dependencies {
     api ("androidx.lifecycle:lifecycle-service:$lifecycleVersion")
     api ("androidx.lifecycle:lifecycle-process:$lifecycleVersion")
     api ("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
+    api ("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
     //retrofit2
     api ("com.squareup.retrofit2:retrofit:$retrofitVersion")
     api ("com.squareup.retrofit2:converter-jackson:$retrofitVersion")

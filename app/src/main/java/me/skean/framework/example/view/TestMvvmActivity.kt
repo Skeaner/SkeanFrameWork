@@ -19,11 +19,13 @@ import me.skean.framework.example.R
 import me.skean.framework.example.component.AppActivityLauncher
 import me.skean.framework.example.databinding.TestMvvmActivityBinding
 import me.skean.framework.example.databinding.TestMvvmItemBinding
+import me.skean.framework.example.model.util.Status
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.viewmodel.TestMvvmViewModel
 import me.skean.materialdialogs.MaterialDialog
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.ktext.*
+import kotlin.system.measureTimeMillis
 
 /**
  * Created by Skean on 2022/4/20.
@@ -62,9 +64,25 @@ class TestMvvmActivity() : BaseActivity() {
 //                        .autoHideToolbarOnSingleTap(true)
 //                        .forResult(1)
 //                }
-                launcher.launchForResultOK<TestMvvmFragmentActivity> {
-                    ToastUtils.showShort("OK")
-                }
+                vm.download("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4")
+                    .observe(this@TestMvvmActivity) {
+                        when (it.status) {
+                            Status.SUCCESS -> {
+                                dismissLoading()
+                                ToastUtils.showShort("下载文件成功, 路径: ${it.data?.absolutePath}")
+                            }
+                            Status.FAIL -> {
+                                dismissLoading()
+                                ToastUtils.showShort("下载文件失败, 原因: ${it.message}")
+                            }
+                            Status.LOADING -> {
+                                showLoading(false)
+                            }
+                        }
+                    }
+//                launcher.launchForResultOK<TestMvvmFragmentActivity> {
+//                    ToastUtils.showShort("OK")
+//                }
             }
             rvItems.layoutManager = LinearLayoutManager(context)
             rvItems.adapter = itemAdapter
