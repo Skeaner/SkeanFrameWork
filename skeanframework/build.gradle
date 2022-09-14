@@ -112,8 +112,9 @@ dependencies {
     api 'com.trello.rxlifecycle3:rxlifecycle-kotlin:3.1.0'
     api 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:3.1.0'
     //高德地图
-    api 'com.amap.api:map2d:5.2.0'
-    api 'com.amap.api:location:3.5.0'
+   // api 'com.amap.api:3dmap:9.2.0'
+    api 'com.amap.api:map2d:6.0.0'
+    api 'com.amap.api:location:6.1.0'
     // sql-cipher支持
     api 'net.zetetic:android-database-sqlcipher:4.4.0@aar'
     //json解析器
@@ -138,7 +139,7 @@ dependencies {
     //图片显示subsamplingImageView
     api 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     //图片选择器matisse
-    api('com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.0') {
+    api('com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.5') {
         exclude module: "library"
     }
     //ViewPager指示器viewpagerindicator
@@ -161,8 +162,8 @@ dependencies {
     //数字进度条
     api  'com.daimajia.numberprogressbar:library:1.4@aar'
     //kotpref
-    api 'com.chibatching.kotpref:kotpref:2.11.0'
-    api 'com.chibatching.kotpref:preference-screen-dsl:2.11.0'
+    api 'com.chibatching.kotpref:kotpref:2.13.1'
+    api 'com.chibatching.kotpref:preference-screen-dsl:2.13.1'
     //rxpermission
     api 'com.github.tbruyelle:rxpermissions:0.11'
     //旧款 MaterialDialog
