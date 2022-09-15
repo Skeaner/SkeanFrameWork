@@ -1,6 +1,5 @@
 package me.skean.skeanframework.rx
 
-import android.app.appsearch.PutDocumentsRequest
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single

@@ -14,7 +14,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.dylanc.viewbinding.getBinding
 import com.hi.dhl.binding.viewbind
-import com.rxjava.rxlife.life
+import com.trello.rxlifecycle3.android.lifecycle.kotlin.bindToLifecycle
 import me.skean.framework.example.R
 import me.skean.framework.example.component.AppActivityLauncher
 import me.skean.framework.example.databinding.TestMvvmActivityBinding
@@ -95,7 +95,7 @@ class TestMvvmActivity() : BaseActivity() {
 
     private fun load(refresh: Boolean) {
         vm.requestData(refresh)
-            .life(this)
+            .bindToLifecycle(this)
             .subscribe(defaultSingleObserver {
                 vb.srlLoader.finishLoad(it)
                 if (refresh) itemAdapter.setNewInstance(it.result) else itemAdapter.addData(it.result.orEmpty())

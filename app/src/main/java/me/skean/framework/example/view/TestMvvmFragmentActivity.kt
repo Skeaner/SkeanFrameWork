@@ -14,7 +14,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.dylanc.viewbinding.getBinding
 import com.hi.dhl.binding.viewbind
-import com.rxjava.rxlife.life
 import me.skean.framework.example.R
 import me.skean.framework.example.component.AppActivityLauncher
 import me.skean.framework.example.databinding.TestMvvmActivityBinding

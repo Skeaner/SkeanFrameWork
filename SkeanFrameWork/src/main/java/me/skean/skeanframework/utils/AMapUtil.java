@@ -32,9 +32,15 @@ public class AMapUtil {
      * 默认搜索间隔, 循环定位的定位器
      */
     public static AMapLocationClient newLocationClient(Context context, @LType int type, AMapLocationListener listener) {
-        AMapLocationClient client = new AMapLocationClient(context);
-        client.setLocationOption(newOption(type, 0, false));
-        if (listener != null) client.setLocationListener(listener);
+        AMapLocationClient client = null;
+        try {
+            client = new AMapLocationClient(context);
+            client.setLocationOption(newOption(type, 0, false));
+            if (listener != null) client.setLocationListener(listener);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return client;
     }
 
@@ -42,9 +48,15 @@ public class AMapUtil {
      * 指定搜索间隔, 循环定位的定位器
      */
     public static AMapLocationClient newLocationClient(Context context, @LType int type, int scanSpan, AMapLocationListener listener) {
-        AMapLocationClient client = new AMapLocationClient(context);
-        client.setLocationOption(newOption(type, scanSpan, false));
-        if (listener != null) client.setLocationListener(listener);
+        AMapLocationClient client = null;
+        try {
+            client = new AMapLocationClient(context);
+            client.setLocationOption(newOption(type, scanSpan, false));
+            if (listener != null) client.setLocationListener(listener);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return client;
     }
 
@@ -52,9 +64,15 @@ public class AMapUtil {
      * 默认搜索间隔, 单次定位的定位器
      */
     public static AMapLocationClient newLocationClient(Context context, @LType int type, boolean once, AMapLocationListener listener) {
-        AMapLocationClient client = new AMapLocationClient(context);
-        client.setLocationOption(newOption(type, 0, once));
-        if (listener != null) client.setLocationListener(listener);
+        AMapLocationClient client = null;
+        try {
+            client = new AMapLocationClient(context);
+            client.setLocationOption(newOption(type, 0, once));
+            if (listener != null) client.setLocationListener(listener);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return client;
     }
 
