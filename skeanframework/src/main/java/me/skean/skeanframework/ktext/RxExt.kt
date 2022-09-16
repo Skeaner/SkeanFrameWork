@@ -8,6 +8,7 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import me.skean.skeanframework.model.LoadingStatus
 import me.skean.skeanframework.rx.*
 import me.skean.skeanframework.widget.LoadingDialog2
 
@@ -49,10 +50,11 @@ fun Disposable?.doIfNotNullAndNotDisposed(action: Disposable.() -> Unit): Boolea
 }
 
 inline fun <T> defaultObserver(
-        crossinline onSubscribe2: (Disposable) -> Unit = {},
-        crossinline onError2: (Throwable) -> Unit = {},
-        crossinline onComplete2: () -> Unit = {},
-        crossinline onNext2: (T) -> Unit): DefaultObserver<T> {
+    crossinline onSubscribe2: (Disposable) -> Unit = {},
+    crossinline onError2: (Throwable) -> Unit = {},
+    crossinline onComplete2: () -> Unit = {},
+    crossinline onNext2: (T) -> Unit
+): DefaultObserver<T> {
     return object : DefaultObserver<T>() {
 
         override fun onSubscribe2(d: Disposable) {
@@ -75,11 +77,12 @@ inline fun <T> defaultObserver(
 
 
 inline fun <T> progressObserver(
-        context: Context,
-        crossinline onSubscribe2: (Disposable) -> Unit = {},
-        crossinline onError2: (Throwable) -> Unit = {},
-        crossinline onComplete2: () -> Unit = {},
-        crossinline onNext2: (T) -> Unit): ProgressObserver<T> {
+    context: Context,
+    crossinline onSubscribe2: (Disposable) -> Unit = {},
+    crossinline onError2: (Throwable) -> Unit = {},
+    crossinline onComplete2: () -> Unit = {},
+    crossinline onNext2: (T) -> Unit
+): ProgressObserver<T> {
     return object : ProgressObserver<T>(context) {
 
         override fun onSubscribe2(d: Disposable) {
@@ -101,9 +104,10 @@ inline fun <T> progressObserver(
 }
 
 inline fun <T> defaultSingleObserver(
-        crossinline onSubscribe2: (Disposable) -> Unit = {},
-        crossinline onError2: (Throwable) -> Unit = {},
-        crossinline onSuccess2: (T) -> Unit): DefaultSingleObserver<T> {
+    crossinline onSubscribe2: (Disposable) -> Unit = {},
+    crossinline onError2: (Throwable) -> Unit = {},
+    crossinline onSuccess2: (T) -> Unit
+): DefaultSingleObserver<T> {
     return object : DefaultSingleObserver<T>() {
         override fun onSuccess2(t: T) {
             onSuccess2.invoke(t)
@@ -120,10 +124,11 @@ inline fun <T> defaultSingleObserver(
 }
 
 inline fun <T> progressSingleObserver(
-        context: Context,
-        crossinline onSubscribe2: (Disposable) -> Unit = {},
-        crossinline onError2: (Throwable) -> Unit = {},
-        crossinline onSuccess2: (T) -> Unit): ProgressSingleObserver<T> {
+    context: Context,
+    crossinline onSubscribe2: (Disposable) -> Unit = {},
+    crossinline onError2: (Throwable) -> Unit = {},
+    crossinline onSuccess2: (T) -> Unit
+): ProgressSingleObserver<T> {
     return object : ProgressSingleObserver<T>(context) {
         override fun onSuccess2(t: T) {
             onSuccess2.invoke(t)
@@ -140,7 +145,12 @@ inline fun <T> progressSingleObserver(
 }
 
 
-inline fun <T> applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+inline fun <T> applyAutoLoading(
+    context: Context,
+    message: String = "请稍后",
+    cancelable: Boolean = true,
+    crossinline onCancel: (Unit) -> Unit = { }
+)
         : DialogProgressTransformer<T> {
     val dialog = LoadingDialog2(context)
     dialog.setMessage(message)
@@ -150,40 +160,86 @@ inline fun <T> applyAutoLoading(context: Context, message: String = "请稍后",
 }
 
 
-inline fun <T> Single<T>.applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+inline fun <T> Single<T>.applyAutoLoading(
+    context: Context,
+    message: String = "请稍后",
+    cancelable: Boolean = true,
+    crossinline onCancel: (Unit) -> Unit = { }
+)
         : Single<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
 }
 
 
-inline fun <T> Observable<T>.applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+inline fun <T> Observable<T>.applyAutoLoading(
+    context: Context,
+    message: String = "请稍后",
+    cancelable: Boolean = true,
+    crossinline onCancel: (Unit) -> Unit = { }
+)
         : Observable<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
 }
 
-inline fun <T> Flowable<T>.applyAutoLoading(context: Context, message: String = "请稍后", cancelable: Boolean = true, crossinline onCancel: (Unit) -> Unit = { })
+inline fun <T> Flowable<T>.applyAutoLoading(
+    context: Context,
+    message: String = "请稍后",
+    cancelable: Boolean = true,
+    crossinline onCancel: (Unit) -> Unit = { }
+)
         : Flowable<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
 }
 
 
-fun <T> applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+fun <T> applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>)
         : SmartRefreshLayoutTransformer<T> {
     return SmartRefreshLayoutTransformer<T>(loader, refresh, checkSuccessAndNoMore)
 }
 
-fun <T> Single<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+fun <T> Single<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>)
         : Single<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
 }
 
 
-fun <T> Observable<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+fun <T> Observable<T>.applyAutoRefresh(
+    loader: SmartRefreshLayout,
+    refresh: Boolean,
+    checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>
+)
         : Observable<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
 }
 
-fun <T> Flowable<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean,Boolean>)
+fun <T> Flowable<T>.applyAutoRefresh(
+    loader: SmartRefreshLayout,
+    refresh: Boolean,
+    checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>
+)
         : Flowable<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
 }
+
+
+fun <T> Single<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit): Single<T> {
+    return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
+        .doOnSuccess { onLoadingStatus.invoke(LoadingStatus.success()) }
+        .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
+}
+
+
+fun <T> Observable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
+        : Observable<T> {
+    return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
+        .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
+        .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
+}
+
+fun <T> Flowable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
+        : Flowable<T> {
+    return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
+        .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
+        .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
+}
+

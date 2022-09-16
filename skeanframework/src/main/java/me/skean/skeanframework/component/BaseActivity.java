@@ -101,6 +101,12 @@ public class BaseActivity extends RxAppCompatActivity {
         return result;
     }
 
+    public void setSupportActionBar(@Nullable Toolbar toolbar, boolean showBack, boolean showTitle) {
+        useHomeShowTitle = showTitle;
+        useHomeAsBack = showBack;
+        setSupportActionBar(toolbar);
+    }
+
     @Override
     public void setSupportActionBar(@Nullable Toolbar toolbar) {
         super.setSupportActionBar(toolbar);
