@@ -19,7 +19,6 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
-import org.apache.commons.lang3.reflect.FieldUtils
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -53,30 +52,34 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    inline fun <reified T> createService(): T {
+    @JvmOverloads
+    inline fun <reified T> createService(timeoutSeconds: Int = timeout): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
-        val retrofit = baseRetrofit(baseUrl)
+        val retrofit = baseRetrofit(timeoutSeconds, baseUrl)
         return retrofit.create(T::class.java)
     }
 
     @JvmStatic
-    fun <T> createService(clazz: Class<T>): T {
+    @JvmOverloads
+    fun <T> createService(timeoutSeconds: Int = timeout, clazz: Class<T>): T {
         val baseUrl = getBaseUrlForClass(clazz)
-        val retrofit = baseRetrofit(baseUrl)
+        val retrofit = baseRetrofit(timeoutSeconds, baseUrl)
         return retrofit.create(clazz)
     }
 
     @JvmStatic
-    inline fun <reified T> createService(vararg interceptors: Interceptor): T {
+    @JvmOverloads
+    inline fun <reified T> createService(timeoutSeconds: Int = timeout, vararg interceptors: Interceptor): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
-        val retrofit = baseRetrofit(baseUrl, *interceptors)
+        val retrofit = baseRetrofit(timeoutSeconds, baseUrl, *interceptors)
         return retrofit.create(T::class.java)
     }
 
     @JvmStatic
-    fun <T> createService(clazz: Class<T>, vararg interceptors: Interceptor): T {
+    @JvmOverloads
+    fun <T> createService(timeoutSeconds: Int = timeout, clazz: Class<T>, vararg interceptors: Interceptor): T {
         val baseUrl = getBaseUrlForClass(clazz)
-        val retrofit = baseRetrofit(baseUrl, *interceptors)
+        val retrofit = baseRetrofit(timeoutSeconds, baseUrl, *interceptors)
         return retrofit.create(clazz)
     }
 
@@ -100,8 +103,8 @@ object NetworkUtil {
             try {
                 for (declaredField in clazz.declaredFields) {
                     val name = declaredField.name.toLowerCase(Locale.ROOT).replace("_", "")
-                    if (name == "baseurl"){
-                        return  declaredField.get(null) as String
+                    if (name == "baseurl") {
+                        return declaredField.get(null) as String
                     }
                 }
             } catch (e: Exception) {
@@ -115,7 +118,8 @@ object NetworkUtil {
      * 生成一个不安全信任全部https证书的okhttpBuilder
      */
     @JvmStatic
-    fun newUnsafeAppHttpBuilder(): OkHttpClient.Builder {
+    @JvmOverloads
+    fun newUnsafeAppHttpBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
         return try {
             // Create a trust manager that does not validate certificate chains
             val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
@@ -134,7 +138,7 @@ object NetworkUtil {
             sslContext.init(null, trustAllCerts, SecureRandom())
             // Create an ssl socket factory with our all-trusting manager
             val sslSocketFactory = sslContext.socketFactory
-            val builder = newAppHttpBuilder()
+            val builder = newAppHttpBuilder(timeoutSeconds)
             builder.sslSocketFactory(sslSocketFactory, (trustAllCerts[0] as X509TrustManager))
             builder.hostnameVerifier(HostnameVerifier { hostname: String?, session: SSLSession? -> true })
             builder
@@ -149,20 +153,22 @@ object NetworkUtil {
      * @return OkHttpClient
      */
     @JvmStatic
-    fun newAppHttpBuilder(): OkHttpClient.Builder {
+    @JvmOverloads
+    fun newAppHttpBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
             .authenticator(tokenAuthenticator())
             .cookieJar(persistentCookieJar())
             .addInterceptor(httpLoggingInterceptor(false))
     }
 
     @JvmStatic
-    fun newAppHttpProgressBuilder(): OkHttpClient.Builder {
+    @JvmOverloads
+    fun newAppHttpProgressBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
             .authenticator(tokenAuthenticator())
             .cookieJar(persistentCookieJar())
             .addInterceptor(httpLoggingInterceptor(true))
@@ -170,13 +176,15 @@ object NetworkUtil {
     }
 
     @JvmStatic
+    @JvmOverloads
     fun newAppHttpProgressBuilder(
+        timeoutSeconds: Int = timeout,
         uploadListener: ProgressInterceptor.UploadListener?,
         downloadListener: ProgressInterceptor.DownloadListener?
     ): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
             .authenticator(tokenAuthenticator())
             .cookieJar(persistentCookieJar())
             .addInterceptor(httpLoggingInterceptor(true))
@@ -234,28 +242,31 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    fun baseRetrofit(baseUrl: String?): Retrofit {
+    @JvmOverloads
+    fun baseRetrofit(timeoutSeconds: Int = timeout, baseUrl: String?): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpBuilder().build())
+            .client(newAppHttpBuilder(timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     @JvmStatic
-    fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?): Retrofit {
+    @JvmOverloads
+    fun baseRetrofit(timeoutSeconds: Int = timeout, baseUrl: String?, mapper: ObjectMapper?): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpBuilder().build())
+            .client(newAppHttpBuilder(timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(mapper))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     @JvmStatic
-    fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
-        val builder = newAppHttpBuilder()
+    @JvmOverloads
+    fun baseRetrofit(timeoutSeconds: Int = timeout, baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
+        val builder = newAppHttpBuilder(timeoutSeconds)
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -266,18 +277,20 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    fun progressRetrofit(baseUrl: String?): Retrofit {
+    @JvmOverloads
+    fun progressRetrofit(timeoutSeconds: Int = timeout, baseUrl: String?): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpProgressBuilder().build())
+            .client(newAppHttpProgressBuilder(timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     @JvmStatic
-    fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
-        val builder = newAppHttpProgressBuilder()
+    @JvmOverloads
+    fun progressRetrofit(timeoutSeconds: Int = timeout, baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
+        val builder = newAppHttpProgressBuilder(timeoutSeconds)
         builder.interceptors().addAll(0, interceptors.toList())
         return Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -288,14 +301,16 @@ object NetworkUtil {
     }
 
     @JvmStatic
+    @JvmOverloads
     fun progressRetrofit(
+        timeoutSeconds: Int = timeout,
         baseUrl: String?,
         uploadListener: ProgressInterceptor.UploadListener?,
         downloadListener: ProgressInterceptor.DownloadListener?
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
+            .client(newAppHttpProgressBuilder(timeoutSeconds, uploadListener, downloadListener).build())
             .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
