@@ -222,21 +222,21 @@ fun <T> Flowable<T>.applyAutoRefresh(
 }
 
 
-fun <T> Single<T>.composeLoadingStauts(onLoadingStatus: (LoadingStatus) -> Unit): Single<T> {
+fun <T> Single<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit): Single<T> {
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnSuccess { onLoadingStatus.invoke(LoadingStatus.success()) }
         .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
 }
 
 
-fun <T> Observable<T>.composeLoadingStauts(onLoadingStatus: (LoadingStatus) -> Unit)
+fun <T> Observable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
         : Observable<T> {
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
         .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
 }
 
-fun <T> Flowable<T>.composeLoadingStauts(onLoadingStatus: (LoadingStatus) -> Unit)
+fun <T> Flowable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
         : Flowable<T> {
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
