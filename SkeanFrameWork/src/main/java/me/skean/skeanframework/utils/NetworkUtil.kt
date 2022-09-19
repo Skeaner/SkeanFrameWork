@@ -19,7 +19,6 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
-import org.apache.commons.lang3.reflect.FieldUtils
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -42,7 +41,7 @@ import kotlin.reflect.*
 @SuppressLint("StaticFieldLeak")
 object NetworkUtil {
 
-    var timeout = 30
+    var timeout = 15
     private var httpLogLevel: HttpLoggingInterceptor.Level? = null
     private var context: Context? = null
 
@@ -53,30 +52,68 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    inline fun <reified T> createService(): T {
+    @JvmOverloads
+    inline fun <reified T> createService(timeoutSeconds: Int = timeout): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
-        val retrofit = baseRetrofit(baseUrl)
+        val retrofit = baseRetrofit(baseUrl, timeoutSeconds)
         return retrofit.create(T::class.java)
     }
 
     @JvmStatic
-    fun <T> createService(clazz: Class<T>): T {
+    @JvmOverloads
+    inline fun <reified T> createUnsafeService(timeoutSeconds: Int = timeout): T {
+        val baseUrl = getBaseUrlForClass(T::class.java)
+        val retrofit = unsafeBaseRetrofit(baseUrl, timeoutSeconds)
+        return retrofit.create(T::class.java)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun <T> createService(clazz: Class<T>, timeoutSeconds: Int = timeout): T {
         val baseUrl = getBaseUrlForClass(clazz)
-        val retrofit = baseRetrofit(baseUrl)
+        val retrofit = baseRetrofit(baseUrl, timeoutSeconds)
+        return retrofit.create(clazz)
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun <T> createUnsafeService(clazz: Class<T>, timeoutSeconds: Int = timeout): T {
+        val baseUrl = getBaseUrlForClass(clazz)
+        val retrofit = unsafeBaseRetrofit(baseUrl, timeoutSeconds)
         return retrofit.create(clazz)
     }
 
     @JvmStatic
-    inline fun <reified T> createService(vararg interceptors: Interceptor): T {
+    @JvmOverloads
+    inline fun <reified T> createService(vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): T {
         val baseUrl = getBaseUrlForClass(T::class.java)
-        val retrofit = baseRetrofit(baseUrl, *interceptors)
+        val retrofit = baseRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
         return retrofit.create(T::class.java)
     }
 
     @JvmStatic
-    fun <T> createService(clazz: Class<T>, vararg interceptors: Interceptor): T {
+    @JvmOverloads
+    inline fun <reified T> createUnsafeService(vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): T {
+        val baseUrl = getBaseUrlForClass(T::class.java)
+        val retrofit = unsafeBaseRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
+        return retrofit.create(T::class.java)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun <T> createService(clazz: Class<T>, vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): T {
         val baseUrl = getBaseUrlForClass(clazz)
-        val retrofit = baseRetrofit(baseUrl, *interceptors)
+        val retrofit = baseRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
+        return retrofit.create(clazz)
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun <T> createUnsafeService(clazz: Class<T>, vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): T {
+        val baseUrl = getBaseUrlForClass(clazz)
+        val retrofit = unsafeBaseRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
         return retrofit.create(clazz)
     }
 
@@ -100,8 +137,8 @@ object NetworkUtil {
             try {
                 for (declaredField in clazz.declaredFields) {
                     val name = declaredField.name.toLowerCase(Locale.ROOT).replace("_", "")
-                    if (name == "baseurl"){
-                        return  declaredField.get(null) as String
+                    if (name == "baseurl") {
+                        return declaredField.get(null) as String
                     }
                 }
             } catch (e: Exception) {
@@ -111,11 +148,21 @@ object NetworkUtil {
         }
     }
 
-    /**
-     * 生成一个不安全信任全部https证书的okhttpBuilder
-     */
+
     @JvmStatic
-    fun newUnsafeAppHttpBuilder(): OkHttpClient.Builder {
+    @JvmOverloads
+    fun newAppHttpBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
+        return OkHttpClient.Builder()
+            .connectTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .authenticator(tokenAuthenticator())
+            .cookieJar(persistentCookieJar())
+            .addInterceptor(httpLoggingInterceptor(false))
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun newUnsafeAppHttpBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
         return try {
             // Create a trust manager that does not validate certificate chains
             val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
@@ -134,53 +181,106 @@ object NetworkUtil {
             sslContext.init(null, trustAllCerts, SecureRandom())
             // Create an ssl socket factory with our all-trusting manager
             val sslSocketFactory = sslContext.socketFactory
-            val builder = newAppHttpBuilder()
+            val builder = newAppHttpBuilder(timeoutSeconds)
             builder.sslSocketFactory(sslSocketFactory, (trustAllCerts[0] as X509TrustManager))
-            builder.hostnameVerifier(HostnameVerifier { hostname: String?, session: SSLSession? -> true })
+            builder.hostnameVerifier({ hostname: String?, session: SSLSession? -> true })
             builder
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
 
-    /**
-     * 生成基础OkHttpClient, 主要添加了超时设置, Cookies, 和自动输出HttpLog
-     *
-     * @return OkHttpClient
-     */
     @JvmStatic
-    fun newAppHttpBuilder(): OkHttpClient.Builder {
+    @JvmOverloads
+    fun newAppHttpProgressBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .authenticator(tokenAuthenticator())
-            .cookieJar(persistentCookieJar())
-            .addInterceptor(httpLoggingInterceptor(false))
-    }
-
-    @JvmStatic
-    fun newAppHttpProgressBuilder(): OkHttpClient.Builder {
-        return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
             .authenticator(tokenAuthenticator())
             .cookieJar(persistentCookieJar())
             .addInterceptor(httpLoggingInterceptor(true))
             .addNetworkInterceptor(ProgressInterceptor())
     }
 
+
     @JvmStatic
+    @JvmOverloads
+    fun newUnsafeAppHttpProgressBuilder(timeoutSeconds: Int = timeout): OkHttpClient.Builder {
+        return try {
+            // Create a trust manager that does not validate certificate chains
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+
+                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            })
+            // Install the all-trusting trust manager
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, SecureRandom())
+            // Create an ssl socket factory with our all-trusting manager
+            val sslSocketFactory = sslContext.socketFactory
+            val builder = newAppHttpProgressBuilder(timeoutSeconds)
+            builder.sslSocketFactory(sslSocketFactory, (trustAllCerts[0] as X509TrustManager))
+            builder.hostnameVerifier({ hostname: String?, session: SSLSession? -> true })
+            builder
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
     fun newAppHttpProgressBuilder(
         uploadListener: ProgressInterceptor.UploadListener?,
-        downloadListener: ProgressInterceptor.DownloadListener?
+        downloadListener: ProgressInterceptor.DownloadListener?,
+        timeoutSeconds: Int = timeout
     ): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-            .connectTimeout(timeout.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeout.toLong(), TimeUnit.SECONDS)
+            .connectTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
+            .readTimeout(timeoutSeconds.toLong(), TimeUnit.SECONDS)
             .authenticator(tokenAuthenticator())
             .cookieJar(persistentCookieJar())
             .addInterceptor(httpLoggingInterceptor(true))
             .addNetworkInterceptor(ProgressInterceptor(uploadListener, downloadListener))
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun newUnsafeAppHttpProgressBuilder(
+        uploadListener: ProgressInterceptor.UploadListener?,
+        downloadListener: ProgressInterceptor.DownloadListener?,
+        timeoutSeconds: Int = timeout
+    ): OkHttpClient.Builder {
+        return try {
+            // Create a trust manager that does not validate certificate chains
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+
+                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> {
+                    return arrayOf()
+                }
+            })
+            // Install the all-trusting trust manager
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, SecureRandom())
+            // Create an ssl socket factory with our all-trusting manager
+            val sslSocketFactory = sslContext.socketFactory
+            val builder = newAppHttpProgressBuilder(uploadListener, downloadListener, timeoutSeconds)
+            builder.sslSocketFactory(sslSocketFactory, (trustAllCerts[0] as X509TrustManager))
+            builder.hostnameVerifier({ hostname: String?, session: SSLSession? -> true })
+            builder
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
     }
 
     @JvmStatic
@@ -234,29 +334,82 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    fun baseRetrofit(baseUrl: String?): Retrofit {
+    @JvmOverloads
+    fun baseRetrofit(baseUrl: String?, timeoutSeconds: Int = timeout): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpBuilder().build())
+            .client(newAppHttpBuilder(timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     @JvmStatic
-    fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?): Retrofit {
+    @JvmOverloads
+    fun baseRetrofit(baseUrl: String?, mapper: ObjectMapper?, timeoutSeconds: Int = timeout): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpBuilder().build())
+            .client(newAppHttpBuilder(timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(mapper))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     @JvmStatic
-    fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
-        val builder = newAppHttpBuilder()
-        builder.interceptors().addAll(0, interceptors.toList())
+    @JvmOverloads
+    fun baseRetrofit(baseUrl: String?, vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): Retrofit {
+        return baseRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun baseRetrofit(baseUrl: String?, interceptors: List<Interceptor>, timeoutSeconds: Int = timeout): Retrofit {
+        val builder = newAppHttpBuilder(timeoutSeconds)
+        builder.interceptors().addAll(0, interceptors)
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(builder.build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeBaseRetrofit(baseUrl: String?, timeoutSeconds: Int = timeout): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(newUnsafeAppHttpBuilder(timeoutSeconds).build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeBaseRetrofit(baseUrl: String?, mapper: ObjectMapper?, timeoutSeconds: Int = timeout): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(newUnsafeAppHttpBuilder(timeoutSeconds).build())
+            .addConverterFactory(JacksonConverterFactory.create(mapper))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeBaseRetrofit(baseUrl: String?, vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): Retrofit {
+        return unsafeBaseRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeBaseRetrofit(baseUrl: String?, interceptors: List<Interceptor>, timeoutSeconds: Int = timeout): Retrofit {
+        val builder = newUnsafeAppHttpBuilder(timeoutSeconds)
+        builder.interceptors().addAll(0, interceptors)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(builder.build())
@@ -266,19 +419,28 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    fun progressRetrofit(baseUrl: String?): Retrofit {
+    @JvmOverloads
+    fun progressRetrofit(baseUrl: String?, timeoutSeconds: Int = timeout): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpProgressBuilder().build())
+            .client(newAppHttpProgressBuilder(timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
     @JvmStatic
-    fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor): Retrofit {
-        val builder = newAppHttpProgressBuilder()
-        builder.interceptors().addAll(0, interceptors.toList())
+    @JvmOverloads
+    fun progressRetrofit(baseUrl: String?, vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): Retrofit {
+        return progressRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun progressRetrofit(baseUrl: String?, interceptors: List<Interceptor>, timeoutSeconds: Int = timeout): Retrofit {
+        val builder = newAppHttpProgressBuilder(timeoutSeconds)
+        builder.interceptors().addAll(0, interceptors)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(builder.build())
@@ -288,14 +450,64 @@ object NetworkUtil {
     }
 
     @JvmStatic
+    @JvmOverloads
     fun progressRetrofit(
         baseUrl: String?,
         uploadListener: ProgressInterceptor.UploadListener?,
-        downloadListener: ProgressInterceptor.DownloadListener?
+        downloadListener: ProgressInterceptor.DownloadListener?,
+        timeoutSeconds: Int = timeout
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .client(newAppHttpProgressBuilder(uploadListener, downloadListener).build())
+            .client(newAppHttpProgressBuilder(uploadListener, downloadListener, timeoutSeconds).build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeProgressRetrofit(baseUrl: String?, timeoutSeconds: Int = timeout): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(newUnsafeAppHttpProgressBuilder(timeoutSeconds).build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeProgressRetrofit(baseUrl: String?, vararg interceptors: Interceptor, timeoutSeconds: Int = timeout): Retrofit {
+        return unsafeProgressRetrofit(baseUrl, interceptors.toList(), timeoutSeconds)
+    }
+
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeProgressRetrofit(baseUrl: String?, interceptors: List<Interceptor>, timeoutSeconds: Int = timeout): Retrofit {
+        val builder = newUnsafeAppHttpProgressBuilder(timeoutSeconds)
+        builder.interceptors().addAll(0, interceptors)
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(builder.build())
+            .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun unsafeProgressRetrofit(
+        baseUrl: String?,
+        uploadListener: ProgressInterceptor.UploadListener?,
+        downloadListener: ProgressInterceptor.DownloadListener?,
+        timeoutSeconds: Int = timeout
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(newUnsafeAppHttpProgressBuilder(uploadListener, downloadListener, timeoutSeconds).build())
             .addConverterFactory(JacksonConverterFactory.create(newObjectMapper()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
