@@ -29,8 +29,7 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 31
     def vcode = Integer.parseInt(VERSION_CODE)
     def vname = VERSION_NAME
     def isRelease = gradle.startParameter.taskRequests.any {
@@ -87,12 +86,13 @@ android {
                 outputFileName = "${shortAppId}-${vname}${versionTag}(b${vcode})-${dateStr}.apk"
             }
             //删除自动生成的output.json
-            variant.assemble.doLast {
-                variant.outputs.each { output ->
-                    delete "${output.outputFile.parent}/output-metadata.json"
-                }
-            }
+//            variant.assemble.doLast {
+//                variant.outputs.each { output ->
+//                    delete "${output.outputFile.parent}/output-metadata.json"
+//                }
+//            }
         }
+
         manifestPlaceholders = [rawApplicationId: defaultConfig.applicationId]
     }
     buildTypes {
