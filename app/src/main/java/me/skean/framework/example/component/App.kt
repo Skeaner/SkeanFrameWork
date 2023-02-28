@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import com.chibatching.kotpref.Kotpref
-import com.tencent.bugly.Bugly
+import com.pgyer.pgyersdk.PgyerSDKManager
 import me.skean.framework.example.BuildConfig
 import me.skean.framework.example.EventBusIndex
 import me.skean.framework.example.db.AppDatabase
@@ -118,12 +118,6 @@ class App : MultiDexApplication(), StatusCallback {
             .setFileWriter(LogFileWriter(5 * 1024 * 1024)).isSingleTagSwitch = true
         //初始化EventBus
         EventBus.builder().throwSubscriberException(true).addIndex(EventBusIndex()).installDefaultEventBus()
-        //初始化上报的工具
-        if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
-            ReportUtils.getInstance().init(context)
-        } else { //外网的使用BUGLY
-            Bugly.init(applicationContext, BuildConfig.BUGLY_APPID, BuildConfig.DEBUG)
-        }
         //数据库初始化
         initDatabase()
         //初始化Kotpref
@@ -136,6 +130,18 @@ class App : MultiDexApplication(), StatusCallback {
                 module {//传入App的注入对象模块
                     single { database!!.dummyDao }
                 })
+        }
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        //初始化上报的工具
+        if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
+            ReportUtils.getInstance().init(this)
+        } else { //外网的使用PGYER
+            PgyerSDKManager.Init()
+                .setContext(this)
+                .start()
         }
     }
 

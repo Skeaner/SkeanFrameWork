@@ -20,6 +20,8 @@ allprojects {
         mavenCentral()
         google()
         maven { url "https://jitpack.io" }
+        maven { url 'https://raw.githubusercontent.com/PGYER/analytics/master/' }
+
     }
 }
 
