@@ -1,6 +1,8 @@
 package me.skean.skeanframework.net.pgy
 
+import com.zhihu.matisse.internal.entity.IncapableCause.Form
 import io.reactivex.Observable
+import io.reactivex.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -10,23 +12,19 @@ import retrofit2.http.*
 /**
  * 蒲公英托管的服务
  */
-interface PgyerApi  {
+interface PgyerApi {
 
-     var baseUrl: String
-        get() = "http://www.pgyer.com/apiv1/app/"
-        set(value) {}
+    val baseUrl: String
+        get() = "https://www.pgyer.com/apiv2/app/"
 
+
+    @POST("check")
     @FormUrlEncoded
-    @POST("viewGroup")
-    fun getAppInfo(@Field("aId") appId: String?, @Field("_api_key") apiKey: String?): Observable<PgyAppInfo?>
-
-    @GET("install")
-    fun downLoadApk(@Query("aId") appId: String?, @Query("_api_key") apiKey: String?): Call<ResponseBody?>
-
-    @Multipart
-    @POST("upload")
-    fun uploadApk(@Part("uKey") userkey: RequestBody?,
-                  @Part("_api_key") apiKey: RequestBody?,
-                  @Part file: MultipartBody.Part?): Call<ResponseBody?>
+    fun checkUpdate(
+        @Field("appKey") appKey: String,
+        @Field("_api_key") apiKey: String,
+        @Field("buildVersion") versionName: String,
+        @Field("buildBuildVersion") versionCode: Int,
+        ): Single<PgyerResult<PgyerAppInfo>>
 
 }

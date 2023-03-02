@@ -138,16 +138,24 @@ android {
             buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
+            manifestPlaceholders["PGYER_FRONTJS_KEY"] = "634980e6bf0cc563094186720a9d3f8b"
+            manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
+            manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
+
         }
         // 测试环境
         create("beta") {
             dimension = "default"
-            applicationId = "${defaultConfig.applicationId}.dev"
+            applicationId = "${defaultConfig.applicationId}.beta"
             resValue("string", "app_name", "SFW-beta")
             buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_beta"
+            manifestPlaceholders["PGYER_FRONTJS_KEY"] = "634980e6bf0cc563094186720a9d3f8b"
+            manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
+            manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
+
         }
         // 开发
         create("develop") {
@@ -158,6 +166,10 @@ android {
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_dev"
+            manifestPlaceholders["PGYER_FRONTJS_KEY"] = "634980e6bf0cc563094186720a9d3f8b"
+            manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
+            manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
+
         }
     }
     sourceSets.getByName("main") {
@@ -166,15 +178,9 @@ android {
         jniLibs.srcDirs("libs")
         res.srcDirs("src/main/res/")
     }
-    lint {
-        abortOnError = false
-    }
-    viewBinding {
-        isEnabled = true
-    }
-    dataBinding {
-        isEnabled = true
-    }
+    lint.abortOnError =false
+    viewBinding.isEnabled =true
+    dataBinding.enable=true
     packagingOptions {
         resources.excludes.apply {
             add("META-INF/DEPENDENCIES")

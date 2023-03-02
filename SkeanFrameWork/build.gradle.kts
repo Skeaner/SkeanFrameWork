@@ -81,7 +81,7 @@ val kotlinVersion = rootProject.extra["kotlinVersion"]
 dependencies {
     api(fileTree("libs") { include("*.jar") })
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     api("com.github.permissions-dispatcher:permissionsdispatcher:4.8.0")
     kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
     api("org.greenrobot:eventbus:$eventbusVersion")
@@ -139,16 +139,16 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     //Apache的常用库
-    api("commons-codec:commons-codec:1.11")
+    api("commons-codec:commons-codec:1.15")
     api("commons-net:commons-net:3.5")
-    api("org.apache.commons:commons-collections4:4.2")
+    api("org.apache.commons:commons-collections4:4.4")
     api("org.apache.commons:commons-lang3:3.9")
     //软引用的handler
     api("com.badoo.mobile:android-weak-handler:1.1")
     //图片加载
-    api("io.coil-kt:coil:2.0.0-rc03")
-    api("io.coil-kt:coil-gif:2.0.0-rc03")
-    api("io.coil-kt:coil-video:2.0.0-rc03")
+    api("io.coil-kt:coil:2.2.2")
+    api("io.coil-kt:coil-gif:2.2.2")
+    api("io.coil-kt:coil-video:2.2.2")
     api("com.github.bumptech.glide:glide:4.10.0")
     //图片显示PhotoView
     api("com.github.chrisbanes:PhotoView:2.3.0")
@@ -170,8 +170,8 @@ dependencies {
     api("com.github.Skeaner:SublimePicker:2.1.2")
     //权限提示
     api("com.github.Skeaner:EasyPermissionDialog:1.8")
-    //bugly
-    api("com.tencent.bugly:crashreport_upgrade:1.3.8")
+    //蒲公英sdk
+    api ("com.pgyer:analytics:4.3.2")
     //butterknife
     api("com.jakewharton:butterknife:10.2.0")
     kapt("com.jakewharton:butterknife-compiler:10.2.0")

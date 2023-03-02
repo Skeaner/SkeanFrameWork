@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    val kotlinVersion = "1.6.0"
+    val kotlinVersion = "1.7.21"
     extra.apply {
         set("kotlinVersion",kotlinVersion)
     }
@@ -11,10 +11,10 @@ buildscript {
         maven { url=uri("https://jitpack.io") }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.1.3")
+        classpath("com.android.tools.build:gradle:7.4.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.4.1")
     }
 }
 
@@ -23,6 +23,7 @@ allprojects {
         mavenCentral()
         google()
         maven { url=uri("https://jitpack.io") }
+        maven { url =uri("https://raw.githubusercontent.com/PGYER/analytics/master/") }
     }
 }
 
