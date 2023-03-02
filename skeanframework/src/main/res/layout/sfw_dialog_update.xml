@@ -62,14 +62,6 @@
                 />
 
 
-            <!--<com.qmuiteam.qmui.widget.QMUIProgressBar-->
-            <!--    android:id="@+id/pgbProgress"-->
-            <!--    android:layout_width="match_parent"-->
-            <!--    android:layout_height="24dp"-->
-            <!--    android:textColor="@color/white"-->
-            <!--    app:qmui_background_color="@color/qmui_config_color_gray_8"-->
-            <!--    app:qmui_progress_color="@color/colorPrimary"-->
-            <!--    app:qmui_type="type_rect" />-->
 
         </LinearLayout>
     </LinearLayout>
@@ -85,6 +77,7 @@
             android:id="@+id/btnNegative"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="暂不下载" />
@@ -94,6 +87,7 @@
             android:id="@+id/btnPositive"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="立刻更新" />
@@ -103,6 +97,7 @@
             android:id="@+id/btnCenter"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="取消下载"
