@@ -25,6 +25,7 @@ import me.skean.skeanframework.utils.AppStatusTracker.StatusCallback
 import me.skean.skeanframework.utils.LogFileWriter
 import me.skean.skeanframework.utils.NetworkUtil.init
 import me.skean.skeanframework.utils.ReportUtils
+import me.skean.skeanframework.utils.UpdateUtils
 import net.sqlcipher.database.SQLiteDatabase.getBytes
 import net.sqlcipher.database.SupportFactory
 import okhttp3.logging.HttpLoggingInterceptor
@@ -131,6 +132,7 @@ class App : MultiDexApplication(), StatusCallback {
                     single { database!!.dummyDao }
                 })
         }
+        UpdateUtils.checkUpdateByPgyerApi(this)
     }
 
     override fun attachBaseContext(base: Context?) {

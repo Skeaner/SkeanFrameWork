@@ -37,6 +37,10 @@
             android:name="PGYER_FRONTJS_KEY"
             android:value="${PGYER_FRONTJS_KEY}"/>
 
+        <meta-data
+            android:name="PGYER_APP_KEY"
+            android:value="${PGYER_APP_KEY}"/>
+
         <!-- 渠道 -->
         <meta-data
             android:name="PGYER_CHALNNEL_KEY"

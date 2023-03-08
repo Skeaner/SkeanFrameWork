@@ -58,6 +58,7 @@
 
             <com.daimajia.numberprogressbar.NumberProgressBar
                 android:id="@+id/pgbProgress"
+                android:padding="6dp"
                 style="@style/NumberProgressBar_Default"
                 />
 

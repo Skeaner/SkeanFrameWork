@@ -22,10 +22,8 @@ import me.skean.skeanframework.component.ActivityStarter
 import me.skean.skeanframework.ktext.*
 import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.utils.NetworkUtil
-import me.skean.skeanframework.utils.UpdateUtils
 import org.greenrobot.eventbus.Subscribe
 import org.koin.android.ext.android.inject
-import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -66,7 +64,6 @@ class TestActivity : BaseActivity() {
 //        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics
         vb.tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
-        UpdateUtils.checkUpdate(this)
     }
 
     private inner class TestRunnable : Runnable {

@@ -29,8 +29,7 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
     def vcode = Integer.parseInt(VERSION_CODE)
     def vname = VERSION_NAME
     def isRelease = gradle.startParameter.taskRequests.any {
@@ -87,11 +86,11 @@ android {
                 outputFileName = "${shortAppId}-${vname}${versionTag}(b${vcode})-${dateStr}.apk"
             }
             //删除自动生成的output.json
-            variant.assemble.doLast {
-                variant.outputs.each { output ->
-                    delete "${output.outputFile.parent}/output-metadata.json"
-                }
-            }
+//            variant.assemble.doLast {
+//                variant.outputs.each { output ->
+//                    delete "${output.outputFile.parent}/output-metadata.json"
+//                }
+//            }
         }
         manifestPlaceholders = [rawApplicationId: defaultConfig.applicationId]
     }
@@ -123,7 +122,10 @@ android {
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
             buildConfigField "boolean", "IS_INTRANET", 'true'
-            manifestPlaceholders = [PGYER_FRONTJS_KEY: "634980e6bf0cc563094186720a9d3f8b", PGYER_API_KEY:"8c9438bcab1415568aa14299358af9f7"]
+            manifestPlaceholders = [PGYER_FRONTJS_KEY: "634980e6bf0cc563094186720a9d3f8b",
+                                    PGYER_API_KEY:"8c9438bcab1415568aa14299358af9f7",
+                                    PGYER_APP_KEY: "88470f142b1734c12f5bf9f9b3303cea"
+            ]
         }
         // 测试环境
         beta {
@@ -133,7 +135,10 @@ android {
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'true'
             buildConfigField "boolean", "IS_INTRANET", 'false'
-            manifestPlaceholders = [PGYER_FRONTJS_KEY: "634980e6bf0cc563094186720a9d3f8b", PGYER_API_KEY:"8c9438bcab1415568aa14299358af9f7"]
+            manifestPlaceholders = [PGYER_FRONTJS_KEY: "634980e6bf0cc563094186720a9d3f8b",
+                                    PGYER_API_KEY:"8c9438bcab1415568aa14299358af9f7",
+                                    PGYER_APP_KEY: "88470f142b1734c12f5bf9f9b3303cea"
+            ]
         }
         // 开发
         develop {
@@ -143,7 +148,10 @@ android {
             buildConfigField "String", "BUGLY_APPID", '"ccced6668f"'
             buildConfigField "boolean", "LOG_TO_FILE", 'false'
             buildConfigField "boolean", "IS_INTRANET", 'false'
-            manifestPlaceholders = [PGYER_FRONTJS_KEY: "634980e6bf0cc563094186720a9d3f8b", PGYER_API_KEY:"8c9438bcab1415568aa14299358af9f7"]
+            manifestPlaceholders = [PGYER_FRONTJS_KEY: "634980e6bf0cc563094186720a9d3f8b",
+                                    PGYER_API_KEY:"8c9438bcab1415568aa14299358af9f7",
+                                    PGYER_APP_KEY: "88470f142b1734c12f5bf9f9b3303cea"
+            ]
         }
     }
     sourceSets {

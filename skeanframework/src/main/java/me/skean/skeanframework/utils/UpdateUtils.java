@@ -1,19 +1,28 @@
 package me.skean.skeanframework.utils;
 
 import android.app.Activity;
+import android.content.Context;
 
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.MetaDataUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.pgyer.pgyersdk.PgyerSDKManager;
 import com.pgyer.pgyersdk.callback.CheckoutCallBack;
 import com.pgyer.pgyersdk.model.CheckSoftModel;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import me.skean.skeanframework.component.UpdateDialog;
+import me.skean.skeanframework.net.pgy.PgyerApi;
+import me.skean.skeanframework.net.pgy.PgyerAppInfo;
+import me.skean.skeanframework.net.pgy.PgyerResult;
+import me.skean.skeanframework.rx.DefaultSingleObserver;
 
 /**
  * Created by Skean on 2023/2/28.
  */
 public class UpdateUtils {
-    public static void checkUpdate(Activity activity) {
+    public static void checkUpdateByPgyerSdk(Activity activity) {
         PgyerSDKManager.checkVersionUpdate(activity, new CheckoutCallBack() {
             @Override
             public void onNewVersionExist(CheckSoftModel model) {
@@ -51,6 +60,43 @@ public class UpdateUtils {
                 ToastUtils.showShort("检查APP更新失败: " + s);
             }
         });
+    }
 
+    public static void checkUpdateByPgyerApi(Context context) {
+        String apiKey = MetaDataUtils.getMetaDataInApp("PGYER_API_KEY");
+        String appKey = MetaDataUtils.getMetaDataInApp("PGYER_APP_KEY");
+        String appVersionName = AppUtils.getAppVersionName();
+        int appVersionCode = AppUtils.getAppVersionCode();
+        NetworkUtil.createService(PgyerApi.class)
+                   .checkUpdate(appKey, apiKey, appVersionName, appVersionCode)
+                   .subscribeOn(Schedulers.io())
+                   .observeOn(AndroidSchedulers.mainThread())
+                   .subscribe(new DefaultSingleObserver<PgyerResult<PgyerAppInfo>>() {
+                       @Override
+                       public void onSuccess2(PgyerResult<PgyerAppInfo> result) {
+                           if (result.getCode() == 0) {
+                               if (result.getData() != null) {
+                                   PgyerAppInfo info = result.getData();
+                                   if (appVersionName.compareTo(info.getBuildVersion()) < 0 || appVersionCode < Integer.parseInt(info.getBuildVersionNo())) {
+                                       UpdateDialog.show(context,
+                                                         info.getBuildVersion(),
+                                                         info.getBuildDescription(),
+                                                         info.getDownloadURL(),
+                                                         info.getNeedForceUpdate());
+                                   }
+                               }
+                           }
+                           else {
+                               ToastUtils.showShort("检查APP更新失败: " + result.getMessage());
+                           }
+                       }
+
+                       @Override
+                       public void onError2(Throwable e) {
+                           super.onError2(e);
+                           ToastUtils.showShort("检查APP更新失败: " + e.getLocalizedMessage());
+
+                       }
+                   });
     }
 }
