@@ -12,6 +12,7 @@ import retrofit2.http.*
  */
 interface FileIOApi {
 
+    @JvmDefault
     val baseUrl get() = "http://useless.com/"
 
     @GET

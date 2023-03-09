@@ -18,6 +18,8 @@ import com.yqritc.recyclerviewflexibledivider.FlexibleDividerDecoration
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
 import com.yqritc.recyclerviewflexibledivider.VerticalDividerItemDecoration
 import me.skean.skeanframework.R
+import me.skean.skeanframework.delegate.AdvanceOnItemChildClickListener
+import me.skean.skeanframework.delegate.AdvanceOnItemChildLongClickListener
 import me.skean.skeanframework.delegate.UnionClickListener
 
 /**
@@ -29,6 +31,51 @@ fun BaseQuickAdapter<*, *>.setUnionClickListener(listener: UnionClickListener) {
     this.setOnItemChildClickListener(listener)
     this.setOnItemChildLongClickListener(listener)
 }
+
+fun BaseQuickAdapter<*, *>.addOnItemChildClickListener(viewId: Int, delegate: (BaseQuickAdapter<*, *>, View, Int) -> Unit) {
+    var itemChildClickListener = this.getOnItemChildClickListener()
+    if (itemChildClickListener == null || itemChildClickListener !is AdvanceOnItemChildClickListener) {
+        itemChildClickListener = AdvanceOnItemChildClickListener()
+        this.setOnItemChildClickListener(itemChildClickListener)
+    }
+    addChildClickViewIds(viewId)
+    itemChildClickListener.addDelegate(viewId, delegate)
+}
+
+fun BaseQuickAdapter<*, *>.removeOnItemChildClickListener(viewId: Int) {
+    val itemChildClickListener = this.getOnItemChildClickListener()
+    getChildClickViewIds().remove(viewId)
+    if (itemChildClickListener is AdvanceOnItemChildClickListener) {
+        itemChildClickListener.removeDelegate(viewId)
+        if (itemChildClickListener.isDelegateMapsEmpty()) {
+            setOnItemChildClickListener(null)
+        }
+    }
+}
+
+
+
+fun BaseQuickAdapter<*, *>.addOnItemChildLongClickListener(viewId: Int, delegate: (BaseQuickAdapter<*, *>, View, Int) -> Unit) {
+    var itemChildLongClickListener = this.getOnItemChildLongClickListener()
+    if (itemChildLongClickListener == null || itemChildLongClickListener !is AdvanceOnItemChildLongClickListener) {
+        itemChildLongClickListener = AdvanceOnItemChildLongClickListener()
+        setOnItemChildLongClickListener(itemChildLongClickListener)
+    }
+    addChildLongClickViewIds(viewId)
+    itemChildLongClickListener.addDelegate(viewId, delegate)
+}
+
+fun BaseQuickAdapter<*, *>.removeOnItemChildLongClickListener(viewId: Int) {
+    val itemChildLongClickListener = getOnItemChildLongClickListener()
+    getChildLongClickViewIds().remove(viewId)
+    if (itemChildLongClickListener is AdvanceOnItemChildLongClickListener) {
+        itemChildLongClickListener.removeDelegate(viewId)
+        if (itemChildLongClickListener.isDelegateMapsEmpty()) {
+            setOnItemChildLongClickListener(null)
+        }
+    }
+}
+
 
 fun GridLayoutManager.setSpanSizeLookup(spanSizeLookupAction: (position: Int) -> Int): GridLayoutManager {
     this.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {

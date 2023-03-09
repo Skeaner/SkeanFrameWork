@@ -26,6 +26,26 @@
 
     <application>
 
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="${AMAP_API_KEY}" />
+
+        <meta-data
+            android:name="PGYER_API_KEY"
+            android:value="${PGYER_API_KEY}"/>
+        <meta-data
+            android:name="PGYER_FRONTJS_KEY"
+            android:value="${PGYER_FRONTJS_KEY}"/>
+
+        <meta-data
+            android:name="PGYER_APP_KEY"
+            android:value="${PGYER_APP_KEY}"/>
+
+        <meta-data
+            android:name="PGYER_FEATURE_CHECK_UNPDATE"
+            android:value="false" />
+
         <!-- 强制更新Dialog-->
         <activity
             android:name=".component.UpdateDialog"

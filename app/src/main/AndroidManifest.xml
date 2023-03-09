@@ -6,6 +6,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".component.App"
         android:allowBackup="false"
@@ -18,38 +19,11 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="allowBackup,requestLegacyExternalStorage">
 
-        <!-- todo 替换为对应的高德地图定位key-->
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="b46c4981b8e07d4d613867e03c753f4b" />
-
-        <meta-data
-            android:name="PGYER_API_KEY"
-            android:value="${PGYER_API_KEY}"/>
-        <meta-data
-            android:name="PGYER_FRONTJS_KEY"
-            android:value="${PGYER_FRONTJS_KEY}"/>
-
-        <meta-data
-            android:name="PGYER_APP_KEY"
-            android:value="${PGYER_APP_KEY}"/>
-
-        <!-- 渠道 -->
-        <meta-data
-            android:name="PGYER_CHALNNEL_KEY"
-            android:value=""/>
-        <!-- 添加新版本检测 -->
-        <meta-data
-            android:name="PGYER_FEATURE_CHECK_UNPDATE"
-            android:value="false" />
-        <!-- 设置fps阈值 -->
-        <meta-data
-            android:name="PGYER_FPS_THRESHOLD"
-            android:value="10"/>
-
         <!--主页-->
 
-        <activity android:name=".view.TestActivity"></activity>
+        <activity android:name=".view.TestActivity">
+
+        </activity>
         <activity
             android:name=".view.TestMvvmActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -68,9 +42,6 @@
             android:name=".component.AppService"
             android:exported="false" />
 
-        <!--高德的定位后台-->
-        <service android:name="com.amap.api.location.APSService" />
-
         <!--App的文件Provider-->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -83,10 +54,11 @@
                 android:resource="@xml/file_paths"
                 tools:replace="android:resource" />
         </provider>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove"></provider>
+            tools:node="remove" />
 
 
     </application>
