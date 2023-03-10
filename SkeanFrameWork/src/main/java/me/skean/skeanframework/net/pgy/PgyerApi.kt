@@ -19,6 +19,13 @@ interface PgyerApi {
         get() = "https://www.pgyer.com/apiv2/app/"
 
 
+    @POST("view")
+    @FormUrlEncoded
+    fun getAppInfo(
+        @Field("appKey") appKey: String,
+        @Field("_api_key") apiKey: String,
+    ): Single<PgyerResult<PgyAppDetail>>
+
     @POST("check")
     @FormUrlEncoded
     fun checkUpdate(

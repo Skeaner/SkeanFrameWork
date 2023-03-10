@@ -5,12 +5,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.MetaDataUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.pgyer.pgyersdk.PgyerSDKManager
 import com.pgyer.pgyersdk.callback.CheckoutCallBack
 import com.pgyer.pgyersdk.model.CheckSoftModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import me.skean.skeanframework.component.UpdateDialog
 import me.skean.skeanframework.net.pgy.PgyerApi
 import me.skean.skeanframework.utils.NetworkUtil
@@ -66,13 +67,29 @@ fun Activity.checkUpdateByPgyerSdk() {
 }
 
 fun Context.checkUpdateByPgyerApi() {
+    val appId = AppUtils.getAppPackageName()
     val apiKey = MetaDataUtils.getMetaDataInApp("PGYER_API_KEY")
     val appKey = MetaDataUtils.getMetaDataInApp("PGYER_APP_KEY")
     val appVersionName = AppUtils.getAppVersionName()
     val appVersionCode = AppUtils.getAppVersionCode()
     NetworkUtil.createService<PgyerApi>()
-        .checkUpdate(appKey, apiKey, appVersionName, appVersionCode)
-        .subscribeOnIoObserveOnMainThread()
+        .getAppInfo(appKey, apiKey)
+        .subscribeOn(Schedulers.io())
+        .map {
+            if (it.code == 0) {
+                if (it.data == null) {
+                    throw  RuntimeException("PGYER返回APP信息为空");
+                } else {
+                    if (appId != it.data.buildIdentifier) {
+                        throw  RuntimeException("PGYER配置的信息跟APP不一致!")
+                    }
+                }
+            } else {
+                throw  RuntimeException(it.message)
+            }
+        }
+        .flatMap { NetworkUtil.createService<PgyerApi>().checkUpdate(appKey, apiKey, appVersionName, appVersionCode) }
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(defaultSingleObserver(onError2 = {
             ToastUtils.showShort("检查APP更新失败: ${it.localizedMessage}")
         }) { result ->

@@ -24,6 +24,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs += "-Xjvm-default=compatibility"
     }
     signingConfigs {
         //todo 修改签名文件
