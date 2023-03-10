@@ -10,9 +10,13 @@ import com.pgyer.pgyersdk.PgyerSDKManager;
 import com.pgyer.pgyersdk.callback.CheckoutCallBack;
 import com.pgyer.pgyersdk.model.CheckSoftModel;
 
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import me.skean.skeanframework.component.UpdateDialog;
+import me.skean.skeanframework.net.FileIOApi;
 import me.skean.skeanframework.net.pgy.PgyerApi;
 import me.skean.skeanframework.net.pgy.PgyerAppInfo;
 import me.skean.skeanframework.net.pgy.PgyerResult;
@@ -63,13 +67,29 @@ public class UpdateUtils {
     }
 
     public static void checkUpdateByPgyerApi(Context context) {
+        String appId = AppUtils.getAppPackageName();
         String apiKey = MetaDataUtils.getMetaDataInApp("PGYER_API_KEY");
         String appKey = MetaDataUtils.getMetaDataInApp("PGYER_APP_KEY");
         String appVersionName = AppUtils.getAppVersionName();
         int appVersionCode = AppUtils.getAppVersionCode();
         NetworkUtil.createService(PgyerApi.class)
-                   .checkUpdate(appKey, apiKey, appVersionName, appVersionCode)
+                   .getAppInfo(appKey, apiKey)
                    .subscribeOn(Schedulers.io())
+                   .map(r -> {
+                       if (r.getCode() == 0) {
+                           if (r.getData() == null) {
+                               throw new RuntimeException("PGYER返回APP信息为空");
+                           }
+                           else if (!appId.equals(r.getData().getBuildIdentifier())) {
+                               throw new RuntimeException("PGYER配置的信息跟APP不一致!");
+                           }
+                       }
+                       else {
+                           throw new RuntimeException(r.getMessage());
+                       }
+                       return r;
+                   })
+                   .flatMap(r -> NetworkUtil.createService(PgyerApi.class).checkUpdate(appKey, apiKey, appVersionName, appVersionCode))
                    .observeOn(AndroidSchedulers.mainThread())
                    .subscribe(new DefaultSingleObserver<PgyerResult<PgyerAppInfo>>() {
                        @Override
@@ -80,7 +100,7 @@ public class UpdateUtils {
                                    if (appVersionName.compareTo(info.getBuildVersion()) < 0 || appVersionCode < Integer.parseInt(info.getBuildVersionNo())) {
                                        UpdateDialog.show(context,
                                                          info.getBuildVersion(),
-                                                         info.getBuildDescription(),
+                                                         info.getBuildUpdateDescription(),
                                                          info.getDownloadURL(),
                                                          info.getNeedForceUpdate());
                                    }

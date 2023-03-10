@@ -118,6 +118,38 @@ object NetworkUtil {
     }
 
     @JvmStatic
+    inline fun <reified T> getBaseUrl(): String? {
+        val clazz = T::class.java
+        if (clazz.isAnnotationPresent(Metadata::class.java)) { //kotlin的接口
+            try {
+                val implClass = Class.forName("${clazz.name}\$DefaultImpls")
+                for (method in implClass.declaredMethods) {
+                    val methodName = method.name.toLowerCase(Locale.ROOT)
+                    if (methodName == "getbaseurl") {
+                        val clazzInstance = Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz)) { proxy, method, args -> null }
+                        return method.invoke(null, clazzInstance)?.toString()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            throw  java.lang.RuntimeException("请给接口定义一个 baseUrl 的接口属性!")
+        } else { //java的接口
+            try {
+                for (declaredField in clazz.declaredFields) {
+                    val name = declaredField.name.toLowerCase(Locale.ROOT).replace("_", "")
+                    if (name == "baseurl") {
+                        return declaredField.get(null) as String
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            throw RuntimeException("请给接口指定一个 BASE_URL 的属性!")
+        }
+    }
+
+    @JvmStatic
     fun getBaseUrlForClass(clazz: Class<*>): String? {
         if (clazz.isAnnotationPresent(Metadata::class.java)) { //kotlin的接口
             try {

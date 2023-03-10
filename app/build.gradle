@@ -19,6 +19,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += '-Xjvm-default=compatibility'
     }
     signingConfigs {
         //todo 修改签名文件
