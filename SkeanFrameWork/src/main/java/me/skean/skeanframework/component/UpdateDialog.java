@@ -169,7 +169,6 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        url = "http://www.442000.xyz:30080/testupdate.apk";
         NetworkUtil.downloadWithProgress(url, tempFile)
                    .subscribeOn(Schedulers.io())
                    .observeOn(AndroidSchedulers.mainThread())
