@@ -3,6 +3,7 @@ package me.skean.skeanframework.net.pgy
 import com.zhihu.matisse.internal.entity.IncapableCause.Form
 import io.reactivex.Observable
 import io.reactivex.Single
+import me.skean.skeanframework.net.BaseUrl
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -14,9 +15,11 @@ import retrofit2.http.*
  */
 interface PgyerApi {
 
-    @JvmDefault
-    val baseUrl: String
-        get() = "https://www.pgyer.com/apiv2/app/"
+    companion object {
+        @JvmField
+        @BaseUrl
+        val baseUrl: String = "https://www.pgyer.com/apiv2/app/"
+    }
 
 
     @POST("view")
@@ -33,6 +36,6 @@ interface PgyerApi {
         @Field("_api_key") apiKey: String,
         @Field("buildVersion") versionName: String,
         @Field("buildBuildVersion") versionCode: Int,
-        ): Single<PgyerResult<PgyerAppInfo>>
+    ): Single<PgyerResult<PgyerAppInfo>>
 
 }

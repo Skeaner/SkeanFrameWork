@@ -12,9 +12,11 @@ import retrofit2.http.*
  */
 interface FileIOApi {
 
-    @JvmDefault
-    val baseUrl
-        get() = "http://useless.com/"
+    companion object{
+        @JvmField
+        @BaseUrl
+        val baseUrl = "http://useless.com/"
+    }
 
     @GET
     @Streaming
