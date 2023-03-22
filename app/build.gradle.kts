@@ -131,7 +131,6 @@ android {
         create("production") {
             dimension = "default"
             resValue("string", "app_name", "SFW")
-            buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
@@ -145,7 +144,6 @@ android {
             dimension = "default"
             applicationId = "${defaultConfig.applicationId}.beta"
             resValue("string", "app_name", "SFW-beta")
-            buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_beta"
@@ -160,7 +158,6 @@ android {
             dimension = "default"
             applicationId = "${defaultConfig.applicationId}.dev"
             resValue("string", "app_name", "SFW-dev")
-            buildConfigField("String", "BUGLY_APPID", "\"ccced6668f\"")
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_dev"
@@ -172,7 +169,6 @@ android {
         }
     }
     sourceSets.getByName("main") {
-        java.srcDirs("build/generated/source/greendao")
         assets.srcDirs("$projectDir/schemas")
         jniLibs.srcDirs("libs")
         res.srcDirs("src/main/res/")

@@ -23,7 +23,6 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
-import java.util.Properties;
 
 import me.skean.framework.example.constant.IntentKey;
 import me.skean.skeanframework.net.FileIOApi;
@@ -138,7 +137,7 @@ public final class AppService extends Service {
                                                                                               .setProgress(100, percentage, false)
                                                                                               .build());
                                          }
-                                     }).create(FileIOApi.class).downLoad(url).enqueue(new Callback<ResponseBody>() {
+                                     }).create(FileIOApi.class).downloadWithCall(url).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {

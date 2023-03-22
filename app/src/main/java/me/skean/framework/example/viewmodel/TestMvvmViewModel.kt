@@ -39,7 +39,7 @@ class TestMvvmViewModel : ViewModel(), KoinComponent {
     fun download(url: String) = liveData<Resource<File>>(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {
-            val res = NetworkUtil.createService<FileIOApi>().downLoad2(url)
+            val res = NetworkUtil.createService<FileIOApi>().download(url)
             val file = File(App.instance?.cacheDir, "temp")
             FileIOUtils.writeFileFromIS(file, res?.byteStream())
             emit(Resource.success(file))

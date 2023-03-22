@@ -13,26 +13,46 @@ import retrofit2.http.*
 interface FileIOApi {
 
     @JvmDefault
-    val baseUrl get() = "http://useless.com/"
+    val baseUrl
+        get() = "http://useless.com/"
 
     @GET
-    fun downLoad(@Url url: String?): Call<ResponseBody?>
+    @Streaming
+    suspend fun download(@Url url: String?): ResponseBody?
 
     @GET
-    suspend fun downLoad2(@Url url: String?): ResponseBody?
+    @Streaming
+    fun downloadWithCall(@Url url: String?): Call<ResponseBody?>
 
     @GET
-    fun downLoadReactive(@Url url: String?): Single<ResponseBody?>
+    @Streaming
+    fun downloadWithSingle(@Url url: String?): Single<ResponseBody?>
+
+    @GET
+    @Streaming
+    fun downloadWithObservable(@Url url: String?): Observable<ResponseBody?>
+
 
     @POST
     @Multipart
     @Streaming
-    fun upload(@Url url: String?, @Part file: MultipartBody.Part?): Call<ResponseBody?>
+    fun upload(@Url url: String?, @Part file: MultipartBody.Part?): ResponseBody?
+
+    @POST
+    @Multipart
+    @Streaming
+    fun uploadWithCall(@Url url: String?, @Part file: MultipartBody.Part?): Call<ResponseBody?>
 
 
     @POST
     @Multipart
     @Streaming
-    fun uploadReactive(@Url url: String?, @Part file: MultipartBody.Part?): Single<ResponseBody?>
+    fun uploadWithSingle(@Url url: String?, @Part file: MultipartBody.Part?): Single<ResponseBody?>
+
+
+    @POST
+    @Multipart
+    @Streaming
+    fun uploadWithObservable(@Url url: String?, @Part file: MultipartBody.Part?): Observable<ResponseBody?>
 
 }

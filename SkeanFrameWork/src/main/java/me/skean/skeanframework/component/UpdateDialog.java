@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
@@ -20,14 +19,13 @@ import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import me.skean.skeanframework.R;
 import me.skean.skeanframework.net.FileIOApi;
-import me.skean.skeanframework.net.ProgressInterceptor;
+import me.skean.skeanframework.rx.DefaultObserver;
 import me.skean.skeanframework.utils.NetworkUtil;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class UpdateDialog extends BaseActivity implements View.OnClickListener {
 
@@ -53,7 +51,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
     private String version;
     private boolean force;
 
-    private Call<ResponseBody> downloadCall;
+    private Disposable downloadDisposable;
     private File tempFile;
 
     public static void show(Context c, String version, String changeLog, String downloadUrl, boolean isForceUpdate) {
@@ -136,8 +134,8 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             else finish();
         }
         else if (v == btnCenter) {
-            if (downloadCall != null && downloadCall.isExecuted() && !downloadCall.isCanceled()) {
-                downloadCall.cancel();
+            if (downloadDisposable != null && !downloadDisposable.isDisposed()) {
+                downloadDisposable.dispose();
             }
             if (force) {
                 finishAffinity();
@@ -146,44 +144,6 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             else finish();
         }
     }
-
-    private Callback<ResponseBody> downloadResponse = new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            try {
-                FileIOUtils.writeFileFromIS(tempFile, response.body().byteStream());
-                installApp();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                onFailure(call, e);
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(UpdateDialog.this,
-                                                                                          R.style.ThemeOverlay_MaterialComponents_Light_Dialog_Alert_Framework));
-            builder.setTitle(R.string.tips)
-                   .setMessage("下载出错, 请尝试重新下载")
-                   .setPositiveButton("重试", (dialog, which) -> startDownload())
-                   .setNegativeButton("暂不", (dialog, which) -> btnCenter.performClick())
-                   .setCancelable(false)
-                   .show();
-        }
-    };
-
-    private ProgressInterceptor.DownloadListener progressResponse = new ProgressInterceptor.DownloadListener() {
-        @Override
-        public void downloadProgress(long bytesRead, long contentLength, int percentage, boolean done) {
-            if (!done) {
-                pgbProgress.setProgress(percentage);
-            }
-            else {
-                pgbProgress.setProgress(100);
-            }
-        }
-    };
 
     private File createTempApk() {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -209,10 +169,45 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        downloadCall = NetworkUtil.progressRetrofit(NetworkUtil.getBaseUrlForClass(FileIOApi.class), null, progressResponse)
-                                  .create(FileIOApi.class)
-                                  .downLoad(url);
-        downloadCall.enqueue(downloadResponse);
+        url = "http://www.442000.xyz:30080/testupdate.apk";
+        NetworkUtil.downloadWithProgress(url, tempFile)
+                   .subscribeOn(Schedulers.io())
+                   .observeOn(AndroidSchedulers.mainThread())
+                   .subscribe(new DefaultObserver<>() {
+
+                       @Override
+                       public void onSubscribe2(Disposable d) {
+                           super.onSubscribe2(d);
+                           downloadDisposable = d;
+                       }
+
+                       @Override
+                       public void onNext2(Integer percentage) {
+                           pgbProgress.setProgress(percentage);
+                       }
+
+                       @Override
+                       public void onComplete2() {
+                           super.onComplete2();
+                           downloadDisposable = null;
+                           installApp();
+                       }
+
+                       @Override
+                       public void onError2(Throwable e) {
+                           super.onError2(e);
+                           downloadDisposable = null;
+                           AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(UpdateDialog.this,
+                                                                                                         R.style.ThemeOverlay_MaterialComponents_Light_Dialog_Alert_Framework));
+                           builder.setTitle(R.string.tips)
+                                  .setMessage("下载出错, 请尝试重新下载")
+                                  .setPositiveButton("重试", (dialog, which) -> startDownload())
+                                  .setNegativeButton("暂不", (dialog, which) -> btnCenter.performClick())
+                                  .setCancelable(false)
+                                  .show();
+                       }
+                   });
+
     }
 
     private void installApp() {

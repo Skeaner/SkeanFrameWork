@@ -15,6 +15,7 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import me.skean.skeanframework.event.NotAuthorisedEvent
 import me.skean.skeanframework.net.ProgressInterceptor
+import me.skean.skeanframework.net.ProgressRequestBody
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.internal.platform.Platform
@@ -33,6 +34,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 import kotlin.reflect.*
+import  io.reactivex.Observable
+import me.skean.skeanframework.net.ProgressResponseObservable
+import retrofit2.Call
 
 //import retrofit2.converter.jackson.JacksonConverterFactory;
 /**
@@ -575,7 +579,7 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    fun fileMultiPart(name: String, uploadFile: File): MultipartBody.Part {
+    fun fileMultiPart(name: String = "file", uploadFile: File): MultipartBody.Part {
         var type: String? = ""
         val filename = uploadFile.name
         val extension = getFileExtension(uploadFile.path)
@@ -586,6 +590,33 @@ object NetworkUtil {
             type = "application/octet-stream"
         }
         return MultipartBody.Part.createFormData(name, filename, RequestBody.create(type?.toMediaTypeOrNull(), uploadFile))
+    }
+
+    @JvmStatic
+    fun fileMultiPartWithProgress(
+        name: String = "file",
+        uploadFile: File,
+        listener: ProgressRequestBody.UploadCallback? = null
+    ): MultipartBody.Part {
+        var type: String? = ""
+        val filename = uploadFile.name
+        val extension = getFileExtension(uploadFile.path)
+        if (!TextUtils.isEmpty(extension)) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        }
+        if (TextUtils.isEmpty(type)) {
+            type = "application/octet-stream"
+        }
+        return MultipartBody.Part.createFormData(name, filename, ProgressRequestBody(uploadFile, type, listener))
+    }
+
+    @JvmStatic
+    fun downloadWithProgress(url: String, downloadFile: File) = ProgressResponseObservable(url, downloadFile)
+
+    @JvmStatic
+    fun Call<*>.excuteWithProgress(downloadFile: File): Observable<Int> {
+        val url = request().url.toString()
+        return ProgressResponseObservable(url, downloadFile)
     }
 
     @JvmStatic
