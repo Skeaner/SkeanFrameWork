@@ -8,6 +8,7 @@ plugins {
 }
 
 group = "com.github.Skeaner"
+version ="2.3.1"
 
 //打包操作
 val androidSourcesJar by tasks.registering(Jar::class) {
@@ -26,7 +27,7 @@ afterEvaluate {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 33
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -51,7 +52,8 @@ android {
     lint {
         abortOnError = false
     }
-
+    viewBinding.isEnabled =true
+    dataBinding.enable=true
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -165,7 +167,7 @@ dependencies {
     //下拉刷新ultra-ptr
     api("in.srain.cube:ultra-ptr:1.0.11")
     //RecyclerView综合适配器
-    api("com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7")
+    api("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.1")
     //material design日期加时间选择器
     api("com.github.Skeaner:SublimePicker:2.1.2")
     //权限提示
@@ -203,10 +205,11 @@ dependencies {
     //viewBinding快速库
     api("com.hi-dhl:binding:1.1.3")
     api("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.0.5")
-    api("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-brvah:2.0.5")
     //FlexibleDivider
     api("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")
     //快速ActivityLauncher
     api("com.github.DylanCaiCoding:ActivityResultLauncher:1.1.2")
+    //mvi框架
+    api("com.github.goldze:MVVMHabit:4.0.0")
 
 }

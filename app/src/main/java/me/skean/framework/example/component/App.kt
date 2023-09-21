@@ -12,12 +12,15 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import com.chibatching.kotpref.Kotpref
 import com.pgyer.pgyersdk.PgyerSDKManager
+import me.goldze.mvvmhabit.base.BaseApplication
+import me.goldze.mvvmhabit.utils.KLog
 import me.skean.framework.example.BuildConfig
 import me.skean.framework.example.EventBusIndex
 import me.skean.framework.example.db.AppDatabase
 import me.skean.framework.example.db.Migrations
 import me.skean.framework.example.event.BackgroundEvent
 import me.skean.framework.example.event.ForegroundEvent
+import me.skean.framework.example.net.ArticleApi
 import me.skean.framework.example.net.DouBanApi
 import me.skean.framework.example.viewmodel.TestMvvmViewModel
 import me.skean.skeanframework.component.SkeanFrameWork
@@ -46,7 +49,7 @@ import java.io.File
 /**
  * App的Application
  */
-class App : Application(), StatusCallback {
+class App : BaseApplication(), StatusCallback {
 
     companion object {
         @JvmStatic
@@ -107,6 +110,7 @@ class App : Application(), StatusCallback {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        KLog.init(true)
         //AppStatusTracker初始化
         AppStatusTracker.init(this)
         AppStatusTracker.getInstance().statusCallback = this
@@ -135,9 +139,11 @@ class App : Application(), StatusCallback {
                 module {//传入App的注入对象模块
                     single { database!!.dummyDao }
                     single { NetworkUtil.createService<DouBanApi>() }
+                    single { NetworkUtil.createService<ArticleApi>() }
+
                 })
         }
-        checkUpdateByPgyerApi()
+//        checkUpdateByPgyerApi()
     }
 
     override fun attachBaseContext(base: Context?) {

@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="5dp">
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/ivIcon"
-        android:scaleType="centerCrop"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerVertical="true" />
-    <androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="item"
+            type="me.skean.framework.example.net.bean.MovieInfo.Data" />
+    </data>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/ivIcon"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
+        android:padding="5dp">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            app:placeholderRes="@drawable/ic_launcher"
+            app:url="@{item.poster}" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/AppTextAppearance"
-            tools:text="测试标题" />
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/ivIcon"
+            android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textAppearance="@style/AppTextAppearance.Small"
-            tools:text="测试描述" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{item.name}"
+                android:textAppearance="@style/AppTextAppearance"
+                tools:text="测试标题" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@{item.description}"
+                android:textAppearance="@style/AppTextAppearance.Small"
+                tools:text="测试描述" />
 
-</RelativeLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </RelativeLayout>
+</layout>

@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import androidx.activity.result.ActivityResult;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import io.reactivex.Scheduler;
@@ -46,6 +47,11 @@ public abstract class BaseFragment extends Fragment {
     ///////////////////////////////////////////////////////////////////////////
 
     public BaseFragment() {
+        super();
+    }
+
+    public BaseFragment(@LayoutRes int layoutId){
+        super(layoutId);
     }
 
     public float getFragmentIndex() {

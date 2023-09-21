@@ -3,11 +3,14 @@
 package me.skean.skeanframework.ktext
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.trello.rxlifecycle2.LifecycleProvider
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import me.goldze.mvvmhabit.utils.RxUtils
 import me.skean.skeanframework.model.LoadingStatus
 import me.skean.skeanframework.rx.*
 import me.skean.skeanframework.widget.LoadingDialog2
@@ -241,4 +244,17 @@ fun <T> Flowable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Uni
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
         .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
+}
+
+
+fun <T> Single<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Single<T> {
+    return compose<T>(lifecycle.bindToLifecycle())
+}
+
+fun <T> Observable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Observable<T> {
+    return compose<T>(lifecycle.bindToLifecycle())
+}
+
+fun <T> Flowable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Flowable<T> {
+    return compose<T>(lifecycle.bindToLifecycle())
 }

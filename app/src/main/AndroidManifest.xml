@@ -32,10 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.TestMvvmFragmentActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
 
         <!--App后台-->
         <service

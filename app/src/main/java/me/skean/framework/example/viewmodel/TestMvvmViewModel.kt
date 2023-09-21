@@ -1,55 +1,70 @@
 package me.skean.framework.example.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import com.blankj.utilcode.util.FileIOUtils
-import io.reactivex.Single
-import kotlinx.coroutines.Dispatchers
-import me.skean.framework.example.component.App
-import me.skean.framework.example.model.util.Resource
+import android.app.Application
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener
+import com.trello.rxlifecycle3.kotlin.bindToLifecycle
+import me.goldze.mvvmhabit.base.BaseViewModel
+import me.goldze.mvvmhabit.binding.command.BindingAction
+import me.goldze.mvvmhabit.binding.command.BindingCommand
+import me.goldze.mvvmhabit.bus.event.SingleLiveEvent
+import me.goldze.mvvmhabit.utils.RxUtils
 import me.skean.framework.example.net.bean.MovieInfo
-import me.skean.skeanframework.model.AppResponse
 import me.skean.framework.example.repository.DouBanRepository
+import me.skean.skeanframework.ktext.bindToVmLifecycle
+import me.skean.skeanframework.ktext.defaultSingleObserver
 import me.skean.skeanframework.ktext.subscribeOnIoObserveOnMainThread
-import me.skean.skeanframework.net.FileIOApi
-import me.skean.skeanframework.utils.NetworkUtil
 import org.koin.core.component.KoinComponent
-import java.io.File
+
 
 /**
  * Created by Skean on 2022/4/20.
  */
-class TestMvvmViewModel : ViewModel(), KoinComponent {
+class TestMvvmViewModel(app: Application) : BaseViewModel<DouBanRepository>(app), KoinComponent {
+    class UIChangeObservable {
+        val finishRefreshing: SingleLiveEvent<Pair<Boolean, Boolean>> = SingleLiveEvent()
+        val finishLoadMore: SingleLiveEvent<Pair<Boolean, Boolean>> = SingleLiveEvent()
+    }
+
+    val uc: UIChangeObservable = UIChangeObservable()
+    val data = SingleLiveEvent<List<MovieInfo.Data?>>()
+
+    private var movieList: MutableList<MovieInfo.Data?> = mutableListOf()
     private var currentPage = 0
 
-    fun requestData(refresh: Boolean): Single<AppResponse<MutableList<MovieInfo>>> {
+    val refreshListener = OnRefreshListener {
+        requestData(true)
+    }
+
+    val loadMoreListener = OnLoadMoreListener {
+        requestData(false)
+    }
+
+    private fun requestData(refresh: Boolean) {
         if (refresh) currentPage = 0
-        return DouBanRepository
-            .listMovie(currentPage)
+        DouBanRepository.listMovie(currentPage)
             .subscribeOnIoObserveOnMainThread()
-            .map {
+            .bindToVmLifecycle(lifecycleProvider)
+            .subscribe(defaultSingleObserver(onError2 = {
+                if (refresh) {
+                    uc.finishRefreshing.value = false to true
+                } else {
+                    uc.finishLoadMore.value = false to true
+                }
+            }) {
+                val list = it.map { it.data?.firstOrNull() }
                 currentPage++
-                AppResponse(success = true, refresh = refresh, noMore = currentPage > 20, result = it.toMutableList())
-            }
-            .onErrorResumeNext {
-                Single.just(AppResponse(success = false, refresh = refresh, msg = it.localizedMessage, result = mutableListOf()))
-            }
+                val noMore = list.size < 10
+                if (refresh) {
+                    uc.finishRefreshing.value = true to noMore
+                    movieList = list.toMutableList()
+                } else {
+                    uc.finishLoadMore.value = true to noMore
+                    movieList.addAll(list)
+                }
+                data.value = movieList
+            })
     }
-
-    fun download(url: String) = liveData<Resource<File>>(Dispatchers.IO) {
-        emit(Resource.loading(null))
-        try {
-            val res = NetworkUtil.createService<FileIOApi>().download(url)
-            val file = File(App.instance?.cacheDir, "temp")
-            FileIOUtils.writeFileFromIS(file, res?.byteStream())
-            emit(Resource.success(file))
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(Resource.fail(data = null, message = e.message ?: "位置错误!"))
-        }
-
-    }
-
-
 }
 

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.RegexUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -733,7 +734,12 @@ public class ContentUtil {
         if (minutes.length() == 1) minutes = "0" + minutes;
         if (hour.length() == 1) hour = "0" + hour;
         out = hour + ":" + minutes + ":" + seconds;
-        metaRetriever.release();
+        try {
+            metaRetriever.release();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
         return out;
     }
 

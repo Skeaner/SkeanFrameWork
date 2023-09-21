@@ -17,7 +17,7 @@ allOpen {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 33
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

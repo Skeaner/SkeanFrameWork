@@ -3,6 +3,8 @@ package me.skean.skeanframework.ktext
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.MetaDataUtils
@@ -64,6 +66,23 @@ fun Activity.checkUpdateByPgyerSdk() {
         }
 
     })
+}
+
+fun AppCompatActivity.initActionBar(
+    toolbar: Toolbar?,
+    showUp: Boolean = true,
+    showTitle: Boolean = false,
+    upAction: () -> Unit = { finish() }
+) {
+    this.setSupportActionBar(toolbar)
+    toolbar?.setNavigationOnClickListener {
+        upAction()
+    }
+    supportActionBar?.let {
+        onSupportNavigateUp()
+        it.setDisplayHomeAsUpEnabled(showUp)
+        it.setDisplayShowTitleEnabled(showTitle)
+    }
 }
 
 fun Context.checkUpdateByPgyerApi() {
