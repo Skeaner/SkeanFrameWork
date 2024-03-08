@@ -7,6 +7,8 @@ import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+
 /**
  * 全屏DialogFragment
  */
@@ -18,10 +20,15 @@ public class FullDialogFragment extends BaseDialogFragment {
     private int height = WindowManager.LayoutParams.MATCH_PARENT;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setStyle(STYLE_NO_TITLE, 0);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        Window window = getDialog().getWindow();
-        window.requestFeature(Window.FEATURE_NO_TITLE);
         super.onActivityCreated(savedInstanceState);
+        Window window = getDialog().getWindow();
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         WindowManager.LayoutParams params = window.getAttributes();
         params.dimAmount = dimAmount;

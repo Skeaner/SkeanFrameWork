@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,23 +40,14 @@ public class FullDialog extends Dialog {
     }
 
     @Override
-    public void setContentView(int layoutResID) {
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        super.setContentView(layoutResID);
-        setUpWindow();
+    protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void setContentView(@NonNull View view) {
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        super.setContentView(view);
-        setUpWindow();
-    }
-
-    @Override
-    public void setContentView(@NonNull View view, @Nullable ViewGroup.LayoutParams params) {
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        super.setContentView(view, params);
+    protected void onStart() {
+        super.onStart();
         setUpWindow();
     }
 
