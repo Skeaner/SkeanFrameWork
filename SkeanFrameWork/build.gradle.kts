@@ -34,7 +34,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-        freeCompilerArgs += "-Xjvm-default=compatibility"
+        freeCompilerArgs += "-Xjvm-default=all-compatibility"
     }
 
     defaultConfig {
@@ -179,9 +179,11 @@ dependencies {
     kapt("com.jakewharton:butterknife-compiler:10.2.0")
     //数字进度条
     api("com.github.Skeaner:NumberProgressBar:1.4.1")
-    //kotpref
+    //sharedpreferences
     api("com.chibatching.kotpref:kotpref:2.13.1")
     api("com.chibatching.kotpref:preference-screen-dsl:2.13.1")
+    api ("com.github.cioccarellia:ksprefs:2.3.2")
+
     //rxpermission
     api("com.github.tbruyelle:rxpermissions:0.11")
     //旧款 MaterialDialog

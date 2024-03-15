@@ -116,6 +116,12 @@ fun View.setOnClickFilterListener(millis: Long, onClick: ((t: Any) -> Unit)) {
         .subscribe(onClick)
 }
 
+fun <T: View> T.postAction(action: (T) -> Unit) {
+    this.post {
+        action(this)
+    }
+}
+
 fun TextView.textOrBlankNull(): String? {
     return if (this.text.isNotBlank()) this.text.toString() else null
 }

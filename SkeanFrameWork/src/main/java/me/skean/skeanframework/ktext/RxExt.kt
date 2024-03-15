@@ -64,7 +64,7 @@ inline fun <T> defaultObserver(
             onSubscribe2.invoke(d)
         }
 
-        override fun onNext2(t: T) {
+        override fun onNext2(t: T & Any) {
             onNext2.invoke(t)
         }
 
@@ -92,9 +92,10 @@ inline fun <T> progressObserver(
             onSubscribe2.invoke(d)
         }
 
-        override fun onNext2(t: T) {
+        override fun onNext2(t: T & Any) {
             onNext2.invoke(t)
         }
+
 
         override fun onError2(e: Throwable) {
             onError2.invoke(e)
@@ -112,7 +113,7 @@ inline fun <T> defaultSingleObserver(
     crossinline onSuccess2: (T) -> Unit
 ): DefaultSingleObserver<T> {
     return object : DefaultSingleObserver<T>() {
-        override fun onSuccess2(t: T) {
+        override fun onSuccess2(t: T & Any) {
             onSuccess2.invoke(t)
         }
 
@@ -133,7 +134,7 @@ inline fun <T> progressSingleObserver(
     crossinline onSuccess2: (T) -> Unit
 ): ProgressSingleObserver<T> {
     return object : ProgressSingleObserver<T>(context) {
-        override fun onSuccess2(t: T) {
+        override fun onSuccess2(t: T & Any) {
             onSuccess2.invoke(t)
         }
 
