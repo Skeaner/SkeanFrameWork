@@ -19,7 +19,7 @@ import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
 import com.yqritc.recyclerviewflexibledivider.VerticalDividerItemDecoration
 import me.skean.skeanframework.R
 import java.util.Objects
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 /**
  * Created by Skean on 21/6/1.
@@ -116,8 +116,8 @@ fun RecyclerView.addDividerItemDecoration(
 
 
 fun <T> quickDiffCallback(
-    id: KMutableProperty1<T, out Any?>? = null,
-    vararg compareProps: KMutableProperty1<T, out Any?>
+    id: KProperty1<T, Any?>? = null,
+    vararg compareProps: KProperty1<T, Any?>
 ): DiffUtil.ItemCallback<T> {
     return object : DiffUtil.ItemCallback<T>() {
         override fun areItemsTheSame(oldItem: T & Any, newItem: T & Any): Boolean {

@@ -620,13 +620,13 @@ object NetworkUtil {
     }
 
     @JvmStatic
-    inline fun <reified T> parseErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>): String {
+    inline fun <reified T> parseErrorBodyMsg(e: Throwable, vararg props: KProperty1<T, String?>): String {
         val namesArray = props.map { it.name }.toTypedArray()
         return parseErrorBodyMsg(e, *namesArray)
     }
 
     @JvmStatic
-    inline fun <reified T> toastErrorBodyMsg(e: Throwable, vararg props: KMutableProperty1<T, String?>) {
+    inline fun <reified T> toastErrorBodyMsg(e: Throwable, vararg props: KProperty1<T, String?>) {
         ToastUtils.showShort(parseErrorBodyMsg(e, *props))
     }
 }

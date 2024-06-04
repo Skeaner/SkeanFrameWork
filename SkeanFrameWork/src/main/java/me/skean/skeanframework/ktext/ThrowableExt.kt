@@ -5,8 +5,7 @@ import com.google.gson.JsonObject
 import me.skean.skeanframework.utils.NetworkUtil
 import org.json.JSONObject
 import retrofit2.HttpException
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 /**
  * Created by Skean on 21/12/1.
@@ -28,7 +27,7 @@ fun Throwable.parseHttpErrorBody(fieldName: String): String {
 }
 
 
-inline fun <reified T> Throwable.parseHttpErrorBody(property: KMutableProperty1<T, String?>): String {
+inline fun <reified T> Throwable.parseHttpErrorBody(property: KProperty1<T, String?>): String {
     try {
         if (this is HttpException) {
             val code = this.code()
