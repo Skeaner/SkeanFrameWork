@@ -134,7 +134,8 @@ android {
             buildConfigField("boolean", "LOG_TO_FILE", "false")
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
-            manifestPlaceholders["PGYER_FRONTJS_KEY"] = "634980e6bf0cc563094186720a9d3f8b"
+            manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"
+            manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "false"
             manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
             manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
 
@@ -148,7 +149,8 @@ android {
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_beta"
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
-            manifestPlaceholders["PGYER_FRONTJS_KEY"] = "634980e6bf0cc563094186720a9d3f8b"
+            manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"
+            manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "true"
             manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
             manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
 
@@ -162,7 +164,8 @@ android {
             buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_dev"
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
-            manifestPlaceholders["PGYER_FRONTJS_KEY"] = "634980e6bf0cc563094186720a9d3f8b"
+            manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"
+            manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "true"
             manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
             manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
 

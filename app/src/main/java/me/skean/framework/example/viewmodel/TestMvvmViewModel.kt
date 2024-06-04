@@ -28,9 +28,9 @@ class TestMvvmViewModel(app: Application) : BaseViewModel<DouBanRepository>(app)
     }
 
     val uc: UIChangeObservable = UIChangeObservable()
-    val data = SingleLiveEvent<List<MovieInfo.Data?>>()
+    val data = SingleLiveEvent<List<MovieInfo.Data>>()
 
-    private var movieList: MutableList<MovieInfo.Data?> = mutableListOf()
+    private var movieList: MutableList<MovieInfo.Data> = mutableListOf()
     private var currentPage = 0
 
     val refreshListener = OnRefreshListener {
@@ -53,7 +53,7 @@ class TestMvvmViewModel(app: Application) : BaseViewModel<DouBanRepository>(app)
                     uc.finishLoadMore.value = false to true
                 }
             }) {
-                val list = it.map { it.data?.firstOrNull() }
+                val list = it.map { it.data?.firstOrNull()!! }
                 currentPage++
                 val noMore = list.size < 10
                 if (refresh) {

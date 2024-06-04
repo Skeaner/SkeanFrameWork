@@ -23,7 +23,7 @@ allprojects {
         mavenCentral()
         google()
         maven { url=uri("https://jitpack.io") }
-        maven { url =uri("https://raw.githubusercontent.com/PGYER/analytics/master/") }
+        maven { url = uri("https://raw.githubusercontent.com/Skeaner/MavenStore/main/") }
     }
 }
 

@@ -10,7 +10,6 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import me.goldze.mvvmhabit.utils.RxUtils
 import me.skean.skeanframework.model.LoadingStatus
 import me.skean.skeanframework.rx.*
 import me.skean.skeanframework.widget.LoadingDialog2

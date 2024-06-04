@@ -1,7 +1,7 @@
 package me.skean.framework.example.net.bean
 
 data class MovieInfo(
-    var `data`: List<Data?>? = null,
+    var `data`: List<Data>? = null,
     var createdAt: Long? = null,
     var updatedAt: Long? = null,
     var id: String? = null,

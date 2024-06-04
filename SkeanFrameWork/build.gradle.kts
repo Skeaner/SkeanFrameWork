@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.Skeaner"
-version ="2.3.1"
+version = "2.3.1"
 
 //打包操作
 val androidSourcesJar by tasks.registering(Jar::class) {
@@ -52,8 +52,8 @@ android {
     lint {
         abortOnError = false
     }
-    viewBinding.isEnabled =true
-    dataBinding.enable=true
+    viewBinding.isEnabled = true
+    dataBinding.enable = true
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -167,13 +167,13 @@ dependencies {
     //下拉刷新ultra-ptr
     api("in.srain.cube:ultra-ptr:1.0.11")
     //RecyclerView综合适配器
-    api("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.1")
+    api("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.4")
     //material design日期加时间选择器
     api("com.github.Skeaner:SublimePicker:2.1.2")
     //权限提示
     api("com.github.Skeaner:EasyPermissionDialog:1.8")
-    //蒲公英sdk
-    api ("com.pgyer:analytics:4.3.2")
+    //BUGLY
+    api("com.tencent.bugly:crashreport:4.1.9.3")
     //butterknife
     api("com.jakewharton:butterknife:10.2.0")
     kapt("com.jakewharton:butterknife-compiler:10.2.0")
@@ -182,7 +182,7 @@ dependencies {
     //sharedpreferences
     api("com.chibatching.kotpref:kotpref:2.13.1")
     api("com.chibatching.kotpref:preference-screen-dsl:2.13.1")
-    api ("com.github.cioccarellia:ksprefs:2.3.2")
+    api("com.github.cioccarellia:ksprefs:2.3.2")
 
     //rxpermission
     api("com.github.tbruyelle:rxpermissions:0.11")
@@ -212,6 +212,7 @@ dependencies {
     //快速ActivityLauncher
     api("com.github.DylanCaiCoding:ActivityResultLauncher:1.1.2")
     //mvi框架
-    api("com.github.goldze:MVVMHabit:4.0.0")
+    api("com.github.goldze:MVVMHabit:4.0.0-fix2")
+    api("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 
 }

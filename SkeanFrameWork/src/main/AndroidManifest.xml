@@ -34,17 +34,18 @@
         <meta-data
             android:name="PGYER_API_KEY"
             android:value="${PGYER_API_KEY}"/>
-        <meta-data
-            android:name="PGYER_FRONTJS_KEY"
-            android:value="${PGYER_FRONTJS_KEY}"/>
 
         <meta-data
             android:name="PGYER_APP_KEY"
             android:value="${PGYER_APP_KEY}"/>
 
         <meta-data
-            android:name="PGYER_FEATURE_CHECK_UNPDATE"
-            android:value="false" />
+            android:name="BUGLY_APPID"
+            android:value="${BUGLY_APPID}" />
+        <!-- 配置Bugly调试模式（true或者false）-->
+        <meta-data
+            android:name="BUGLY_ENABLE_DEBUG"
+            android:value="${BUGLY_ENABLE_DEBUG}" />
 
         <!-- 强制更新Dialog-->
         <activity

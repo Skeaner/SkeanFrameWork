@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter.base.BaseDifferAdapter
+import com.chad.library.adapter4.BaseDifferAdapter
 import com.dylanc.viewbinding.BindingViewHolder
 import me.goldze.mvvmhabit.base.BaseActivity
 import me.skean.framework.example.BR
@@ -58,7 +58,7 @@ class TestMvvmActivity() : BaseActivity<TestMvvmActivityBinding, TestMvvmViewMod
 
 
     private inner class ItemAdapter :
-        BaseDifferAdapter<MovieInfo.Data?, BindingViewHolder<TestMvvmItemBinding>>(itemDiffCallback, emptyList()) {
+        BaseDifferAdapter<MovieInfo.Data, BindingViewHolder<TestMvvmItemBinding>>(itemDiffCallback, emptyList()) {
         override fun onBindViewHolder(holder: BindingViewHolder<TestMvvmItemBinding>, position: Int, item: MovieInfo.Data?) {
             holder.binding.item = item
         }
@@ -69,7 +69,7 @@ class TestMvvmActivity() : BaseActivity<TestMvvmActivityBinding, TestMvvmViewMod
     }
 
 
-    private val itemDiffCallback = object : DiffUtil.ItemCallback<MovieInfo.Data?>() {
+    private val itemDiffCallback = object : DiffUtil.ItemCallback<MovieInfo.Data>() {
         override fun areItemsTheSame(oldItem: MovieInfo.Data, newItem: MovieInfo.Data) = oldItem == newItem
 
         override fun areContentsTheSame(oldItem: MovieInfo.Data, newItem: MovieInfo.Data) = oldItem == newItem

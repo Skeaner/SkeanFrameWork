@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import com.chibatching.kotpref.Kotpref
-import com.pgyer.pgyersdk.PgyerSDKManager
+import com.tencent.bugly.crashreport.CrashReport
 import me.goldze.mvvmhabit.base.BaseApplication
 import me.goldze.mvvmhabit.utils.KLog
 import me.skean.framework.example.BuildConfig
@@ -143,7 +143,7 @@ class App : BaseApplication(), StatusCallback {
 
                 })
         }
-//        checkUpdateByPgyerApi()
+       checkUpdateByPgyerApi()
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -151,8 +151,8 @@ class App : BaseApplication(), StatusCallback {
         //初始化上报的工具
         if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
             ReportUtils.getInstance().init(this)
-        } else { //外网的使用PGYER
-            PgyerSDKManager.Init().setContext(this).start()
+        } else { //外网的使用BUGLY
+            CrashReport.initCrashReport(applicationContext)
         }
     }
 
