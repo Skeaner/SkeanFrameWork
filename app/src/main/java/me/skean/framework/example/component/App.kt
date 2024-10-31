@@ -143,7 +143,7 @@ class App : BaseApplication(), StatusCallback {
 
                 })
         }
-       checkUpdateByPgyerApi()
+        checkUpdateByPgyerApi()
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -175,7 +175,7 @@ class App : BaseApplication(), StatusCallback {
     }
 
     fun <Temp> getTempObject(): Temp? {
-        return tempObject as Temp?
+        return tempObject as? Temp
     }
 
     fun releaseTempObject() {

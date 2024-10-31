@@ -21,7 +21,7 @@
     </declare-styleable>
 
 
-    <declare-styleable name="AdvanceImageView" parent="android.support.v7.widget.AppCompatImageView">
+    <declare-styleable name="AdvanceImageView" parent="androidx.appcompat.widget.AppCompatImageView">
         <attr name="scale_type" format="enum">
             <enum name="matrix" value="0" />
             <enum name="fit_xy" value="1" />

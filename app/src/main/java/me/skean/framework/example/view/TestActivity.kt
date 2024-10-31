@@ -75,20 +75,18 @@ class TestActivity : BaseActivity() {
             var selectedImageUri = data?.data
             // Get the path from the Uri
             val path = getPathFromURI(selectedImageUri!!)
-            if (path != null) {
-                val f = File(path)
-                selectedImageUri = Uri.fromFile(f)
-                val file = File(App.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "compress.jpg")
-                ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, object : ImageUtil.Compressor.FileCallBack {
-                    override fun onSuccess(file: File) {
-                        ToastUtils.showShort("成功")
-                    }
+            val f = File(path)
+            selectedImageUri = Uri.fromFile(f)
+            val file = File(App.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "compress.jpg")
+            ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, object : ImageUtil.Compressor.FileCallBack {
+                override fun onSuccess(file: File) {
+                    ToastUtils.showShort("成功")
+                }
 
-                    override fun onFail() {
-                        ToastUtils.showShort("失败")
-                    }
-                })
-            }
+                override fun onFail() {
+                    ToastUtils.showShort("失败")
+                }
+            })
         }
     }
 

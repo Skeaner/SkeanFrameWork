@@ -54,15 +54,6 @@
         <item name="android:textColor">@color/textcolor_inverse</item>
     </style>
 
-    <style name="PTRFrameLayoutSetting">
-        <item name="ptr_duration_to_close">200</item>
-        <item name="ptr_duration_to_close_header">800</item>
-        <item name="ptr_keep_header_when_refresh">true</item>
-        <item name="ptr_pull_to_fresh">false</item>
-        <item name="ptr_ratio_of_header_height_to_refresh">1.2</item>
-        <item name="ptr_resistance">1.7</item>
-    </style>
-
     <style name="WindowBottomInOutStyle">
         <item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
         <item name="android:windowExitAnimation">@anim/slide_bottom_out</item>

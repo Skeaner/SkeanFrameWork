@@ -40,6 +40,11 @@ android {
     defaultConfig {
         minSdk = 21
         targetSdk = 28
+        manifestPlaceholders["AMAP_API_KEY"] = ""
+        manifestPlaceholders["BUGLY_APPID"] = ""
+        manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = ""
+        manifestPlaceholders["PGYER_API_KEY"] = ""
+        manifestPlaceholders["PGYER_APP_KEY"] = ""
     }
 
     kapt {
@@ -60,6 +65,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+
 }
 
 repositories {
@@ -119,11 +125,10 @@ dependencies {
     //RxJava的库
     api("io.reactivex.rxjava2:rxandroid:2.1.1")
     api("io.reactivex.rxjava2:rxjava:2.2.19")
-    api("com.jakewharton.rxbinding2:rxbinding:2.2.0")
-    api("com.jakewharton.rxbinding2:rxbinding-support-v4:2.2.0")
-    api("com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.2.0")
-    api("com.jakewharton.rxbinding2:rxbinding-design:2.2.0")
-    api("com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.2.0")
+    api ("com.jakewharton.rxbinding3:rxbinding-core:3.1.0")
+    api ("com.jakewharton.rxbinding3:rxbinding-appcompat:3.1.0")
+    api ("com.jakewharton.rxbinding3:rxbinding-recyclerview:3.1.0")
+    api ("com.jakewharton.rxbinding3:rxbinding-material:3.1.0")
     api("com.trello.rxlifecycle3:rxlifecycle:$rxLifecycleVersion")
     api("com.trello.rxlifecycle3:rxlifecycle-android:$rxLifecycleVersion")
     api("com.trello.rxlifecycle3:rxlifecycle-components:$rxLifecycleVersion")
@@ -146,7 +151,7 @@ dependencies {
     api("org.apache.commons:commons-collections4:4.4")
     api("org.apache.commons:commons-lang3:3.9")
     //软引用的handler
-    api("com.badoo.mobile:android-weak-handler:1.1")
+    api("com.github.badoo:android-weak-handler:1.3")
     //图片加载
     api("io.coil-kt:coil:2.2.2")
     api("io.coil-kt:coil-gif:2.2.2")
@@ -157,19 +162,17 @@ dependencies {
     //图片触摸库
     api("it.sephiroth.android.library.imagezoom:imagezoom:2.3.0")
     //图片显示subsamplingImageView
-    api("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
+    api("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
     //图片选择器matisse
     api("com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.5") {
         exclude(module = "library")
     }
     //综合工具库utilcode
     api("com.blankj:utilcodex:1.30.6")
-    //下拉刷新ultra-ptr
-    api("in.srain.cube:ultra-ptr:1.0.11")
     //RecyclerView综合适配器
     api("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.4")
     //material design日期加时间选择器
-    api("com.github.Skeaner:SublimePicker:2.1.2")
+    api("com.github.Skeaner:SublimePicker:2.1.4")
     //权限提示
     api("com.github.Skeaner:EasyPermissionDialog:1.8")
     //BUGLY
@@ -194,9 +197,9 @@ dependencies {
     api("com.afollestad.material-dialogs:input:3.3.0")
     api("com.afollestad.material-dialogs:bottomsheets:3.3.0")
     //刷新库
-    api("io.github.scwang90:refresh-layout-kernel:2.0.5")
-    api("io.github.scwang90:refresh-header-classics:2.0.5")  //经典刷新头
-    api("io.github.scwang90:refresh-footer-classics:2.0.5")
+    api("io.github.scwang90:refresh-layout-kernel:2.1.0x")
+    api("io.github.scwang90:refresh-header-classics:2.1.0x")  //经典刷新头
+    api("io.github.scwang90:refresh-footer-classics:2.1.0x")
     //koin
     api("io.insert-koin:koin-core:$koinVersion")
     api("io.insert-koin:koin-android:$koinVersion")// Koin main features for Android
@@ -212,7 +215,7 @@ dependencies {
     //快速ActivityLauncher
     api("com.github.DylanCaiCoding:ActivityResultLauncher:1.1.2")
     //mvi框架
-    api("com.github.goldze:MVVMHabit:4.0.0-fix2")
+    api("com.github.Skeaner:MVVMHabit:4.0.0-androidx")
     api("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 
 }

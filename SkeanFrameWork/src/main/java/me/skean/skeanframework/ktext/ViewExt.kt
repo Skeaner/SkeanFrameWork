@@ -27,7 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
-import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding3.view.clicks
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
@@ -105,18 +105,18 @@ fun View.isInvisible(): Boolean {
 }
 
 fun View.setOnClickFilterListener(onClick: ((t: Any) -> Unit)) {
-    RxView.clicks(this)
+    this.clicks()
         .throttleFirst(1, TimeUnit.SECONDS)
         .subscribe(onClick)
 }
 
 fun View.setOnClickFilterListener(millis: Long, onClick: ((t: Any) -> Unit)) {
-    RxView.clicks(this)
+    this.clicks()
         .throttleFirst(millis, TimeUnit.MILLISECONDS)
         .subscribe(onClick)
 }
 
-fun <T: View> T.postAction(action: (T) -> Unit) {
+fun <T : View> T.postAction(action: (T) -> Unit) {
     this.post {
         action(this)
     }

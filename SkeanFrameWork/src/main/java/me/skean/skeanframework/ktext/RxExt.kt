@@ -5,7 +5,7 @@ package me.skean.skeanframework.ktext
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.trello.rxlifecycle2.LifecycleProvider
+import com.trello.rxlifecycle3.LifecycleProvider
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
