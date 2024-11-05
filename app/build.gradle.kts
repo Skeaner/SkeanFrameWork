@@ -112,13 +112,16 @@ android {
         val useExternalDatabase = true
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("config")
             buildConfigField("String", "APP_TAG", appTag)
             buildConfigField("boolean", "EXTERNAL_DB", "$useExternalDatabase")
         }
         debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("config")
             buildConfigField("String", "APP_TAG", appTag)
             buildConfigField("boolean", "EXTERNAL_DB", "$useExternalDatabase")
@@ -176,9 +179,9 @@ android {
         jniLibs.srcDirs("libs")
         res.srcDirs("src/main/res/")
     }
-    lint.abortOnError =false
-    viewBinding.isEnabled =true
-    dataBinding.enable=true
+    lint.abortOnError = false
+    viewBinding.isEnabled = true
+    dataBinding.enable = true
     packagingOptions {
         resources.excludes.apply {
             add("META-INF/DEPENDENCIES")
@@ -203,7 +206,7 @@ repositories {
 
 dependencies {
 //    implementation("com.github.Skeaner:SkeanFrameWork:2.2.0")
-    implementation (project( ":SkeanFrameWork"))
+    implementation(project(":SkeanFrameWork"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
     implementation(fileTree("libs") { include("*.jar") })
     kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
