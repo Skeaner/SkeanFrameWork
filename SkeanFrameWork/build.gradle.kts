@@ -188,7 +188,7 @@ dependencies {
     api("com.github.cioccarellia:ksprefs:2.3.2")
 
     //rxpermission
-    api("com.github.tbruyelle:rxpermissions:0.11")
+    api("com.github.tbruyelle:rxpermissions:v0.11")
     //旧款 MaterialDialog
     api("com.github.Skeaner.OldMaterialDialogs:core:1.0.0")
     api("com.github.Skeaner.OldMaterialDialogs:commons:1.0.0")
@@ -215,7 +215,9 @@ dependencies {
     //快速ActivityLauncher
     api("com.github.DylanCaiCoding:ActivityResultLauncher:1.1.2")
     //mvi框架
-    api("com.github.Skeaner:MVVMHabit:4.0.0-androidx")
+    api("com.github.Skeaner:MVVMHabit:4.0.0-androidx"){
+        exclude(group = "com.github.tbruyelle", module = "rxpermissions")
+    }
     api("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 
 }
