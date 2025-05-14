@@ -3,39 +3,34 @@ package me.skean.skeanframework.component;
 import android.Manifest;
 import android.content.Intent;
 
+import com.blankj.utilcode.util.PermissionUtils;
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.XXPermissions;
+
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.PermissionUtils;
-import permissions.dispatcher.RuntimePermissions;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 
 /**
  * 使用相机的基础
  */
-@RuntimePermissions
 public class UseCameraFragment extends BaseFragment {
 
-    private static final String P = Manifest.permission.CAMERA;
+    private static final String[] PERMISSIONS = {Manifest.permission.CAMERA};
     private static final int REQUEST_PERMISSION = 99;
 
     ///////////////////////////////////////////////////////////////////////////
     // 1
     ///////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        UseCameraFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PERMISSION) {
-            UseCameraFragmentPermissionsDispatcher.startCameraWithPermissionCheck(this);
+            startCameraWithPermissionCheck();
         }
     }
 
@@ -48,31 +43,34 @@ public class UseCameraFragment extends BaseFragment {
     ///////////////////////////////////////////////////////////////////////////
 
     protected final void startCameraWithPermissionCheck() {
-        UseCameraFragmentPermissionsDispatcher.startCameraWithPermissionCheck(this);
+        XXPermissions.with(this)
+                .permission(PERMISSIONS)
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
+                       if (allGranted) startCamera();
+                    }
+
+                    @Override
+                    public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
+                        if (doNotAskAgain){
+                            EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeNeverAsk(null).show();
+                        }
+                        else {
+                            EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeTemporaryDeny(allow -> {
+                                if (allow) startCameraWithPermissionCheck();
+                            }).show();
+                        }
+                    }
+                });
     }
 
     protected final boolean hasCameraPermission() {
-        return PermissionUtils.hasSelfPermissions(getContext(), P);
+        return PermissionUtils.isGranted( PERMISSIONS);
     }
 
-    @NeedsPermission({P})
     public  void startCamera() {
     }
 
-    @OnPermissionDenied({P})
-    public final void permissionDenied() {
-        if (PermissionUtils.hasSelfPermissions(getContext(), P)) {
-            EasyPermissionDialog.build(this).permissions(P).typeTemporaryDeny(allow -> {
-                if (allow) {
-                    UseCameraFragmentPermissionsDispatcher.startCameraWithPermissionCheck(this);
-                }
-            }).show();
-        }
-    }
-
-    @OnNeverAskAgain({P})
-    public final void permissionNever() {
-        EasyPermissionDialog.build(this).permissions(P).typeNeverAsk( null).show();
-    }
 
 }

@@ -101,7 +101,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_INSTALL) {
             AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,
-                                                                                          R.style.ThemeOverlay_MaterialComponents_Light_Dialog_Alert_Framework));
+                                                                                          com.google.android.material.R.style.ThemeOverlay_MaterialComponents_Light_Dialog_Alert_Framework));
             builder.setTitle(R.string.tips)
                    .setMessage("请点击进行应用更新!")
                    .setPositiveButton("更新", (dialog, which) -> installApp())
@@ -197,7 +197,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
                            super.onError2(e);
                            downloadDisposable = null;
                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(UpdateDialog.this,
-                                                                                                         R.style.ThemeOverlay_MaterialComponents_Light_Dialog_Alert_Framework));
+                                                                                                         com.google.android.material.R.style.ThemeOverlay_MaterialComponents_Light_Dialog_Alert_Framework));
                            builder.setTitle(R.string.tips)
                                   .setMessage("下载出错, 请尝试重新下载")
                                   .setPositiveButton("重试", (dialog, which) -> startDownload())

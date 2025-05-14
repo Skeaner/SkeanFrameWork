@@ -116,12 +116,12 @@ public final class AppService extends Service {
 
     private void downloadApp(final String url) {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            Toast.makeText(this, R.string.noSdcardMountedDownloadFail, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, me.skean.skeanframework.R.string.noSdcardMountedDownloadFail, Toast.LENGTH_SHORT).show();
             return;
         }
         File apkFile = new File(getExternalCacheDir(), "update.apk");
         if (!FileUtils.createOrExistsFile(apkFile)) {
-            Toast.makeText(this, R.string.createFileFail, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, me.skean.skeanframework.R.string.createFileFail, Toast.LENGTH_SHORT).show();
             return;
         }
         NetworkUtil.progressRetrofit(NetworkUtil.getBaseUrlForClass(FileIOApi.class),
@@ -129,8 +129,8 @@ public final class AppService extends Service {
                                      (bytesRead, contentLength, percentage, done) -> {
                                          if (!done) {
                                              nManager.notify(1,
-                                                             new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                                              .setContentText(getString(R.string.downloadProgress,
+                                                             new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                                                                                              .setContentText(getString(me.skean.skeanframework.R.string.downloadProgress,
                                                                                                                         percentage))
                                                                                               .setSmallIcon(R.drawable.ic_launcher)
                                                                                               .setOngoing(true)
@@ -154,8 +154,8 @@ public final class AppService extends Service {
                     }
                     PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, installIntent, PendingIntent.FLAG_CANCEL_CURRENT);
                     nManager.notify(1,
-                                    new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                     .setContentText(getString(R.string.downloadFinishClickInstall))
+                                    new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                                                                     .setContentText(getString(me.skean.skeanframework.R.string.downloadFinishClickInstall))
                                                                      .setContentIntent(pi)
                                                                      .setSmallIcon(R.drawable.ic_launcher)
                                                                      .setOngoing(false)
@@ -174,10 +174,10 @@ public final class AppService extends Service {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP)
                                                                              .putExtra(IntentKey.EXTRA_DOWNLOAD_URL, url);
-                PendingIntent pi = PendingIntent.getService(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                PendingIntent pi = PendingIntent.getService(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 nManager.notify(1,
-                                new Notification.Builder(context).setContentTitle(getString(R.string.updatingApp))
-                                                                 .setContentText(getString(R.string.downloadFailClickRetry))
+                                new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                                                                 .setContentText(getString(me.skean.skeanframework.R.string.downloadFailClickRetry))
                                                                  .setContentIntent(pi)
                                                                  .setSmallIcon(R.drawable.ic_launcher)
                                                                  .setOngoing(false)

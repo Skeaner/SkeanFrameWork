@@ -7,27 +7,9 @@ plugins {
     id("maven-publish")
 }
 
-group = "com.github.Skeaner"
-version = "2.3.1"
-
-//打包操作
-val androidSourcesJar by tasks.registering(Jar::class) {
-    classifier = "sources"
-    from(android.sourceSets.getByName("main").java.srcDirs)
-}
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-                artifact(androidSourcesJar.get())
-            }
-        }
-    }
-}
-
 android {
-    compileSdk = 33
+    namespace = "me.skean.skeanframework"
+    compileSdk = 34
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -39,7 +21,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 28
         manifestPlaceholders["AMAP_API_KEY"] = ""
         manifestPlaceholders["BUGLY_APPID"] = ""
         manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = ""
@@ -66,6 +47,26 @@ android {
         }
     }
 
+    publishing {
+        singleVariant("release"){
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.github.Skeaner"
+            artifactId = "SkeanFrameWork"
+            version = "2.3.1"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }
 
 repositories {
@@ -77,11 +78,11 @@ repositories {
 
 val eventbusVersion = "3.1.1"
 val retrofitVersion = "2.6.4"
-val koinVersion = "3.1.5"
-val lifecycleVersion = "2.4.1"
-val navigationVersion = "2.3.5"
-val roomVersion = "2.3.0"
-val jacksonVersion = "2.11.0"
+val koinVersion = "4.0.4"
+val lifecycleVersion = "2.8.7"
+val navigationVersion = "2.8.9"
+val roomVersion = "2.7.1"
+val jacksonVersion = "2.11.1"
 val rxLifecycleVersion = "3.1.0"
 
 val kotlinVersion = rootProject.extra["kotlinVersion"]
@@ -89,16 +90,14 @@ val kotlinVersion = rootProject.extra["kotlinVersion"]
 dependencies {
     api(fileTree("libs") { include("*.jar") })
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-    api("com.github.permissions-dispatcher:permissionsdispatcher:4.8.0")
-    kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     api("org.greenrobot:eventbus:$eventbusVersion")
     kapt("org.greenrobot:eventbus-annotation-processor:$eventbusVersion")
     //谷歌库
-    api("androidx.core:core-ktx:1.8.0")
-    api("androidx.appcompat:appcompat:1.4.2")
-    api("androidx.recyclerview:recyclerview:1.2.1")
-    api("com.google.android.material:material:1.6.1")
+    api("androidx.core:core-ktx:1.13.1")
+    api("androidx.appcompat:appcompat:1.7.0")
+    api("androidx.recyclerview:recyclerview:1.3.2")
+    api("com.google.android.material:material:1.12.0")
     api("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
     api("androidx.navigation:navigation-ui-ktx:$navigationVersion")
     api("androidx.navigation:navigation-fragment-ktx:$navigationVersion")
@@ -156,7 +155,7 @@ dependencies {
     api("io.coil-kt:coil:2.2.2")
     api("io.coil-kt:coil-gif:2.2.2")
     api("io.coil-kt:coil-video:2.2.2")
-    api("com.github.bumptech.glide:glide:4.10.0")
+    api("com.github.bumptech.glide:glide:4.11.0")
     //图片显示PhotoView
     api("com.github.chrisbanes:PhotoView:2.3.0")
     //图片触摸库
@@ -187,11 +186,11 @@ dependencies {
     api("com.chibatching.kotpref:preference-screen-dsl:2.13.1")
     api("com.github.cioccarellia:ksprefs:2.3.2")
 
-    //rxpermission
-    api("com.github.tbruyelle:rxpermissions:v0.11")
+    //Permission
+    api("com.github.Skeaner:XXPermissions:21.3")
     //旧款 MaterialDialog
-    api("com.github.Skeaner.OldMaterialDialogs:core:1.0.0")
-    api("com.github.Skeaner.OldMaterialDialogs:commons:1.0.0")
+    api("com.github.Skeaner.OldMaterialDialogs:core:1.0.2")
+    api("com.github.Skeaner.OldMaterialDialogs:commons:1.0.2")
     //MaterialDialog
     api("com.afollestad.material-dialogs:core:3.3.0")
     api("com.afollestad.material-dialogs:input:3.3.0")
@@ -208,7 +207,7 @@ dependencies {
     api("io.insert-koin:koin-androidx-navigation:$koinVersion")// Navigation Graph
     api("io.insert-koin:koin-androidx-compose:$koinVersion")// Jetpack Compose
     //viewBinding快速库
-    api("com.hi-dhl:binding:1.1.3")
+    api("com.hi-dhl:binding:1.2.0")
     api("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.0.5")
     //FlexibleDivider
     api("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")

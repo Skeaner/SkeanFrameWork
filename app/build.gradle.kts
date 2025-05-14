@@ -9,7 +9,7 @@ plugins {
     id("kotlin-parcelize")
     id("kotlin-allopen")
     id("kotlin-kapt")
-    id("androidx.navigation.safeargs")
+    id("maven-publish")
 }
 
 allOpen {
@@ -17,7 +17,7 @@ allOpen {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -71,10 +71,11 @@ android {
     }
 
     defaultConfig {
+        namespace = "me.skean.framework.example"
         //todo 修改程序ID
         applicationId = "me.skean.framework.example"
         minSdk = 21
-        targetSdk = 28
+        targetSdk = 33
         versionCode = vCode
         versionName = vName
         ndk {
@@ -205,12 +206,12 @@ repositories {
 
 
 dependencies {
-//    implementation("com.github.Skeaner:SkeanFrameWork:2.2.0")
+//    implementation("com.github.Skeaner:SkeanFrameWork:2.3.6")
     implementation(project(":SkeanFrameWork"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
     implementation(fileTree("libs") { include("*.jar") })
     kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
     kapt("org.greenrobot:eventbus-annotation-processor:3.1.1")
     kapt("com.jakewharton:butterknife-compiler:10.2.0")
-    kapt("androidx.room:room-compiler:2.3.0")
+    kapt("androidx.room:room-compiler:2.7.1")
 }

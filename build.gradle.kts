@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    val kotlinVersion = "1.9.20"
+    val kotlinVersion = "2.0.20"
     extra.apply {
         set("kotlinVersion",kotlinVersion)
     }
@@ -11,10 +11,9 @@ buildscript {
         maven { url=uri("https://jitpack.io") }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.android.tools.build:gradle:8.5.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.4.1")
     }
 }
 

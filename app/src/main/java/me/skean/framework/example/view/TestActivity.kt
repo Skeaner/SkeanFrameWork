@@ -190,8 +190,8 @@ class TestActivity : BaseActivity() {
 
     private fun testPermission(onGranted: () -> Unit) {
         val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-        requestPermissionEach(*permissions) {
-            onGranted.invoke()
-        }
+//        requestPermissionEach(*permissions) {
+//            onGranted.invoke()
+//        }
     }
 }

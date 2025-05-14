@@ -5,7 +5,6 @@ import me.skean.framework.example.net.ArticleApi
 import me.skean.framework.example.net.DouBanApi
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.skeanframework.utils.NetworkUtil
-import org.koin.androidx.compose.inject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
