@@ -1,8 +1,7 @@
 package me.skean.skeanframework.net.pgy
 
 import com.zhihu.matisse.internal.entity.IncapableCause.Form
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import me.skean.skeanframework.net.BaseUrl
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

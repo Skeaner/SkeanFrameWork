@@ -19,11 +19,10 @@ import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import me.skean.skeanframework.R;
-import me.skean.skeanframework.net.FileIOApi;
 import me.skean.skeanframework.rx.DefaultObserver;
 import me.skean.skeanframework.utils.NetworkUtil;
 
@@ -169,7 +168,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        NetworkUtil.downloadWithProgress(url, tempFile)
+        NetworkUtil.downloadProgress(url, tempFile)
                    .subscribeOn(Schedulers.io())
                    .observeOn(AndroidSchedulers.mainThread())
                    .subscribe(new DefaultObserver<>() {

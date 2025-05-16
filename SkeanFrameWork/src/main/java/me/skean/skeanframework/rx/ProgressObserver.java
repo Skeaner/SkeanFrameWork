@@ -2,8 +2,8 @@ package me.skean.skeanframework.rx;
 
 import android.content.Context;
 
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.disposables.Disposable;
 import me.skean.skeanframework.widget.LoadingDialog2;
 
 /**

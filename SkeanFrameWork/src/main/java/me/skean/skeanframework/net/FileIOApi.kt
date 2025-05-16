@@ -1,7 +1,7 @@
 package me.skean.skeanframework.net
 
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -24,15 +24,15 @@ interface FileIOApi {
 
     @GET
     @Streaming
-    fun downloadWithCall(@Url url: String?): Call<ResponseBody?>
+    fun downloadToCall(@Url url: String?): Call<ResponseBody?>
 
     @GET
     @Streaming
-    fun downloadWithSingle(@Url url: String?): Single<ResponseBody?>
+    fun downloadToSingle(@Url url: String?): Single<ResponseBody>
 
     @GET
     @Streaming
-    fun downloadWithObservable(@Url url: String?): Observable<ResponseBody?>
+    fun downloadToObservable(@Url url: String?): Observable<ResponseBody>
 
 
     @POST
@@ -43,18 +43,18 @@ interface FileIOApi {
     @POST
     @Multipart
     @Streaming
-    fun uploadWithCall(@Url url: String?, @Part file: MultipartBody.Part?): Call<ResponseBody?>
+    fun uploadToCall(@Url url: String?, @Part file: MultipartBody.Part?): Call<ResponseBody?>
 
 
     @POST
     @Multipart
     @Streaming
-    fun uploadWithSingle(@Url url: String?, @Part file: MultipartBody.Part?): Single<ResponseBody?>
+    fun uploadToSingle(@Url url: String?, @Part file: MultipartBody.Part?): Single<ResponseBody>
 
 
     @POST
     @Multipart
     @Streaming
-    fun uploadWithObservable(@Url url: String?, @Part file: MultipartBody.Part?): Observable<ResponseBody?>
+    fun uploadToObservable(@Url url: String?, @Part file: MultipartBody.Part?): Observable<ResponseBody>
 
 }

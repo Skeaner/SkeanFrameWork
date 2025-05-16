@@ -5,11 +5,14 @@ package me.skean.skeanframework.ktext
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.trello.rxlifecycle3.LifecycleProvider
+import com.trello.rxlifecycle4.LifecycleProvider
 import io.reactivex.*
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import me.skean.skeanframework.model.LoadingStatus
 import me.skean.skeanframework.rx.*
 import me.skean.skeanframework.widget.LoadingDialog2
@@ -18,15 +21,15 @@ import me.skean.skeanframework.widget.LoadingDialog2
  * Created by Skean on 21/4/8.
  */
 
-fun <T> Single<T>.subscribeOnIoObserveOnMainThread(): Single<T> {
+fun <T : Any> Single<T>.subscribeOnIoObserveOnMainThread(): Single<T> {
     return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }
 
-fun <T> Observable<T>.subscribeOnIoObserveOnMainThread(): Observable<T> {
+fun <T : Any> Observable<T>.subscribeOnIoObserveOnMainThread(): Observable<T> {
     return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }
 
-fun <T> Flowable<T>.subscribeOnIoObserveOnMainThread(): Flowable<T> {
+fun <T : Any> Flowable<T>.subscribeOnIoObserveOnMainThread(): Flowable<T> {
     return this.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }
 
@@ -163,7 +166,7 @@ inline fun <T> applyAutoLoading(
 }
 
 
-inline fun <T> Single<T>.applyAutoLoading(
+inline fun <T : Any> Single<T>.applyAutoLoading(
     context: Context,
     message: String = "请稍后",
     cancelable: Boolean = true,
@@ -174,7 +177,7 @@ inline fun <T> Single<T>.applyAutoLoading(
 }
 
 
-inline fun <T> Observable<T>.applyAutoLoading(
+inline fun <T : Any> Observable<T>.applyAutoLoading(
     context: Context,
     message: String = "请稍后",
     cancelable: Boolean = true,
@@ -184,7 +187,7 @@ inline fun <T> Observable<T>.applyAutoLoading(
     return this.compose(me.skean.skeanframework.ktext.applyAutoLoading<T>(context, message, cancelable, onCancel))
 }
 
-inline fun <T> Flowable<T>.applyAutoLoading(
+inline fun <T : Any> Flowable<T>.applyAutoLoading(
     context: Context,
     message: String = "请稍后",
     cancelable: Boolean = true,
@@ -195,18 +198,22 @@ inline fun <T> Flowable<T>.applyAutoLoading(
 }
 
 
-fun <T> applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>)
+fun <T : Any> applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>)
         : SmartRefreshLayoutTransformer<T> {
     return SmartRefreshLayoutTransformer<T>(loader, refresh, checkSuccessAndNoMore)
 }
 
-fun <T> Single<T>.applyAutoRefresh(loader: SmartRefreshLayout, refresh: Boolean, checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>)
+fun <T : Any> Single<T>.applyAutoRefresh(
+    loader: SmartRefreshLayout,
+    refresh: Boolean,
+    checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>
+)
         : Single<T> {
     return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
 }
 
 
-fun <T> Observable<T>.applyAutoRefresh(
+fun <T : Any> Observable<T>.applyAutoRefresh(
     loader: SmartRefreshLayout,
     refresh: Boolean,
     checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>
@@ -215,7 +222,7 @@ fun <T> Observable<T>.applyAutoRefresh(
     return this.compose(me.skean.skeanframework.ktext.applyAutoRefresh<T>(loader, refresh, checkSuccessAndNoMore))
 }
 
-fun <T> Flowable<T>.applyAutoRefresh(
+fun <T : Any> Flowable<T>.applyAutoRefresh(
     loader: SmartRefreshLayout,
     refresh: Boolean,
     checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>
@@ -225,21 +232,21 @@ fun <T> Flowable<T>.applyAutoRefresh(
 }
 
 
-fun <T> Single<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit): Single<T> {
+fun <T : Any> Single<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit): Single<T> {
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnSuccess { onLoadingStatus.invoke(LoadingStatus.success()) }
         .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
 }
 
 
-fun <T> Observable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
+fun <T : Any> Observable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
         : Observable<T> {
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
         .doOnError { onLoadingStatus.invoke(LoadingStatus.fail(tips = it.localizedMessage)) }
 }
 
-fun <T> Flowable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
+fun <T : Any> Flowable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Unit)
         : Flowable<T> {
     return this.doOnSubscribe { onLoadingStatus.invoke(LoadingStatus.loading()) }
         .doOnNext { onLoadingStatus.invoke(LoadingStatus.success()) }
@@ -247,14 +254,14 @@ fun <T> Flowable<T>.composeLoadingStatus(onLoadingStatus: (LoadingStatus) -> Uni
 }
 
 
-fun <T> Single<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Single<T> {
+fun <T : Any> Single<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Single<T> {
     return compose<T>(lifecycle.bindToLifecycle())
 }
 
-fun <T> Observable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Observable<T> {
+fun <T : Any> Observable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Observable<T> {
     return compose<T>(lifecycle.bindToLifecycle())
 }
 
-fun <T> Flowable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Flowable<T> {
+fun <T : Any> Flowable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Flowable<T> {
     return compose<T>(lifecycle.bindToLifecycle())
 }

@@ -18,8 +18,10 @@
             android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
-            app:placeholderRes="@drawable/ic_launcher"
-            app:url="@{item.poster}" />
+
+            />
+<!--        app:placeholderRes="@drawable/ic_launcher"
+        app:url="@{item.poster}"-->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

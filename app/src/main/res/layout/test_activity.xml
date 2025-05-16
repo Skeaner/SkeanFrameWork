@@ -31,12 +31,22 @@
             android:layout_centerHorizontal="true" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/txvSelect"
+            android:id="@+id/btn1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="点击一下看看" />
+            android:text="功能1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_below="@id/btn1"
+            android:id="@+id/btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="功能2" />
+
     </RelativeLayout>
 
 

@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter4.BaseDifferAdapter
 import com.dylanc.viewbinding.BindingViewHolder
-import me.goldze.mvvmhabit.base.BaseActivity
+import com.hi.dhl.binding.viewbind
+import me.hgj.jetpackmvvm.base.activity.BaseVmDbActivity
 import me.skean.framework.example.BR
 import me.skean.framework.example.R
 import me.skean.framework.example.component.AppActivityLauncher
@@ -20,38 +21,53 @@ import me.skean.skeanframework.ktext.*
 /**
  * Created by Skean on 2022/4/20.
  */
-class TestMvvmActivity() : BaseActivity<TestMvvmActivityBinding, TestMvvmViewModel>() {
+class TestMvvmActivity() : BaseVmDbActivity<TestMvvmViewModel,TestMvvmActivityBinding>() {
 
     private val launcher: AppActivityLauncher by injectLauncher()
     private lateinit var itemAdapter: ItemAdapter
 
 
-    override fun initContentView(savedInstanceState: Bundle?) = R.layout.test_mvvm_activity
+//    override fun initContentView(savedInstanceState: Bundle?) = R.layout.test_mvvm_activity
+//
+//    override fun initVariableId() = BR.viewModel
+    override fun createObserver() {
+        TODO("Not yet implemented")
+    }
 
-    override fun initVariableId() = BR.viewModel
+    override fun dismissLoading() {
+        TODO("Not yet implemented")
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
+        TODO("Not yet implemented")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    override fun initData() {
-        initActionBar(binding.toolbar)
-        binding.rvItems.apply {
+    override fun showLoading(message: String) {
+        TODO("Not yet implemented")
+    }
+
+     fun initData() {
+        initActionBar(mDatabind.toolbar)
+        mDatabind.rvItems.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = ItemAdapter().apply { itemAdapter = this }
             addDividerItemDecoration()
         }
-        binding.srlLoader.autoRefresh()
+         mDatabind.srlLoader.autoRefresh()
     }
 
-    override fun initViewObservable() {
-        viewModel.uc.finishRefreshing.observe(this) { isSuccessAndNoMore ->
-            binding.srlLoader.finishRefresh(0, isSuccessAndNoMore.first, isSuccessAndNoMore.second)
+     fun initViewObservable() {
+         mViewModel.uc.finishRefreshing.observe(this) { isSuccessAndNoMore ->
+            mDatabind.srlLoader.finishRefresh(0, isSuccessAndNoMore.first, isSuccessAndNoMore.second)
         }
-        viewModel.uc.finishLoadMore.observe(this) { isSuccessAndNoMore ->
-            binding.srlLoader.finishLoadMore(0, isSuccessAndNoMore.first, isSuccessAndNoMore.second)
+         mViewModel.uc.finishLoadMore.observe(this) { isSuccessAndNoMore ->
+            mDatabind.srlLoader.finishLoadMore(0, isSuccessAndNoMore.first, isSuccessAndNoMore.second)
         }
-        viewModel.data.observe(this) {
+         mViewModel.data.observe(this) {
             itemAdapter.submitList(it)
         }
     }

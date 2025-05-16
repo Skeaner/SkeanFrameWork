@@ -1,8 +1,8 @@
 package me.skean.framework.example.db.dao
 
 import androidx.room.*
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import me.skean.framework.example.db.entity.Dummy
 import me.skean.framework.example.db.pojo.NameCount
 

@@ -1,11 +1,11 @@
 package me.skean.skeanframework.rx
 
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.functions.Function
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import org.reactivestreams.Publisher
 import java.util.concurrent.TimeUnit
+import  io.reactivex.rxjava3.functions.Function
 
 
 /**
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
  * @param retryDelayMillis Int 每次重试的延迟毫秒数
  * @return Observable<T>
  */
-fun <T> Observable<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMillis: Int): Observable<T> {
+fun <T : Any> Observable<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMillis: Int): Observable<T> {
     return this.retryWhen(RetryWithDelay(maxRetries, retryDelayMillis))
 }
 
@@ -24,14 +24,15 @@ fun <T> Observable<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMill
  * @param retryDelayMillis Int Int 每次重试的延迟毫秒数
  * @return Single<T>
  */
-fun <T> Single<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMillis: Int): Single<T> {
+fun <T : Any> Single<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMillis: Int): Single<T> {
     return this.retryWhen(RetryWithDelaySingle(maxRetries, retryDelayMillis))
 }
 
+
 class RetryWithDelay(private val maxRetries: Int, private val retryDelayMillis: Int) :
-    Function<Observable<out Throwable?>, Observable<*>> {
+    Function<Observable<out Throwable>, Observable<*>> {
     private var retryCount = 0
-    override fun apply(attempts: Observable<out Throwable?>): Observable<*> {
+    override fun apply(attempts: Observable<out Throwable>): Observable<*> {
         return attempts
             .flatMap { t ->
                 if (maxRetries == 0 || ++retryCount < maxRetries) {
@@ -47,10 +48,10 @@ class RetryWithDelay(private val maxRetries: Int, private val retryDelayMillis: 
 }
 
 class RetryWithDelaySingle(private val maxRetries: Int, private val retryDelayMillis: Int) :
-    Function<Flowable<out Throwable?>, Flowable<*>> {
+    Function<Flowable<out Throwable>, Flowable<*>> {
     private var retryCount = 0
 
-    override fun apply(attempts: Flowable<out Throwable?>): Flowable<*> {
+    override fun apply(attempts: Flowable<out Throwable>): Flowable<*> {
         return attempts
             .flatMap { t ->
                 if (maxRetries == 0 || ++retryCount < maxRetries) {

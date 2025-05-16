@@ -1,11 +1,12 @@
 package me.skean.skeanframework.rx;
 
 import androidx.lifecycle.ViewModel
-import com.trello.rxlifecycle3.LifecycleProvider
-import com.trello.rxlifecycle3.LifecycleTransformer
-import com.trello.rxlifecycle3.RxLifecycle
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import com.trello.rxlifecycle4.LifecycleProvider
+import com.trello.rxlifecycle4.LifecycleTransformer
+import com.trello.rxlifecycle4.RxLifecycle
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.internal.util.HalfSerializer.onNext
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 abstract class RxViewModel : ViewModel(), LifecycleProvider<RxViewModel.ViewModelEvent> {
 

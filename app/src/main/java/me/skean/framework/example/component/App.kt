@@ -5,20 +5,23 @@ import android.content.Context
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import androidx.lifecycle.ViewModelStore
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import cn.numeron.okhttp.log.LogLevel
+import cn.numeron.okhttp.log.TextLogInterceptor
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import com.chibatching.kotpref.Kotpref
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.tencent.bugly.crashreport.CrashReport
-import me.goldze.mvvmhabit.base.BaseApplication
-import me.goldze.mvvmhabit.utils.KLog
+import me.hgj.jetpackmvvm.base.BaseApp
 import me.skean.framework.example.BuildConfig
-import me.skean.framework.example.EventBusIndex
 import me.skean.framework.example.db.AppDatabase
 import me.skean.framework.example.db.Migrations
 import me.skean.framework.example.event.BackgroundEvent
+import me.skean.framework.example.event.Events
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.framework.example.net.ArticleApi
 import me.skean.framework.example.net.DouBanApi
@@ -30,12 +33,9 @@ import me.skean.skeanframework.utils.AppStatusTracker
 import me.skean.skeanframework.utils.AppStatusTracker.StatusCallback
 import me.skean.skeanframework.utils.LogFileWriter
 import me.skean.skeanframework.utils.NetworkUtil
-import me.skean.skeanframework.utils.NetworkUtil.init
 import me.skean.skeanframework.utils.ReportUtils
 import net.sqlcipher.database.SQLiteDatabase.getBytes
 import net.sqlcipher.database.SupportFactory
-import okhttp3.logging.HttpLoggingInterceptor
-import org.greenrobot.eventbus.EventBus
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.android.logger.AndroidLogger
@@ -49,7 +49,7 @@ import java.io.File
 /**
  * App的Application
  */
-class App : BaseApplication(), StatusCallback {
+class App : Application(), StatusCallback {
 
     companion object {
         @JvmStatic
@@ -110,13 +110,12 @@ class App : BaseApplication(), StatusCallback {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        KLog.init(true)
         //AppStatusTracker初始化
         AppStatusTracker.init(this)
         AppStatusTracker.getInstance().statusCallback = this
         //初始化框架
         SkeanFrameWork.init(this)
-        init(this, if (BuildConfig.FLAVOR == "production") HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.BODY)
+        NetworkUtil.init(this, if (BuildConfig.FLAVOR == "production") LogLevel.BASIC else LogLevel.BODY)
         //AndroidUtils初始化
         Utils.init(this)
         LogUtils.getConfig() //.setLogSwitch(BuildConfig.DEBUG)
@@ -125,8 +124,6 @@ class App : BaseApplication(), StatusCallback {
             .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
             .setFilePrefix("new")
             .setFileWriter(LogFileWriter(5 * 1024 * 1024)).isSingleTagSwitch = true
-        //初始化EventBus
-        EventBus.builder().throwSubscriberException(true).addIndex(EventBusIndex()).installDefaultEventBus()
         //数据库初始化
         initDatabase()
         //初始化Kotpref
@@ -212,12 +209,14 @@ class App : BaseApplication(), StatusCallback {
 
     override fun onToForeground() {
         LogUtils.iTag(TAG, "恢复到前台了")
-        EventBus.getDefault().post(ForegroundEvent())
+        LiveEventBus.get<Any?>(Events.FOREGROUND)
+            .post(null)
     }
 
     override fun onToBackground() {
         LogUtils.iTag(TAG, "进入了后台")
-        EventBus.getDefault().post(BackgroundEvent())
+        LiveEventBus.get<Any?>(Events.BACKGROUND)
+            .post(null)
     }
 
 

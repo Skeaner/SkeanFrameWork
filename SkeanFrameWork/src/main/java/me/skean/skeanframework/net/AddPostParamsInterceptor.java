@@ -1,14 +1,10 @@
 package me.skean.skeanframework.net;
 
 import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Map;
 
-import androidx.annotation.IntDef;
 import okhttp3.FormBody;
 import okhttp3.Interceptor;
-import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -16,11 +12,11 @@ import okhttp3.Response;
 /**
  * 全局post参数添加的拦截器
  */
-public class GlobalPostParamsInterceptor implements Interceptor {
+public class AddPostParamsInterceptor implements Interceptor {
 
     private Map<String, String> params;
 
-    public GlobalPostParamsInterceptor(Map<String, String> params) {
+    public AddPostParamsInterceptor(Map<String, String> params) {
         this.params = params;
     }
 

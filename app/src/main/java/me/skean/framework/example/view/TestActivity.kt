@@ -8,21 +8,31 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.dylanc.activityresult.launcher.StartActivityLauncher
 import com.hi.dhl.binding.viewbind
-import io.reactivex.Single
+import com.jeremyliao.liveeventbus.LiveEventBus
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import me.skean.framework.example.component.App
 import me.skean.framework.example.databinding.TestActivityBinding
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.utils.ImageUtil
 import me.skean.framework.example.db.dao.DummyDao
 import me.skean.framework.example.event.BackgroundEvent
+import me.skean.framework.example.event.Events
 import me.skean.framework.example.event.ForegroundEvent
 import me.skean.skeanframework.ktext.*
 import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.utils.NetworkUtil
-import org.greenrobot.eventbus.Subscribe
+import me.skean.skeanframework.utils.NetworkUtil.toMultiPart
+import me.skean.skeanframework.utils.NetworkUtil.toProgressUploadObservable
 import org.koin.android.ext.android.inject
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -42,6 +52,9 @@ class TestActivity : BaseActivity() {
     private val vb: TestActivityBinding by viewbind()
     private val navigator: StartActivityLauncher by inject()
 
+    private var task: Disposable? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setResult(Activity.RESULT_OK)
@@ -53,13 +66,40 @@ class TestActivity : BaseActivity() {
         vb.srlLoader.setOnLoadMoreListener {
             testRefresh(false)
         }
-        vb.txvSelect.setOnClickListener {
-            val baseUrl = NetworkUtil.getBaseUrlForClass(FileIOApi::class.java)
-            ToastUtils.showShort(baseUrl)
+        vb.btn1.setOnClickListener {
+            val file = File(externalCacheDir, "test.mp4")
+//            val file = File(externalCacheDir, "test2.mp4")
+
+            FileUtils.createOrExistsFile(file)
+//            NetworkUtil.downloadProgress("http://442000.xyz:30080/test2.mp4", file)
+            NetworkUtil.createService<FileIOApi>()
+//                .uploadToObservable("http://192.168.1.249:8080/gjf/caiLiaoBiaoZhu/attachment/upload", file.toMultiPart())
+                .uploadToCall("http://192.168.1.249:8080/gjf/caiLiaoBiaoZhu/attachment/upload", file.toMultiPart())
+                .toProgressUploadObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(defaultObserver(
+                    onSubscribe2 = {
+                        task = it
+                    },
+                    onError2 = {
+                        ToastUtils.showShort("出错: ${it.message}")
+                    }, onComplete2 = {
+                        ToastUtils.showShort("完毕")
+                    }) {
+                    ToastUtils.showShort("进度:$it");
+                })
+        }
+        vb.btn2.setOnClickListener {
+            task?.dispose()
+            task = null
         }
 //        postInMainDelayed(3000, "MSG", TestRunnable())
         val dm = resources.displayMetrics
         vb.tvInfo.text = "Resolution:${dm.widthPixels}X${dm.heightPixels}\nDPI:${dm.density * 160f.toInt()}"
+        LiveEventBus.get<Any>(Events.BACKGROUND).observe(this) {
+
+        }
     }
 
     private inner class TestRunnable : Runnable {
@@ -152,15 +192,6 @@ class TestActivity : BaseActivity() {
         return filePath
     }
 
-    @Subscribe
-    fun getBackgroundEvent(event: BackgroundEvent) {
-
-    }
-
-    @Subscribe
-    fun getForegroundEvent(event: ForegroundEvent) {
-
-    }
 
     private fun testUploadFile() {
         Single.timer(4, TimeUnit.SECONDS)

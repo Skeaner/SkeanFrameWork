@@ -1,10 +1,9 @@
 
 package me.skean.skeanframework.rx;
 
-import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public interface SingleObserver2<T> extends SingleObserver<T> {
 

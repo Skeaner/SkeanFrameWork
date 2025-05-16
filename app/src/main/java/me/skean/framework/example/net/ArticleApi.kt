@@ -1,6 +1,6 @@
 package me.skean.framework.example.net
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import me.skean.framework.example.net.bean.ArticleResponse
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.skeanframework.net.BaseUrl

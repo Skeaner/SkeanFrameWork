@@ -11,11 +11,11 @@ import okhttp3.Response;
 /**
  * 全局get参数添加的拦截器
  */
-public class GlobalGetParamsInterceptor implements Interceptor {
+public class AddGetParamsInterceptor implements Interceptor {
 
     private Map<String, String> params;
 
-    public GlobalGetParamsInterceptor(Map<String, String> params) {
+    public AddGetParamsInterceptor(Map<String, String> params) {
         this.params = params;
     }
 

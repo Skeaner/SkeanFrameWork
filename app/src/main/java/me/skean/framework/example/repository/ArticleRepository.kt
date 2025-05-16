@@ -1,6 +1,5 @@
 package me.skean.framework.example.repository
 
-import io.reactivex.Single
 import me.skean.framework.example.net.ArticleApi
 import me.skean.framework.example.net.DouBanApi
 import me.skean.framework.example.net.bean.MovieInfo

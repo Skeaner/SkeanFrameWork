@@ -9,7 +9,7 @@ plugins {
     id("kotlin-parcelize")
     id("kotlin-allopen")
     id("kotlin-kapt")
-    id("maven-publish")
+    id("com.google.devtools.ksp")
 }
 
 allOpen {
@@ -85,7 +85,6 @@ android {
 
         kapt {
             arguments {
-                arg("eventBusIndex", "${applicationId}.EventBusIndex")
                 arg("resourcePackageName", "$applicationId")
                 arg("room.schemaLocation", "$projectDir/schemas")
                 arg("androidManifestFile", "$projectDir/src/main/AndroidManifest.xml")
@@ -210,8 +209,5 @@ dependencies {
     implementation(project(":SkeanFrameWork"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
     implementation(fileTree("libs") { include("*.jar") })
-    kapt("com.github.permissions-dispatcher:permissionsdispatcher-processor:4.8.0")
-    kapt("org.greenrobot:eventbus-annotation-processor:3.1.1")
-    kapt("com.jakewharton:butterknife-compiler:10.2.0")
-    kapt("androidx.room:room-compiler:2.7.1")
+    ksp("androidx.room:room-compiler:2.7.1")
 }

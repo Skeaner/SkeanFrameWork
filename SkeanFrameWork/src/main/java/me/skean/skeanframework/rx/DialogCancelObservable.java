@@ -5,10 +5,9 @@ import android.content.DialogInterface;
 import android.os.Looper;
 import android.view.View;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.MainThreadDisposable;
-import io.reactivex.disposables.Disposables;
+import io.reactivex.rxjava3.android.MainThreadDisposable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
 
 public final class DialogCancelObservable extends Observable<Object> {
     private final Dialog dialog;

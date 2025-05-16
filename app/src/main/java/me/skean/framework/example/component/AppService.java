@@ -24,8 +24,12 @@ import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import me.skean.framework.example.constant.IntentKey;
 import me.skean.skeanframework.net.FileIOApi;
+import me.skean.skeanframework.rx.DefaultObserver;
 import me.skean.skeanframework.utils.NetworkUtil;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -124,67 +128,68 @@ public final class AppService extends Service {
             Toast.makeText(this, me.skean.skeanframework.R.string.createFileFail, Toast.LENGTH_SHORT).show();
             return;
         }
-        NetworkUtil.progressRetrofit(NetworkUtil.getBaseUrlForClass(FileIOApi.class),
-                                     null,
-                                     (bytesRead, contentLength, percentage, done) -> {
-                                         if (!done) {
-                                             nManager.notify(1,
-                                                             new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
-                                                                                              .setContentText(getString(me.skean.skeanframework.R.string.downloadProgress,
-                                                                                                                        percentage))
-                                                                                              .setSmallIcon(R.drawable.ic_launcher)
-                                                                                              .setOngoing(true)
-                                                                                              .setProgress(100, percentage, false)
-                                                                                              .build());
-                                         }
-                                     }).create(FileIOApi.class).downloadWithCall(url).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    FileIOUtils.writeFileFromIS(apkFile, response.body().byteStream());
-                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        Uri contentUri = FileProvider.getUriForFile(context, IntentKey.AUTHORITY + ".fileprovider", apkFile);
-                        installIntent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-                    }
-                    else {
-                        installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                     .setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
-                    }
-                    PendingIntent pi = PendingIntent.getActivity(AppService.this, 0, installIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-                    nManager.notify(1,
-                                    new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
-                                                                     .setContentText(getString(me.skean.skeanframework.R.string.downloadFinishClickInstall))
-                                                                     .setContentIntent(pi)
-                                                                     .setSmallIcon(R.drawable.ic_launcher)
-                                                                     .setOngoing(false)
-                                                                     .setAutoCancel(false)
-                                                                     .setProgress(100, 100, false)
-                                                                     .build());
-                    context.startActivity(installIntent);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    onFailure(call, e);
-                }
-            }
+        NetworkUtil.downloadProgress(url, apkFile)
+                   .subscribeOn(Schedulers.io())
+                   .observeOn(AndroidSchedulers.mainThread())
+                   .subscribe(new DefaultObserver<Integer>() {
+                       @Override
+                       public void onNext2(Integer percentage) {
+                           nManager.notify(1,
+                                           new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                                                                            .setContentText(getString(me.skean.skeanframework.R.string.downloadProgress,
+                                                                                                      percentage))
+                                                                            .setSmallIcon(R.drawable.ic_launcher)
+                                                                            .setOngoing(true)
+                                                                            .setProgress(100, percentage, false)
+                                                                            .build());
+                       }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP)
-                                                                             .putExtra(IntentKey.EXTRA_DOWNLOAD_URL, url);
-                PendingIntent pi = PendingIntent.getService(AppService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                nManager.notify(1,
-                                new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
-                                                                 .setContentText(getString(me.skean.skeanframework.R.string.downloadFailClickRetry))
-                                                                 .setContentIntent(pi)
-                                                                 .setSmallIcon(R.drawable.ic_launcher)
-                                                                 .setOngoing(false)
-                                                                 .setAutoCancel(false)
-                                                                 .build());
-            }
-        });
+                       @Override
+                       public void onError2(Throwable e) {
+                           Intent intent = new Intent(AppService.this, AppService.class).setAction(IntentKey.ACTION_DOWNLOAD_APP)
+                                                                                        .putExtra(IntentKey.EXTRA_DOWNLOAD_URL, url);
+                           PendingIntent pi = PendingIntent.getService(AppService.this,
+                                                                       0,
+                                                                       intent,
+                                                                       PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                           nManager.notify(1,
+                                           new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                                                                            .setContentText(getString(me.skean.skeanframework.R.string.downloadFailClickRetry))
+                                                                            .setContentIntent(pi)
+                                                                            .setSmallIcon(R.drawable.ic_launcher)
+                                                                            .setOngoing(false)
+                                                                            .setAutoCancel(false)
+                                                                            .build());
+                       }
+
+                       @Override
+                       public void onComplete2() {
+                           Intent installIntent = new Intent(Intent.ACTION_VIEW);
+                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                               installIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                               Uri contentUri = FileProvider.getUriForFile(context, IntentKey.AUTHORITY + ".fileprovider", apkFile);
+                               installIntent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+                           }
+                           else {
+                               installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            .setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+                           }
+                           PendingIntent pi = PendingIntent.getActivity(AppService.this,
+                                                                        0,
+                                                                        installIntent,
+                                                                        PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                           nManager.notify(1,
+                                           new Notification.Builder(context).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                                                                            .setContentText(getString(me.skean.skeanframework.R.string.downloadFinishClickInstall))
+                                                                            .setContentIntent(pi)
+                                                                            .setSmallIcon(R.drawable.ic_launcher)
+                                                                            .setOngoing(false)
+                                                                            .setAutoCancel(false)
+                                                                            .setProgress(100, 100, false)
+                                                                            .build());
+                           context.startActivity(installIntent);
+                       }
+                   });
     }
 
 }

@@ -1,7 +1,7 @@
 package me.skean.skeanframework.rx;
 
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * Observer默认空实现

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import org.reactivestreams.Subscription;
 
-import io.reactivex.annotations.NonNull;
+import io.reactivex.rxjava3.annotations.NonNull;
 import me.skean.skeanframework.widget.LoadingDialog2;
 
 /**

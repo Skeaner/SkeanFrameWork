@@ -15,17 +15,27 @@ package me.skean.skeanframework.rx
 
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import io.reactivex.*
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.FlowableTransformer
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.ObservableSource
+import io.reactivex.rxjava3.core.ObservableTransformer
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.SingleSource
+import io.reactivex.rxjava3.core.SingleTransformer
 import org.reactivestreams.Publisher
 
 /**
  * Transformer that continues a subscription until a second Observable emits an event.
  */
-class SmartRefreshLayoutTransformer<T>(private val loader: SmartRefreshLayout,
-                                       private val refresh: Boolean,
-                                       private val checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>) :
-        ObservableTransformer<T, T>,
-        FlowableTransformer<T, T>,
-        SingleTransformer<T, T> {
+class SmartRefreshLayoutTransformer<T : Any>(
+    private val loader: SmartRefreshLayout,
+    private val refresh: Boolean,
+    private val checkSuccessAndNoMore: (T) -> Pair<Boolean, Boolean>
+) :
+    ObservableTransformer<T, T>,
+    FlowableTransformer<T, T>,
+    SingleTransformer<T, T> {
 
     override fun apply(upstream: Observable<T>): ObservableSource<T> {
         return upstream.doOnNext { finishLoading(true, it) }.doOnError { finishLoading(false, null) }

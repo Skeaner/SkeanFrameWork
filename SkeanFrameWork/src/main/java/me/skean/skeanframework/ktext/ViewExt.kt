@@ -27,7 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
-import com.jakewharton.rxbinding3.view.clicks
+import com.jakewharton.rxbinding4.view.clicks
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
