@@ -1,9 +1,6 @@
-package me.skean.skeanframework.component;
+package me.skean.skeanframework.component.function;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.net.Uri;
 
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.XXPermissions;
@@ -15,48 +12,36 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import me.skean.skeanframework.BuildConfig;
-import me.skean.skeanframework.R;
+import me.skean.skeanframework.component.BaseActivity;
 import me.skean.skeanframework.utils.GlideEngine;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * 选择图片基础Activity
  */
-public class SelectPictureFragment extends BaseFragment {
+public class SelectPictureActivity extends BaseActivity {
+
 
     protected List<LocalMedia> selectedPictures = new ArrayList<>();
     private int maxSelectCount = 1;
     private boolean rememberSelectedPictures = false;
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 1
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 3
-    ///////////////////////////////////////////////////////////////////////////
 
     protected final void startSelectPictureWithPermissionCheck() {
         XXPermissions.with(this)
                      .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                      .request(new OnPermissionCallback() {
                          @Override
-                         public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
+                         public void onGranted(List<String> permissions, boolean allGranted) {
                              if (allGranted) {
                                  startSelectPicture();
                              }
                          }
 
                          @Override
-                         public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
+                         public void onDenied(List<String> permissions, boolean doNotAskAgain) {
                              EasyPermissionDialog.build(getThis()).permissions(permissions).show(doNotAskAgain, allow -> {
                                  if (allow) startSelectPictureWithPermissionCheck();
                              });
@@ -64,7 +49,7 @@ public class SelectPictureFragment extends BaseFragment {
                      });
     }
 
-    public void onSelectPictureResult(List<LocalMedia> pathList) {
+    public void onSelectPictureResult(List<LocalMedia> pictures) {
 
     }
 

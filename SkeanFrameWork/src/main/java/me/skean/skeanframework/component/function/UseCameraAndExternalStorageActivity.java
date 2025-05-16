@@ -1,7 +1,6 @@
-package me.skean.skeanframework.component;
+package me.skean.skeanframework.component.function;
 
 import android.Manifest;
-import android.content.Intent;
 
 import com.blankj.utilcode.util.PermissionUtils;
 import com.hjq.permissions.OnPermissionCallback;
@@ -10,15 +9,16 @@ import com.hjq.permissions.XXPermissions;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import me.skean.skeanframework.component.BaseActivity;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 
 /**
- * 使用相机的基础
+ * 使用相机和读取储存功能的基础Activity
  */
-public class UseCameraActivity extends BaseActivity {
+public class UseCameraAndExternalStorageActivity extends BaseActivity {
 
-    private static final String[] PERMISSIONS = {Manifest.permission.CAMERA};
+    private static final String[] PERMISSIONS = {Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     ///////////////////////////////////////////////////////////////////////////
     // 1
@@ -32,27 +32,27 @@ public class UseCameraActivity extends BaseActivity {
     // 3
     ///////////////////////////////////////////////////////////////////////////
 
-    protected final void startCameraWithPermissionCheck() {
+    protected final void userCameraAndExternalStorageWithPermissionCheck() {
         XXPermissions.with(this).permission(PERMISSIONS).request(new OnPermissionCallback() {
             @Override
             public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
-                if (allGranted) startCamera();
+                if (allGranted) onUseCameraAndExternalStorage();
             }
 
             @Override
             public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
                 EasyPermissionDialog.build(getThis()).permissions(permissions).show(doNotAskAgain, allow -> {
-                    if (allow) startCameraWithPermissionCheck();
+                    if (allow) userCameraAndExternalStorageWithPermissionCheck();
                 });
             }
         });
     }
 
-    protected final boolean hasCameraPermission() {
-        return PermissionUtils.isGranted(PERMISSIONS);
+    public void onUseCameraAndExternalStorage() {
     }
 
-    public void startCamera() {
+    protected final boolean hasCameraPermission() {
+        return PermissionUtils.isGranted(PERMISSIONS);
     }
 
 }

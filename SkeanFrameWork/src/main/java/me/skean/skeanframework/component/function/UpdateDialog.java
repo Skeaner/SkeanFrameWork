@@ -1,4 +1,4 @@
-package me.skean.skeanframework.component;
+package me.skean.skeanframework.component.function;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +23,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import me.skean.skeanframework.R;
+import me.skean.skeanframework.component.BaseActivity;
 import me.skean.skeanframework.rx.DefaultObserver;
 import me.skean.skeanframework.utils.NetworkUtil;
 

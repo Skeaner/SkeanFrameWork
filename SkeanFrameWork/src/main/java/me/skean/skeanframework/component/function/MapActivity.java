@@ -1,6 +1,5 @@
-package me.skean.skeanframework.component;
+package me.skean.skeanframework.component.function;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
@@ -28,6 +26,7 @@ import com.hjq.permissions.XXPermissions;
 import java.util.List;
 
 import me.skean.skeanframework.R;
+import me.skean.skeanframework.component.BaseActivity;
 import me.skean.skeanframework.utils.AMapUtil;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 

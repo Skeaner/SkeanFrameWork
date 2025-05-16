@@ -69,14 +69,14 @@
 
         <!-- 强制更新Dialog-->
         <activity
-            android:name=".component.UpdateDialog"
+            android:name=".component.function.UpdateDialog"
             android:theme="@style/AppTheme.Dialog"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
 
         <!--地图预览-->
         <activity
-            android:name=".component.MapActivity"
+            android:name=".component.function.MapActivity"
             android:label="地图预览"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"

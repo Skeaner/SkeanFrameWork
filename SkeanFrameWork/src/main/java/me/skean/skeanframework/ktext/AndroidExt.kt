@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.MetaDataUtils
 import com.blankj.utilcode.util.ToastUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import me.skean.skeanframework.component.UpdateDialog
+import me.skean.skeanframework.component.function.UpdateDialog
 import me.skean.skeanframework.net.pgy.PgyerApi
 import me.skean.skeanframework.utils.NetworkUtil
 

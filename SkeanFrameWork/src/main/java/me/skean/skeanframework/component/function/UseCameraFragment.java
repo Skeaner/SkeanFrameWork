@@ -1,7 +1,6 @@
-package me.skean.skeanframework.component;
+package me.skean.skeanframework.component.function;
 
 import android.Manifest;
-import android.content.Intent;
 
 import com.blankj.utilcode.util.PermissionUtils;
 import com.hjq.permissions.OnPermissionCallback;
@@ -10,7 +9,7 @@ import com.hjq.permissions.XXPermissions;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import me.skean.skeanframework.component.BaseFragment;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 
 /**

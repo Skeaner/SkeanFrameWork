@@ -1,7 +1,6 @@
-package me.skean.skeanframework.component;
+package me.skean.skeanframework.component.function;
 
 import android.Manifest;
-import android.content.Intent;
 
 import com.blankj.utilcode.util.PermissionUtils;
 import com.hjq.permissions.OnPermissionCallback;
@@ -10,16 +9,18 @@ import com.hjq.permissions.XXPermissions;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import me.skean.skeanframework.component.BaseActivity;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 
 /**
- * 使用相机和读取储存功能的基础Activity
+ * 使用OCR功能的基础Activity
  */
-public class UseCameraAndExternalStorageActivity extends BaseActivity {
+public class UseOcrActivity extends BaseActivity {
 
     private static final String[] PERMISSIONS = {Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE};
 
     ///////////////////////////////////////////////////////////////////////////
     // 1
@@ -37,7 +38,8 @@ public class UseCameraAndExternalStorageActivity extends BaseActivity {
         XXPermissions.with(this).permission(PERMISSIONS).request(new OnPermissionCallback() {
             @Override
             public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
-                if (allGranted) onUseCameraAndExternalStorage();
+                if (allGranted) onUseOcr();
+
             }
 
             @Override
@@ -49,11 +51,11 @@ public class UseCameraAndExternalStorageActivity extends BaseActivity {
         });
     }
 
-    public void onUseCameraAndExternalStorage() {
-    }
-
     protected final boolean hasCameraPermission() {
         return PermissionUtils.isGranted(PERMISSIONS);
+    }
+
+    public void onUseOcr() {
     }
 
 }
