@@ -40,11 +40,4 @@
         <item name="android:dialogTitle">@null</item>
     </style>
 
-
-    <style name="Matisse.APP" parent="Matisse.Zhihu">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    </style>
-
-
 </resources>

@@ -22,19 +22,10 @@ public class UseOcrActivity extends BaseActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE};
-    private static final int REQUEST_PERMISSION = 99;
 
     ///////////////////////////////////////////////////////////////////////////
     // 1
     ///////////////////////////////////////////////////////////////////////////
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PERMISSION) {
-            userCameraAndExternalStorageWithPermissionCheck();
-        }
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 2
@@ -54,14 +45,9 @@ public class UseOcrActivity extends BaseActivity {
 
             @Override
             public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
-                if (doNotAskAgain) {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeNeverAsk(null).show();
-                }
-                else {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeTemporaryDeny(allow -> {
-                        if (allow) userCameraAndExternalStorageWithPermissionCheck();
-                    }).show();
-                }
+                EasyPermissionDialog.build(getThis()).permissions(permissions).show(doNotAskAgain, allow -> {
+                    if (allow) userCameraAndExternalStorageWithPermissionCheck();
+                });
             }
         });
     }

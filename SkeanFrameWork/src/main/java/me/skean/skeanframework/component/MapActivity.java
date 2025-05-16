@@ -22,6 +22,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 
 import java.util.List;
@@ -37,8 +38,6 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
 
     private static final String TAG = "MapActivity";
 
-    public static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
-    public static final int REQUEST_SETTING = 1;
 
     public static final String EXTRA_SHOW_LOCATION_ONLY = "show_location_only";
     public static final String EXTRA_ADDRESS = "address";
@@ -132,14 +131,6 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SETTING) {
-            if (PermissionUtils.isGranted(PERMISSIONS)) tryLocate();
-        }
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // DELE
     ///////////////////////////////////////////////////////////////////////////
@@ -176,7 +167,7 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
     ///////////////////////////////////////////////////////////////////////////
 
     public void tryLocate() {
-        XXPermissions.with(this).permission(PERMISSIONS).request(new OnPermissionCallback() {
+        XXPermissions.with(this).permission(Permission.ACCESS_FINE_LOCATION).request(new OnPermissionCallback() {
             @Override
             public void onGranted(List<String> permissions, boolean allGranted) {
                 if (allGranted) {
@@ -186,15 +177,9 @@ public class MapActivity extends BaseActivity implements AMapLocationListener, L
 
             @Override
             public void onDenied(List<String> permissions, boolean doNotAskAgain) {
-                if (doNotAskAgain) {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeTemporaryDeny(allow -> {
-                        if (allow) tryLocate();
-                    }).show();
-                }
-                else {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeNeverAsk(null).show();
-                }
-
+                EasyPermissionDialog.build(getThis()).permissions(permissions).show(doNotAskAgain, allow -> {
+                    if (allow) tryLocate();
+                });
             }
 
         });

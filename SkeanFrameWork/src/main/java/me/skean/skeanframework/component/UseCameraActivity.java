@@ -19,19 +19,10 @@ import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 public class UseCameraActivity extends BaseActivity {
 
     private static final String[] PERMISSIONS = {Manifest.permission.CAMERA};
-    private static final int REQUEST_PERMISSION = 99;
 
     ///////////////////////////////////////////////////////////////////////////
     // 1
     ///////////////////////////////////////////////////////////////////////////
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PERMISSION) {
-            startCameraWithPermissionCheck();
-        }
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 2
@@ -50,14 +41,9 @@ public class UseCameraActivity extends BaseActivity {
 
             @Override
             public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
-                if (doNotAskAgain) {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeNeverAsk(null).show();
-                }
-                else {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeTemporaryDeny(allow -> {
-                        if (allow) startCameraWithPermissionCheck();
-                    }).show();
-                }
+                EasyPermissionDialog.build(getThis()).permissions(permissions).show(doNotAskAgain, allow -> {
+                    if (allow) startCameraWithPermissionCheck();
+                });
             }
         });
     }

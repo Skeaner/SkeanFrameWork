@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+
 plugins {
     id("com.android.library")
     id("kotlin-android")
@@ -138,7 +140,8 @@ dependencies {
     api("com.amap.api:map2d:6.0.0")
     api("com.amap.api:location:6.1.0")
     // sql-cipher支持
-    api("net.zetetic:android-database-sqlcipher:4.5.4")    //json解析器
+    api("net.zetetic:android-database-sqlcipher:4.5.4")
+    //json解析器
     api("com.fasterxml.jackson.core:jackson-core:$jacksonVer")
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVer")
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVer")
@@ -161,26 +164,31 @@ dependencies {
     api("it.sephiroth.android.library.imagezoom:imagezoom:2.3.0")
     //图片显示subsamplingImageView
     api("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
-    //图片选择器matisse
-    api("com.github.Skeaner:Matisse:0.5.3-beta3-extend-1.5") {
-        exclude(module = "library")
-    }
+    //图片选择器
+    api("io.github.lucksiege:pictureselector:v3.11.2")
+    api("io.github.lucksiege:compress:v3.11.2")
+    api("io.github.lucksiege:ucrop:v3.11.2")
+    api("io.github.lucksiege:camerax:v3.11.2")
     //综合工具库utilcode
-    api("com.blankj:utilcodex:1.30.6")
+    api("com.blankj:utilcodex:1.31.1")
     //RecyclerView综合适配器
-    api("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.4")
+    api("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.7")
     //material design日期加时间选择器
     api("com.github.Skeaner:SublimePicker:2.1.4")
     //权限提示
-    api("com.github.Skeaner:EasyPermissionDialog:1.8")
+    api("com.github.Skeaner:EasyPermissionDialog:1.9")
     //BUGLY
     api("com.tencent.bugly:crashreport:4.1.9.3")
     //数字进度条
     api("com.github.Skeaner:NumberProgressBar:1.4.1")
     //sharedpreferences
-    api("com.chibatching.kotpref:kotpref:2.13.1")
-    api("com.chibatching.kotpref:preference-screen-dsl:2.13.1")
-    api("com.github.cioccarellia:ksprefs:2.3.2")
+    api("com.chibatching.kotpref:kotpref:2.13.2")
+    api ("com.chibatching.kotpref:enum-support:2.13.2")
+    api ("com.chibatching.kotpref:gson-support:2.13.2")
+    api ("com.google.code.gson:gson:2.10.1")
+    api ("com.chibatching.kotpref:livedata-support:2.13.2")
+    api("com.chibatching.kotpref:preference-screen-dsl:2.13.2")
+    api("com.github.cioccarellia:ksprefs:2.4.1")
 
     //Permission
     api("com.github.Skeaner:XXPermissions:21.3")
@@ -192,9 +200,9 @@ dependencies {
     api("com.afollestad.material-dialogs:input:3.3.0")
     api("com.afollestad.material-dialogs:bottomsheets:3.3.0")
     //刷新库
-    api("io.github.scwang90:refresh-layout-kernel:2.1.0x")
-    api("io.github.scwang90:refresh-header-classics:2.1.0x")  //经典刷新头
-    api("io.github.scwang90:refresh-footer-classics:2.1.0x")
+    api("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha")
+    api("io.github.scwang90:refresh-header-classics:3.0.0-alpha")  //经典刷新头
+    api("io.github.scwang90:refresh-footer-classics:3.0.0-alpha")
     //koin
     api("io.insert-koin:koin-core:$koinVer")
     api("io.insert-koin:koin-android:$koinVer")// Koin main features for Android
@@ -204,7 +212,7 @@ dependencies {
     api("io.insert-koin:koin-androidx-compose:$koinVer")// Jetpack Compose
     //viewBinding快速库
     api("com.hi-dhl:binding:1.2.0")
-    api("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.0.5")
+    api("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.1.0")
     //FlexibleDivider
     api("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")
     //快速ActivityLauncher

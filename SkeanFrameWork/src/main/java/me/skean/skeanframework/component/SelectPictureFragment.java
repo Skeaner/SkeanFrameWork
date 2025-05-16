@@ -7,9 +7,10 @@ import android.net.Uri;
 
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.XXPermissions;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.luck.picture.lib.basic.PictureSelector;
+import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -21,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.skean.skeanframework.BuildConfig;
 import me.skean.skeanframework.R;
-import me.skean.skeanframework.utils.Glide4Engine;
+import me.skean.skeanframework.utils.GlideEngine;
 import skean.yzsm.com.easypermissiondialog.EasyPermissionDialog;
 
 import static android.app.Activity.RESULT_OK;
@@ -31,14 +32,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class SelectPictureFragment extends BaseFragment {
 
-    private static final String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA};
-    private static final int REQUEST_PERMISSION = 98;
-    private static final int REQUEST_CHOOSE_PICTURE = 99;
-
-    protected List<String> selectedPicturePaths;
-    protected List<Uri> selectedPictureUris;
+    protected List<LocalMedia> selectedPictures = new ArrayList<>();
     private int maxSelectCount = 1;
     private boolean rememberSelectedPictures = false;
 
@@ -46,49 +40,31 @@ public class SelectPictureFragment extends BaseFragment {
     // 1
     ///////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CHOOSE_PICTURE) {
-            if (resultCode == RESULT_OK) {
-                selectedPictureUris = Matisse.obtainResult(data);
-                selectedPicturePaths = Matisse.obtainPathResult(data);
-                onSelectPictureResult(selectedPicturePaths);
-            }
-        }
-        else if (requestCode == REQUEST_PERMISSION) {
-            startSelectPictureWithPermissionCheck();
-        }
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // 3
     ///////////////////////////////////////////////////////////////////////////
 
     protected final void startSelectPictureWithPermissionCheck() {
-        XXPermissions.with(this).permission(PERMISSIONS).request(new OnPermissionCallback() {
-            @Override
-            public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
-                if (allGranted) {
-                    startSelectPicture();
-                }
-            }
+        XXPermissions.with(this)
+                     .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                     .request(new OnPermissionCallback() {
+                         @Override
+                         public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
+                             if (allGranted) {
+                                 startSelectPicture();
+                             }
+                         }
 
-            @Override
-            public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
-                if (doNotAskAgain) {
-                    EasyPermissionDialog.build(SelectPictureFragment.this).permissions(PERMISSIONS).typeNeverAsk(null).show();
-                }
-                else {
-                    EasyPermissionDialog.build(getThis()).permissions(PERMISSIONS).typeTemporaryDeny(allow -> {
-                        if (allow) startSelectPictureWithPermissionCheck();
-                    }).show();
-                }
-            }
-        });
+                         @Override
+                         public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
+                             EasyPermissionDialog.build(getThis()).permissions(permissions).show(doNotAskAgain, allow -> {
+                                 if (allow) startSelectPictureWithPermissionCheck();
+                             });
+                         }
+                     });
     }
 
-    public void onSelectPictureResult(List<String> pathList) {
+    public void onSelectPictureResult(List<LocalMedia> pathList) {
 
     }
 
@@ -100,31 +76,33 @@ public class SelectPictureFragment extends BaseFragment {
         this.rememberSelectedPictures = rememberSelectedPictures;
     }
 
-    protected void clearSelectedPictures(String path) {
-        if (CollectionUtils.isNotEmpty(selectedPicturePaths)) {
-            int i = selectedPicturePaths.indexOf(path);
-            if (i != -1) {
-                selectedPictureUris.remove(i);
-                selectedPicturePaths.remove(i);
+    protected void clearSelectedPictures(int position) {
+        if (CollectionUtils.isNotEmpty(selectedPictures)) {
+            if (position != -1) {
+                selectedPictures.remove(position);
             }
         }
     }
 
     public final void startSelectPicture() {
-        Matisse.from(this)
-               .choose(EnumSet.of(MimeType.JPEG, MimeType.PNG), false)
-               .theme(R.style.Matisse_APP)
-               .countable(true)
-               .capture(true, true)
-               .selectedUri(rememberSelectedPictures ? selectedPictureUris : new ArrayList<>())
-               .captureStrategy(new CaptureStrategy(true, requireContext().getPackageName() + ".fileprovider", "test"))
-               .maxSelectable(maxSelectCount)
-               .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-               .thumbnailScale(0.85f)
-               .imageEngine(new Glide4Engine())    // for glide-V4
-               .originalEnable(false)
-               .autoHideToolbarOnSingleTap(true)
-               .forResult(REQUEST_CHOOSE_PICTURE);
+        PictureSelector.create(this)
+                       .openGallery(SelectMimeType.ofImage())
+                       .setImageEngine(GlideEngine.createGlideEngine())
+                       .isDisplayCamera(true)
+                       .setSelectedData(rememberSelectedPictures ? selectedPictures : new ArrayList<>())
+                       .setMaxSelectNum(maxSelectCount)
+                       .forResult(new OnResultCallbackListener<>() {
+                           @Override
+                           public void onResult(ArrayList<LocalMedia> result) {
+                               selectedPictures = result;
+                               onSelectPictureResult(selectedPictures);
+                           }
+
+                           @Override
+                           public void onCancel() {
+
+                           }
+                       });
     }
 
 }
