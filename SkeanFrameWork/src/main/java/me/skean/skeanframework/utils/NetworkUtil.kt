@@ -7,7 +7,6 @@ import android.webkit.MimeTypeMap
 import cn.numeron.okhttp.log.LogLevel
 import cn.numeron.okhttp.log.TextLogInterceptor
 import com.blankj.utilcode.util.FileUtils.getFileExtension
-import com.blankj.utilcode.util.ToastUtils
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -16,9 +15,12 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.flow.Flow
 import me.skean.skeanframework.net.BaseUrl
 import me.skean.skeanframework.net.FileIOApi
+import me.skean.skeanframework.net.ProgressDownloadFlow
 import me.skean.skeanframework.net.ProgressDownloadObservable
+import me.skean.skeanframework.net.ProgressUploadFlow
 import me.skean.skeanframework.net.ProgressUploadObservable
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -201,11 +203,9 @@ object NetworkUtil {
 
     @JvmStatic
     @JvmOverloads
-    fun downloadProgress(url: String, savedFile: File, progressInterval: Int = 5): Observable<Int> {
-        return ProgressDownloadObservable(
-            createService<FileIOApi>().downloadToCall(url), savedFile, progressInterval
-        )
-    }
+    fun downloadObservable(url: String, savedFile: File, progressInterval: Int = 5): Observable<Int> =
+        createService<FileIOApi>().downloadToCall(url).toProgressDownloadObservable(savedFile, progressInterval)
+
 
     @JvmStatic
     @JvmOverloads
@@ -215,11 +215,30 @@ object NetworkUtil {
 
     @JvmStatic
     @JvmOverloads
-    fun uploadProgress(url: String, uploadFile: File, progressInterval: Int = 5): Observable<Int> {
-        return ProgressUploadObservable(
-            createService<FileIOApi>().uploadToCall(url, uploadFile.toMultiPart()), progressInterval
-        )
+    fun uploadObservable(url: String, uploadFile: File, progressInterval: Int = 5): Observable<Int> =
+        createService<FileIOApi>().uploadToCall(url, uploadFile.toMultiPart()).toProgressUploadObservable(progressInterval)
+
+    @JvmStatic
+    @JvmOverloads
+    fun Call<*>.toProgressDownloadFlow(savedFile: File, progressInterval: Int = 5): Flow<Int> {
+        return ProgressDownloadFlow(this, savedFile, progressInterval).produce()
     }
+
+    @JvmStatic
+    @JvmOverloads
+    fun downloadFlow(url: String, savedFile: File, progressInterval: Int = 5): Flow<Int> =
+        createService<FileIOApi>().downloadToCall(url).toProgressDownloadFlow(savedFile, progressInterval)
+
+    @JvmStatic
+    @JvmOverloads
+    fun Call<*>.toProgressUploadFlow(progressInterval: Int = 5): Flow<Int> {
+        return ProgressUploadFlow(this, progressInterval).produce()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun uploadFlow(url: String, uploadFile: File, progressInterval: Int = 5): Flow<Int> =
+        createService<FileIOApi>().uploadToCall(url, uploadFile.toMultiPart()).toProgressUploadFlow(progressInterval)
 
     @JvmStatic
     inline fun <reified T> parseErrorBody(e: Throwable): T? {
@@ -245,9 +264,13 @@ object NetworkUtil {
                 val errorBody = e.response()?.errorBody()?.string() ?: "{}"
                 val jo = JSONObject(errorBody)
                 var info: String? = null
-                for (fieldName in fieldNames) {
-                    if (!jo.isNull(fieldName)) {
-                        info = jo.getString(fieldName)
+                var fields = fieldNames;
+                if (fields.isEmpty()) {
+                    fields = arrayOf("msg", "message", "err", "errMessage", "errorMessage")
+                }
+                for (field in fields) {
+                    if (jo.has(field)) {
+                        info = "${jo.get(field)}"
                         break
                     }
                 }
@@ -268,8 +291,5 @@ object NetworkUtil {
         return parseErrorBodyMsg(e, *namesArray)
     }
 
-    @JvmStatic
-    inline fun <reified T> toastErrorBodyMsg(e: Throwable, vararg props: KProperty1<T, String?>) {
-        ToastUtils.showShort(parseErrorBodyMsg(e, *props))
-    }
+
 }

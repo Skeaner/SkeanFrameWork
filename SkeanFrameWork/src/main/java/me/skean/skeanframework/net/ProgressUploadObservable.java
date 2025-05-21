@@ -53,50 +53,48 @@ public final class ProgressUploadObservable extends Observable<Integer> {
             if (rawRequest.body() == null) {
                 return chain.proceed(rawRequest);
             }
-            else {
-                Request progressRequest = rawRequest.newBuilder().method(rawRequest.method(), new RequestBody() {
-                    private final RequestBody body;
-                    private BufferedSink bufferedSink;
+            Request progressRequest = rawRequest.newBuilder().method(rawRequest.method(), new RequestBody() {
+                private final RequestBody body;
+                private BufferedSink bufferedSink;
 
-                    {
-                        body = rawRequest.body();
-                        totalBytes = body.contentLength();
-                    }
+                {
+                    body = rawRequest.body();
+                    totalBytes = body.contentLength();
+                }
 
-                    @Nullable
-                    @Override
-                    public MediaType contentType() {
-                        return body.contentType();
-                    }
+                @Nullable
+                @Override
+                public MediaType contentType() {
+                    return body.contentType();
+                }
 
-                    @Override
-                    public long contentLength() throws IOException {
-                        return body.contentLength();
-                    }
+                @Override
+                public long contentLength() throws IOException {
+                    return body.contentLength();
+                }
 
-                    @Override
-                    public void writeTo(@NonNull BufferedSink rawSink) throws IOException {
-                        if (bufferedSink == null) {
-                            ForwardingSink progressSink = new ForwardingSink(rawSink) {
-                                @Override
-                                public void write(@NonNull Buffer source, long byteCount) throws IOException {
-                                    super.write(source, byteCount);
-                                    savedBytes += byteCount != -1 ? byteCount : 0;
-                                    int newPercentage = (int) ((savedBytes * 100L) / totalBytes);
-                                    if (newPercentage - currentPercentage >= progressInterval) {
-                                        currentPercentage = newPercentage;
-                                        observer.onNext(currentPercentage);
-                                    }
+                @Override
+                public void writeTo(@NonNull BufferedSink rawSink) throws IOException {
+                    if (bufferedSink == null) {
+                        ForwardingSink progressSink = new ForwardingSink(rawSink) {
+                            @Override
+                            public void write(@NonNull Buffer source, long byteCount) throws IOException {
+                                super.write(source, byteCount);
+                                savedBytes += byteCount != -1 ? byteCount : 0;
+                                int newPercentage = (int) ((savedBytes * 100L) / totalBytes);
+                                if (newPercentage - currentPercentage >= progressInterval) {
+                                    currentPercentage = newPercentage;
+                                    observer.onNext(currentPercentage);
                                 }
-                            };
-                            bufferedSink = Okio.buffer(progressSink);
-                            body.writeTo(bufferedSink);
-                            bufferedSink.flush();
-                        }
+                            }
+                        };
+                        bufferedSink = Okio.buffer(progressSink);
+                        body.writeTo(bufferedSink);
+                        bufferedSink.flush();
                     }
-                }).build();
-                return chain.proceed(progressRequest);
-            }
+                }
+            }).build();
+            return chain.proceed(progressRequest);
         }).build();
         try {
             newCall = newClient.newCall(rawCall.request());

@@ -53,6 +53,9 @@ public final class ProgressDownloadObservable extends Observable<Integer> {
         OkHttpClient client = ReflectUtils.reflect(obj).field("callFactory").get();
         OkHttpClient newClient = client.newBuilder().addInterceptor(chain -> {
             okhttp3.Response rawResponse = chain.proceed(chain.request());
+            if (rawResponse.body() == null) {
+                return rawResponse;
+            }
             return rawResponse.newBuilder().body(new ResponseBody() {
                 private final ResponseBody body;
                 private BufferedSource bufferedSource;

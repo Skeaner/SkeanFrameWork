@@ -169,7 +169,7 @@ public class UpdateDialog extends BaseActivity implements View.OnClickListener {
             btnCenter.performClick();
             return;
         }
-        NetworkUtil.downloadProgress(url, tempFile)
+        NetworkUtil.downloadObservable(url, tempFile)
                    .subscribeOn(Schedulers.io())
                    .observeOn(AndroidSchedulers.mainThread())
                    .subscribe(new DefaultObserver<>() {

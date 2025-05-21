@@ -87,14 +87,18 @@ val jacksonVer = "2.17.0"
 val rxLifecycleVer = "4.0.2"
 val rxbindingVer = "4.0.0"
 val coilVer = "2.7.0"
+val coroutinesVer = "1.8.1"
 
 val kotlinVersion = rootProject.extra["kotlinVersion"]
 
 dependencies {
     api(fileTree("libs") { include("*.jar") })
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    api("com.github.michaellee123:LiveEventBus:1.8.14")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVer")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$coroutinesVer")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-rx3:$coroutinesVer")
+
     //谷歌库
     api("androidx.core:core-ktx:1.13.1")
     api("androidx.appcompat:appcompat:1.7.0")
@@ -136,6 +140,8 @@ dependencies {
     api("com.trello.rxlifecycle4:rxlifecycle-android-lifecycle:$rxLifecycleVer")
     api("com.trello.rxlifecycle4:rxlifecycle-kotlin:$rxLifecycleVer")
     api("com.trello.rxlifecycle4:rxlifecycle-android-lifecycle-kotlin:$rxLifecycleVer")
+    //EVENT
+    api("com.github.michaellee123:LiveEventBus:1.8.14")
     //高德地图
     api("com.amap.api:map2d:6.0.0")
     api("com.amap.api:location:6.1.0")
@@ -183,10 +189,10 @@ dependencies {
     api("com.github.Skeaner:NumberProgressBar:1.4.1")
     //sharedpreferences
     api("com.chibatching.kotpref:kotpref:2.13.2")
-    api ("com.chibatching.kotpref:enum-support:2.13.2")
-    api ("com.chibatching.kotpref:gson-support:2.13.2")
-    api ("com.google.code.gson:gson:2.10.1")
-    api ("com.chibatching.kotpref:livedata-support:2.13.2")
+    api("com.chibatching.kotpref:enum-support:2.13.2")
+    api("com.chibatching.kotpref:gson-support:2.13.2")
+    api("com.google.code.gson:gson:2.10.1")
+    api("com.chibatching.kotpref:livedata-support:2.13.2")
     api("com.chibatching.kotpref:preference-screen-dsl:2.13.2")
     api("com.github.cioccarellia:ksprefs:2.4.1")
 

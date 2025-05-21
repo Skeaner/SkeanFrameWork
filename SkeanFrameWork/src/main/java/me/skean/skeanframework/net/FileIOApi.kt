@@ -12,7 +12,7 @@ import retrofit2.http.*
  */
 interface FileIOApi {
 
-    companion object{
+    companion object {
         @JvmField
         @BaseUrl
         val baseUrl = "http://useless.com/"
@@ -21,6 +21,7 @@ interface FileIOApi {
     @GET
     @Streaming
     suspend fun download(@Url url: String?): ResponseBody?
+
 
     @GET
     @Streaming
@@ -38,7 +39,7 @@ interface FileIOApi {
     @POST
     @Multipart
     @Streaming
-    fun upload(@Url url: String?, @Part file: MultipartBody.Part?): ResponseBody?
+    suspend fun upload(@Url url: String?, @Part file: MultipartBody.Part?): ResponseBody?
 
     @POST
     @Multipart

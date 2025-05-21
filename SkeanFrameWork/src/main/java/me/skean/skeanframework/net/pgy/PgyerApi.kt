@@ -27,6 +27,13 @@ interface PgyerApi {
         @Field("_api_key") apiKey: String,
     ): Single<PgyerResult<PgyAppDetail>>
 
+    @POST("view")
+    @FormUrlEncoded
+    suspend fun getAppInfo2(
+        @Field("appKey") appKey: String,
+        @Field("_api_key") apiKey: String,
+    ): PgyerResult<PgyAppDetail>
+
     @POST("check")
     @FormUrlEncoded
     fun checkUpdate(
@@ -35,5 +42,14 @@ interface PgyerApi {
         @Field("buildVersion") versionName: String,
         @Field("buildBuildVersion") versionCode: Int,
     ): Single<PgyerResult<PgyerAppInfo>>
+
+    @POST("check")
+    @FormUrlEncoded
+    suspend fun checkUpdate2(
+        @Field("appKey") appKey: String,
+        @Field("_api_key") apiKey: String,
+        @Field("buildVersion") versionName: String,
+        @Field("buildBuildVersion") versionCode: Int,
+    ): PgyerResult<PgyerAppInfo>
 
 }

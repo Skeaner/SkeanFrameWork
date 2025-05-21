@@ -18,23 +18,16 @@ import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import me.skean.framework.example.constant.IntentKey;
-import me.skean.skeanframework.net.FileIOApi;
 import me.skean.skeanframework.rx.DefaultObserver;
 import me.skean.skeanframework.utils.NetworkUtil;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import me.skean.framework.example.R;
 
@@ -128,7 +121,7 @@ public final class AppService extends Service {
             Toast.makeText(this, me.skean.skeanframework.R.string.createFileFail, Toast.LENGTH_SHORT).show();
             return;
         }
-        NetworkUtil.downloadProgress(url, apkFile)
+        NetworkUtil.downloadObservable(url, apkFile)
                    .subscribeOn(Schedulers.io())
                    .observeOn(AndroidSchedulers.mainThread())
                    .subscribe(new DefaultObserver<Integer>() {
