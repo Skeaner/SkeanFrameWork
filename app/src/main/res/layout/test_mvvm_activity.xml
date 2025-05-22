@@ -39,8 +39,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/barLayout"
-            app:onLoadMoreListener="@{viewModel.loadMoreListener}"
-            app:onRefreshListener="@{viewModel.refreshListener}">
+            app:bindLoadMoreListener="@{viewModel.loadMoreListener}"
+            app:bindRefreshFinishEvent="@{viewModel.refreshCompleteEvent}"
+            app:bindRefreshListener="@{viewModel.refreshListener}">
             <com.scwang.smart.refresh.header.ClassicsHeader
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

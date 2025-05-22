@@ -115,31 +115,28 @@ fun RecyclerView.addDividerItemDecoration(
 }
 
 
-fun <T> quickDiffCallback(
-    id: KProperty1<T, Any?>? = null,
-    vararg compareProps: KProperty1<T, Any?>
+
+fun <T : Any> quickDiffCallback(
+    isSameComparator: (T, T) -> Boolean = { oldItem, newItem -> oldItem == newItem },
+    contentEqualComparator: (T, T) -> Boolean = { oldItem, newItem -> oldItem == newItem }
 ): DiffUtil.ItemCallback<T> {
     return object : DiffUtil.ItemCallback<T>() {
-        override fun areItemsTheSame(oldItem: T & Any, newItem: T & Any): Boolean {
-            return if (id == null) {
-                oldItem == newItem
-            } else {
-                Objects.equals(id.get(oldItem), id.get(newItem))
-            }
-        }
+        override fun areItemsTheSame(oldItem: T, newItem: T): Boolean = isSameComparator(oldItem, newItem)
 
-        override fun areContentsTheSame(oldItem: T & Any, newItem: T & Any): Boolean {
-            if (compareProps.isEmpty()) {
-                return Objects.equals(oldItem, newItem)
-            } else {
-                for (prop in compareProps) {
-                    if (!Objects.equals(prop.get(oldItem), prop.get(newItem))) {
-                        return false
-                    }
+        override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = contentEqualComparator(oldItem, newItem)
+    }
+}
+
+fun <T : Any> propsComparator(vararg compareProps: KProperty1<T, Any?>): (T, T) -> Boolean {
+    return object : (T, T) -> Boolean {
+        override fun invoke(oldItem: T, newItem: T): Boolean {
+            if (oldItem == newItem) return true
+            for (prop in compareProps) {
+                if (!Objects.equals(prop.get(oldItem), prop.get(newItem))) {
+                    return false
                 }
-                return true
             }
+            return true
         }
-
     }
 }

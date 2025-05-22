@@ -1,16 +1,15 @@
 package me.skean.framework.example.viewmodel
 
-import android.app.Application
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener
-import com.trello.rxlifecycle4.kotlin.bindToLifecycle
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.base.viewmodel.BaseViewModel
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.repository.DouBanRepository
-import me.skean.skeanframework.ktext.bindToVmLifecycle
-import me.skean.skeanframework.ktext.defaultSingleObserver
-import me.skean.skeanframework.ktext.subscribeOnIoObserveOnMainThread
+import me.skean.skeanframework.model.RefreshFinishEvent
 import me.skean.skeanframework.utils.SingleLiveEvent
 import org.koin.core.component.KoinComponent
 
@@ -18,13 +17,12 @@ import org.koin.core.component.KoinComponent
 /**
  * Created by Skean on 2022/4/20.
  */
-class TestMvvmViewModel(app: Application) : BaseViewModel(), KoinComponent {
-    class UIChangeObservable {
-        val finishRefreshing: SingleLiveEvent<Pair<Boolean, Boolean>> = SingleLiveEvent()
-        val finishLoadMore: SingleLiveEvent<Pair<Boolean, Boolean>> = SingleLiveEvent()
-    }
+class TestMvvmViewModel() : BaseViewModel(), KoinComponent {
 
-    val uc: UIChangeObservable = UIChangeObservable()
+    private val repository = DouBanRepository()
+
+    val refreshCompleteEvent: SingleLiveEvent<RefreshFinishEvent> = SingleLiveEvent()
+
     val data = SingleLiveEvent<List<MovieInfo.Data>>()
 
     private var movieList: MutableList<MovieInfo.Data> = mutableListOf()
@@ -38,30 +36,20 @@ class TestMvvmViewModel(app: Application) : BaseViewModel(), KoinComponent {
         requestData(false)
     }
 
+
     private fun requestData(refresh: Boolean) {
         if (refresh) currentPage = 0
-        DouBanRepository.listMovie(currentPage)
-            .subscribeOnIoObserveOnMainThread()
-//            .bindToVmLifecycle(lifecycleProvider)
-            .subscribe(defaultSingleObserver(onError2 = {
-                if (refresh) {
-                    uc.finishRefreshing.value = false to true
-                } else {
-                    uc.finishLoadMore.value = false to true
-                }
-            }) {
-                val list = it.map { it.data?.firstOrNull()!! }
-                currentPage++
-                val noMore = list.size < 10
-                if (refresh) {
-                    uc.finishRefreshing.value = true to noMore
-                    movieList = list.toMutableList()
-                } else {
-                    uc.finishLoadMore.value = true to noMore
-                    movieList.addAll(list)
-                }
-                data.value = movieList
-            })
+        viewModelScope.launch(CoroutineExceptionHandler { _, e ->
+            ToastUtils.showShort(e.localizedMessage)
+            refreshCompleteEvent.value = RefreshFinishEvent(isRefresh = refresh, success = false, noMore = true)
+        }) {
+            val list = repository.listMovie(currentPage).map { it.data?.firstOrNull()!! }
+            currentPage++
+            val noMore = list.size < 10
+            refreshCompleteEvent.value = RefreshFinishEvent(isRefresh = refresh, success = true, noMore = noMore)
+            if (refresh) movieList = list.toMutableList() else movieList.addAll(list)
+            data.value = movieList
+        }
     }
 }
 

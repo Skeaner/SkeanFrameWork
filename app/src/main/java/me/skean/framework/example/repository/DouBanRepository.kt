@@ -7,15 +7,19 @@ import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.skeanframework.utils.NetworkUtil
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * Created by Skean on 2022/4/21.
  */
-object DouBanRepository : ViewModel(),KoinComponent {
-    private val douBanApi by inject<DouBanApi>()
+class DouBanRepository : ViewModel(), KoinComponent {
+    companion object {
+        val api: DouBanApi by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+            NetworkUtil.createService<DouBanApi>()
+        }
+    }
 
-
-    fun listMovie(page: Int): Single<List<MovieInfo>> {
-        return douBanApi.listMovie(skip = page * 10, limit = 10)
+    suspend fun listMovie(page: Int): List<MovieInfo> {
+        return api.listMovie(skip = page * 10, limit = 10)
     }
 }

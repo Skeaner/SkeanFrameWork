@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="item"
+            name="_item"
             type="me.skean.framework.example.net.bean.MovieInfo.Data" />
     </data>
     <RelativeLayout
@@ -34,7 +34,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{item.name}"
+                android:text="@{_item.name}"
                 android:textAppearance="@style/AppTextAppearance"
                 tools:text="测试标题" />
 
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="@{item.description}"
+                android:text="@{_item.description}"
                 android:textAppearance="@style/AppTextAppearance.Small"
                 tools:text="测试描述" />
 
