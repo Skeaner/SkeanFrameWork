@@ -82,6 +82,7 @@ android {
         versionName = vName
         ndk {
             abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
             abiFilters.add("x86")
         }
 
@@ -95,12 +96,11 @@ android {
         applicationVariants.all {
             //修改打包的apk名字
             outputs.all {
-                val dateStr = SimpleDateFormat("MMddHHmm", Locale.getDefault()).format(Date())
-                val shortAppId = "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1)
+                val dateStr = SimpleDateFormat("yyMMddHHmm", Locale.getDefault()).format(Date())
                 val buildTypeName: String = buildType.name
                 val versionTag = buildTypeName.get(0)
                 (this as BaseVariantOutputImpl).outputFileName =
-                    "${shortAppId}-${vName}${versionTag}(b${vCode})-${dateStr}.apk"
+                    "$tag(${flavorName})-${vName}${versionTag}(b${vCode})-${dateStr}.apk"
 
             }
 
@@ -128,6 +128,7 @@ android {
     flavorDimensions.add("default")
     productFlavors {
         //todo 渠道打包配置
+
         // 发布环境
         create("production") {
             dimension = "default"

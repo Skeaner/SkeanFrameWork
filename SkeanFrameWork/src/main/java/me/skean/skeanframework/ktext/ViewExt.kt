@@ -185,7 +185,7 @@ import kotlin.reflect.KMutableProperty
                 }
             }
             startIndexOfLink = this.text.toString().indexOf(link.first, startIndexOfLink + 1)
-//      if(startIndexOfLink == -1) continue // todo if you want to verify your texts contains links text
+//      if(startIndexOfLink == -1) continue
             spannableString.setSpan(
                 clickableSpan, startIndexOfLink, startIndexOfLink + link.first.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

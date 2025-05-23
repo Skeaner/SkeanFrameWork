@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.base.viewmodel.BaseViewModel
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.repository.DouBanRepository
+import me.skean.skeanframework.component.BaseVm
 import me.skean.skeanframework.model.RefreshFinishEvent
 import me.skean.skeanframework.utils.SingleLiveEvent
 import org.koin.core.component.KoinComponent
@@ -17,7 +18,7 @@ import org.koin.core.component.KoinComponent
 /**
  * Created by Skean on 2022/4/20.
  */
-class TestMvvmViewModel() : BaseViewModel(), KoinComponent {
+class TestMvvmViewModel() : BaseVm(), KoinComponent {
 
     private val repository = DouBanRepository()
 

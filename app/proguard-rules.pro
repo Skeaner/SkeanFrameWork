@@ -16,7 +16,7 @@
 #
 #############################################
 #启动器
--keep class me.skean.framework.example.component.AppActivityLauncher {*;}
+-keep class me.skean.skeanframework.component.ActivityLauncher {*;}
 #数据库实体
 -keep class me.skean.framework.example.db.entity.** {*;}
 #数据库实体
