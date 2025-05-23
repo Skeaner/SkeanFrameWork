@@ -1,4 +1,4 @@
-package me.skean.skeanframework.widget;
+package me.skean.skeanframework.component.function;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,8 +12,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.blankj.utilcode.util.LogUtils;
 
 import androidx.appcompat.app.AlertDialog;
 import me.skean.skeanframework.R;

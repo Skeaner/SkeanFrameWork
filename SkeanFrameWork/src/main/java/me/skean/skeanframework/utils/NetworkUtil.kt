@@ -47,7 +47,7 @@ object NetworkUtil {
 
     var timeout = 20
     private var logLevel: LogLevel = LogLevel.HEADERS
-    private var context: Context? = null
+    private lateinit var context: Context
 
     @JvmStatic
     fun init(context: Context, logLevel: LogLevel) {

@@ -16,7 +16,7 @@ import me.skean.skeanframework.ktext.injectLauncher
  * 时间　: 2019/12/12
  * 描述　: ViewModelActivity基类，把ViewModel注入进来了
  */
-abstract class BaseVmActivity<VM : BaseViewModel> : BaseActivity() {
+abstract class BaseVmActivity<VM : BaseVm> : BaseActivity() {
 
     lateinit var viewModel: VM
     val launcher: ActivityLauncher by injectLauncher()

@@ -1,8 +1,8 @@
+@file:JvmName("ThrowableExt")
+
 package me.skean.skeanframework.ktext
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.gson.JsonObject
-import me.skean.skeanframework.utils.NetworkUtil
+import com.blankj.utilcode.util.LogUtils
 import org.json.JSONObject
 import retrofit2.HttpException
 import kotlin.reflect.KProperty1
@@ -41,4 +41,10 @@ inline fun <reified T> Throwable.parseHttpErrorBody(property: KProperty1<T, Stri
         e.printStackTrace()
     }
     return "未知错误"
+}
+
+
+@JvmOverloads
+fun Throwable.log(tag: String = LogUtils.getConfig().globalTag, msg: String? = null) {
+    LogUtils.eTag(tag, msg ?: "${this.message}", this);
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.disposables.Disposable;
-import me.skean.skeanframework.widget.LoadingDialog2;
+import me.skean.skeanframework.component.function.LoadingDialog2;
 
 /**
  * 自动显示进度Dialog的SingleObserver

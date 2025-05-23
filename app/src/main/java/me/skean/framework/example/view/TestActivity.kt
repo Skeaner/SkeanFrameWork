@@ -17,22 +17,17 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx3.asFlow
 import me.skean.framework.example.component.App
 import me.skean.framework.example.databinding.TestActivityBinding
 import me.skean.skeanframework.component.BaseActivity
 import me.skean.skeanframework.utils.ImageUtil
 import me.skean.framework.example.db.dao.DummyDao
-import me.skean.framework.example.event.Events
+import me.skean.framework.example.constant.Events
 import me.skean.skeanframework.ktext.*
-import me.skean.skeanframework.net.FileIOApi
 import me.skean.skeanframework.utils.NetworkUtil
-import me.skean.skeanframework.utils.NetworkUtil.toMultiPart
 import org.koin.android.ext.android.inject
 import java.io.File
 import java.util.concurrent.CancellationException
@@ -149,7 +144,7 @@ class TestActivity : BaseActivity() {
             val path = getPathFromURI(selectedImageUri!!)
             val f = File(path)
             selectedImageUri = Uri.fromFile(f)
-            val file = File(App.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "compress.jpg")
+            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "compress.jpg")
             ImageUtil.Compressor.toActualSizeFile(getContext(), f, file, 50, 800, 550, object : ImageUtil.Compressor.FileCallBack {
                 override fun onSuccess(file: File) {
                     ToastUtils.showShort("成功")

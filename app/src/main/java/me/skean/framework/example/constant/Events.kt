@@ -1,4 +1,4 @@
-package me.skean.framework.example.event
+package me.skean.framework.example.constant
 
 /**
  * Created by Skean on 2025/05/14.

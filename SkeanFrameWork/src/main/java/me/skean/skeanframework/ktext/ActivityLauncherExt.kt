@@ -1,3 +1,5 @@
+@file:JvmName("ActivityLauncherExt")
+
 package me.skean.skeanframework.ktext
 
 import android.app.Activity

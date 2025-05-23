@@ -3,45 +3,50 @@ package me.skean.skeanframework.component;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.trello.rxlifecycle4.LifecycleProvider;
+import com.trello.rxlifecycle4.LifecycleTransformer;
+import com.trello.rxlifecycle4.RxLifecycle;
+import com.trello.rxlifecycle4.android.ActivityEvent;
+import com.trello.rxlifecycle4.android.RxLifecycleAndroid;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.activity.result.ActivityResult;
+import androidx.annotation.CallSuper;
+import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+import kotlin.jvm.functions.Function0;
 import me.skean.skeanframework.R;
 
-import me.skean.skeanframework.widget.LoadingDialog;
+import me.skean.skeanframework.component.function.LoadingDialog;
 
 /**
  * App的Activity基类 <p/>
  */
 @SuppressWarnings("unused")
 @SuppressLint("HandlerLeak")
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements LifecycleProvider<ActivityEvent> {
     protected Bundle savedInstanceStateCache;
     protected Context context = null;
     protected ActionBar actionBar;
@@ -55,7 +60,9 @@ public class BaseActivity extends AppCompatActivity {
 
     private final Set<Handler.Callback> callbacks = new HashSet<>();
 
-    private OnBackPressedListener onBackPressedListener;
+    private Function0<Boolean> onBackPressedListener;
+
+    private final BehaviorSubject<ActivityEvent> lifecycleSubject = BehaviorSubject.create();
 
     ///////////////////////////////////////////////////////////////////////////
     // 声明周期/初始化/设置
@@ -64,6 +71,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        lifecycleSubject.onNext(ActivityEvent.CREATE);
         savedInstanceStateCache = savedInstanceState;
         context = this;
         initActionBar();
@@ -80,6 +88,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        lifecycleSubject.onNext(ActivityEvent.DESTROY);
         mainHandler.removeCallbacksAndMessages(null);
         callbacks.clear();
         if (loadingDialog != null) {
@@ -90,8 +99,29 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    @CallSuper
+    protected void onStart() {
+        super.onStart();
+        lifecycleSubject.onNext(ActivityEvent.START);
+    }
+
+    @Override
+    @CallSuper
+    protected void onStop() {
+        lifecycleSubject.onNext(ActivityEvent.STOP);
+        super.onStop();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        lifecycleSubject.onNext(ActivityEvent.RESUME);
+    }
+
+    @Override
+    protected void onPause() {
+        lifecycleSubject.onNext(ActivityEvent.PAUSE);
+        super.onPause();
     }
 
     @Override
@@ -132,7 +162,7 @@ public class BaseActivity extends AppCompatActivity {
         initActionBar();
     }
 
-    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+    public void setOnBackPressedListener(Function0<Boolean> onBackPressedListener) {
         this.onBackPressedListener = onBackPressedListener;
     }
 
@@ -140,7 +170,7 @@ public class BaseActivity extends AppCompatActivity {
     public void onBackPressed() {
         boolean consumed = false;
         if (onBackPressedListener != null) {
-            consumed = onBackPressedListener.onBackPressed();
+            consumed = onBackPressedListener.invoke();
         }
         if (!consumed) super.onBackPressed();
     }
@@ -359,6 +389,31 @@ public class BaseActivity extends AppCompatActivity {
 
     protected Scheduler mainThread() {
         return AndroidSchedulers.mainThread();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // RxLife方法
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    @NonNull
+    @CheckResult
+    public final Observable<ActivityEvent> lifecycle() {
+        return lifecycleSubject.hide();
+    }
+
+    @Override
+    @NonNull
+    @CheckResult
+    public final <T> LifecycleTransformer<T> bindUntilEvent(@NonNull ActivityEvent event) {
+        return RxLifecycle.bindUntilEvent(lifecycleSubject, event);
+    }
+
+    @Override
+    @NonNull
+    @CheckResult
+    public final <T> LifecycleTransformer<T> bindToLifecycle() {
+        return RxLifecycleAndroid.bindActivity(lifecycleSubject);
     }
 
 }

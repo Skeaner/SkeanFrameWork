@@ -140,6 +140,7 @@ dependencies {
     api("com.trello.rxlifecycle4:rxlifecycle-android-lifecycle:$rxLifecycleVer")
     api("com.trello.rxlifecycle4:rxlifecycle-kotlin:$rxLifecycleVer")
     api("com.trello.rxlifecycle4:rxlifecycle-android-lifecycle-kotlin:$rxLifecycleVer")
+
     //EVENT
     api("com.github.michaellee123:LiveEventBus:1.8.14")
     //高德地图

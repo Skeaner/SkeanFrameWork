@@ -1,4 +1,4 @@
-package me.skean.skeanframework.widget;
+package me.skean.skeanframework.component.function;
 
 import android.app.Dialog;
 import android.content.Context;

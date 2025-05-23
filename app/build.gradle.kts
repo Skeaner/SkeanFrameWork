@@ -2,6 +2,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.tag
 
 plugins {
     id("com.android.application")
@@ -71,8 +72,9 @@ android {
     }
 
     defaultConfig {
+        //todo 修改程序名字相关
+        val tag = "FrameworkExample"
         namespace = "me.skean.framework.example"
-        //todo 修改程序ID
         applicationId = "me.skean.framework.example"
         minSdk = 21
         targetSdk = 33
@@ -103,39 +105,33 @@ android {
             }
 
         }
+        //todo 通用的配置
         manifestPlaceholders["rawApplicationId"] = "$applicationId"
         manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher"
+        buildConfigField("String", "APP_TAG", "\"$tag\"")
+        buildConfigField("boolean", "EXTERNAL_DB", "true")
+        buildConfigField("boolean", "USE_FILE_LOGGER", "false")
+        signingConfig = signingConfigs.getByName("config")
     }
     buildTypes {
-        //todo 通用的配置
-        val appTag = "\"" + "${defaultConfig.applicationId}".substring("${defaultConfig.applicationId}".lastIndexOf(".") + 1) + "\""
-        val useExternalDatabase = true
+        //todo 发布与开发的配置
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("config")
-            buildConfigField("String", "APP_TAG", appTag)
-            buildConfigField("boolean", "EXTERNAL_DB", "$useExternalDatabase")
         }
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("config")
-            buildConfigField("String", "APP_TAG", appTag)
-            buildConfigField("boolean", "EXTERNAL_DB", "$useExternalDatabase")
         }
     }
     flavorDimensions.add("default")
     productFlavors {
-        //todo 渠道打包配置配置
+        //todo 渠道打包配置
         // 发布环境
         create("production") {
             dimension = "default"
             resValue("string", "app_name", "SFW")
-            buildConfigField("boolean", "LOG_TO_FILE", "false")
-            buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
             manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"
             manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "false"
@@ -148,8 +144,6 @@ android {
             dimension = "default"
             applicationId = "${defaultConfig.applicationId}.beta"
             resValue("string", "app_name", "SFW-beta")
-            buildConfigField("boolean", "LOG_TO_FILE", "false")
-            buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_beta"
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
             manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"
@@ -163,8 +157,6 @@ android {
             dimension = "default"
             applicationId = "${defaultConfig.applicationId}.dev"
             resValue("string", "app_name", "SFW-dev")
-            buildConfigField("boolean", "LOG_TO_FILE", "false")
-            buildConfigField("boolean", "IS_INTRANET", "false")
             manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher_dev"
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
             manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"

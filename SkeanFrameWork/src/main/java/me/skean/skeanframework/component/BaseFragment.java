@@ -3,33 +3,41 @@ package me.skean.skeanframework.component;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.EditText;
+import android.view.View;
 
+import com.trello.rxlifecycle4.LifecycleProvider;
+import com.trello.rxlifecycle4.LifecycleTransformer;
+import com.trello.rxlifecycle4.RxLifecycle;
+import com.trello.rxlifecycle4.android.FragmentEvent;
+import com.trello.rxlifecycle4.android.RxLifecycleAndroid;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import androidx.activity.result.ActivityResult;
+import androidx.annotation.CallSuper;
+import androidx.annotation.CheckResult;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import me.skean.skeanframework.widget.LoadingDialog;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+import kotlin.jvm.functions.Function0;
+import me.skean.skeanframework.component.function.LoadingDialog;
 
 /**
  * App的DialogFragment基类 <p/>
  */
 @SuppressWarnings("unused")
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements LifecycleProvider<FragmentEvent> {
     protected Bundle savedInstanceStateCache;
     protected BaseActivity hostActivity;
     private Context context;
@@ -40,7 +48,7 @@ public abstract class BaseFragment extends Fragment {
     private final Set<Integer> msgWhats = new HashSet<>();
     private final Set<String> msgTokens = new HashSet<>();
 
-
+    private final BehaviorSubject<FragmentEvent> lifecycleSubject = BehaviorSubject.create();
 
     ///////////////////////////////////////////////////////////////////////////
     // 设置/生命周期/初始化
@@ -61,11 +69,53 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        lifecycleSubject.onNext(FragmentEvent.CREATE);
         savedInstanceStateCache = savedInstanceState;
     }
 
     @Override
+    public void onDestroy() {
+        lifecycleSubject.onNext(FragmentEvent.DESTROY);
+        super.onDestroy();
+    }
+
+    @Override
+    @CallSuper
+    public void onStart() {
+        super.onStart();
+        lifecycleSubject.onNext(FragmentEvent.START);
+    }
+
+    @Override
+    @CallSuper
+    public void onStop() {
+        lifecycleSubject.onNext(FragmentEvent.STOP);
+        super.onStop();
+    }
+
+    @Override
+    @CallSuper
+    public void onResume() {
+        super.onResume();
+        lifecycleSubject.onNext(FragmentEvent.RESUME);
+    }
+
+    @Override
+    @CallSuper
+    public void onPause() {
+        lifecycleSubject.onNext(FragmentEvent.PAUSE);
+        super.onPause();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        lifecycleSubject.onNext(FragmentEvent.CREATE_VIEW);
+    }
+
+    @Override
     public void onDestroyView() {
+        lifecycleSubject.onNext(FragmentEvent.DESTROY_VIEW);
         for (Integer msgWhat : msgWhats) {
             removeMainMessages(msgWhat);
         }
@@ -86,7 +136,14 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        lifecycleSubject.onNext(FragmentEvent.ATTACH);
         this.hostActivity = (BaseActivity) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        lifecycleSubject.onNext(FragmentEvent.DETACH);
+        super.onDetach();
     }
 
     @Override
@@ -95,7 +152,7 @@ public abstract class BaseFragment extends Fragment {
         isMenuCreated = true;
     }
 
-    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+    public void setOnBackPressedListener(Function0<Boolean> onBackPressedListener) {
         hostActivity.setOnBackPressedListener(onBackPressedListener);
     }
 
@@ -221,4 +278,28 @@ public abstract class BaseFragment extends Fragment {
         return AndroidSchedulers.mainThread();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // RXLife
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    @NonNull
+    @CheckResult
+    public final Observable<FragmentEvent> lifecycle() {
+        return lifecycleSubject.hide();
+    }
+
+    @Override
+    @NonNull
+    @CheckResult
+    public final <T> LifecycleTransformer<T> bindUntilEvent(@NonNull FragmentEvent event) {
+        return RxLifecycle.bindUntilEvent(lifecycleSubject, event);
+    }
+
+    @Override
+    @NonNull
+    @CheckResult
+    public final <T> LifecycleTransformer<T> bindToLifecycle() {
+        return RxLifecycleAndroid.bindFragment(lifecycleSubject);
+    }
 }

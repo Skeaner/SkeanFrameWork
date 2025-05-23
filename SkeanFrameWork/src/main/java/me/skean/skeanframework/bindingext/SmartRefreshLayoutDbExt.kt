@@ -18,17 +18,13 @@ import me.skean.skeanframework.model.RefreshFinishEvent
 )
 object SmartRefreshLayoutDbExt {
 
-    @BindingAdapter("bindRefreshListener")
+    @BindingAdapter(value = ["refreshListener", "loadMoreListener"])
     @JvmStatic
-    fun SmartRefreshLayout.bindRefreshListener(refreshListener: OnRefreshListener) {
-        setOnRefreshListener(refreshListener)
+    fun SmartRefreshLayout.bindRefreshListener(refreshListener: OnRefreshListener?, loadMoreListener: OnLoadMoreListener?) {
+        refreshListener?.let { this.setOnRefreshListener(refreshListener) }
+        loadMoreListener?.let { this.setOnLoadMoreListener(loadMoreListener) }
     }
 
-    @BindingAdapter("bindLoadMoreListener")
-    @JvmStatic
-    fun SmartRefreshLayout.bindLoadMoreListener(loadMoreListener: OnLoadMoreListener) {
-        setOnLoadMoreListener(loadMoreListener)
-    }
 
     @BindingAdapter("bindRefreshFinishEvent")
     @JvmStatic

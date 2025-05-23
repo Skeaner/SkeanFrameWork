@@ -1,3 +1,4 @@
+@file:JvmName("ViewBindingUtils")
 package me.skean.skeanframework.ktext
 
 import android.content.Context

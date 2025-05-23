@@ -7,6 +7,7 @@ import java.util.Stack;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import kotlin.jvm.functions.Function0;
 import me.skean.skeanframework.R;
 
 /**
@@ -21,7 +22,7 @@ public abstract class BaseHostActivity extends BaseActivity {
     protected boolean useDefaultAnimation = true;
     protected boolean ignoreSameTagFragment = true;
 
-    private OnBackPressedListener onBackPressedListenerBackup;
+    private Function0<Boolean> onBackPressedListenerBackup;
 
     ///////////////////////////////////////////////////////////////////////////
     // 设置/声明周期
@@ -46,7 +47,7 @@ public abstract class BaseHostActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setOnBackPressedListener(() -> {
-            boolean consumed = onBackPressedListenerBackup != null && onBackPressedListenerBackup.onBackPressed();
+            boolean consumed = onBackPressedListenerBackup != null && onBackPressedListenerBackup.invoke();
             if (!consumed) {
                 fragmentManager = getSupportFragmentManager();
                 if (fragmentManager.popBackStackImmediate()) {
@@ -68,7 +69,7 @@ public abstract class BaseHostActivity extends BaseActivity {
     }
 
     @Override
-    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+    public void setOnBackPressedListener(Function0<Boolean> onBackPressedListener) {
         this.onBackPressedListenerBackup = onBackPressedListener;
     }
 

@@ -1,31 +1,25 @@
 package me.skean.framework.example.component
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
-import androidx.lifecycle.ViewModelStore
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import cn.numeron.okhttp.log.LogLevel
-import cn.numeron.okhttp.log.TextLogInterceptor
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import com.chibatching.kotpref.Kotpref
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.tencent.bugly.crashreport.CrashReport
-import me.hgj.jetpackmvvm.base.BaseApp
 import me.skean.framework.example.BuildConfig
 import me.skean.framework.example.db.AppDatabase
 import me.skean.framework.example.db.Migrations
-import me.skean.framework.example.event.BackgroundEvent
-import me.skean.framework.example.event.Events
-import me.skean.framework.example.event.ForegroundEvent
+import me.skean.framework.example.constant.Events
 import me.skean.framework.example.net.ArticleApi
 import me.skean.framework.example.net.DouBanApi
-import me.skean.framework.example.viewmodel.TestMvvmViewModel
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.component.SkeanFrameworkModules
 import me.skean.skeanframework.ktext.checkUpdateByPgyerApi
@@ -38,8 +32,6 @@ import net.sqlcipher.database.SQLiteDatabase.getBytes
 import net.sqlcipher.database.SupportFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.android.logger.AndroidLogger
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.koin.dsl.module
@@ -51,65 +43,32 @@ import java.io.File
  */
 class App : Application(), StatusCallback {
 
+    @SuppressLint("StaticFieldLeak")
     companion object {
         @JvmStatic
-        var instance: App? = null
-            private set
+        val instance: App get() = _instance
 
         @JvmStatic
-        val context: Context? = instance?.applicationContext
-
-        @JvmStatic
-        val appExternalFilesRootDir: String?
-            get() {
-                val file = instance?.getExternalFilesDir(null)?.apply { FileUtils.createOrExistsDir(this) }
-                return file?.absolutePath
-            }
-
-        /**
-         *
-         * @param type The type of files directory to return. May be  null
-         *            for the root of the files directory or one of the following
-         *            constants for a subdirectory:
-         *            Environment#DIRECTORY_MUSIC,
-         *            Environment#DIRECTORY_PODCASTS,
-         *            Environment#DIRECTORY_RINGTONES,
-         *            Environment#DIRECTORY_ALARMS,
-         *            Environment#DIRECTORY_NOTIFICATIONS,
-         *            Environment#DIRECTORY_PICTURES,
-         *            Environment#DIRECTORY_MOVIES.
-         * @return String?
-         */
-        @JvmStatic
-        fun getExternalFilesDir(type: String?): String? {
-            val file = instance?.getExternalFilesDir(type)?.apply { FileUtils.createOrExistsDir(this) }
-            return file?.absolutePath
-        }
+        val context: Context get() = _instance.applicationContext
+        private lateinit var _instance: App
 
         @JvmStatic
         val appExternalDatabaseDir: String?
             get() {
-                appExternalFilesRootDir?.let {
-                    val file = File(appExternalFilesRootDir, "Database").apply { FileUtils.createOrExistsDir(this) }
+                context.getExternalFilesDir(null).let {
+                    val file = File(it, "Database").apply { FileUtils.createOrExistsDir(this) }
                     return file.absolutePath
                 }
-                return null
             }
 
-        @JvmStatic
-        val appExternalCacheDir: String?
-            get() {
-                return instance?.externalCacheDir?.apply { FileUtils.createOrExistsDir(this) }?.absolutePath
-            }
     }
 
     private val TAG = BuildConfig.APP_TAG
-    private var tempObject: Any? = null
-    var database: AppDatabase? = null
+    private var database: AppDatabase? = null
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
+        _instance = this
         //AppStatusTracker初始化
         AppStatusTracker.init(this)
         AppStatusTracker.getInstance().statusCallback = this
@@ -121,7 +80,7 @@ class App : Application(), StatusCallback {
         LogUtils.getConfig() //.setLogSwitch(BuildConfig.DEBUG)
             .setGlobalTag(TAG)
             .setLogHeadSwitch(true)
-            .setLog2FileSwitch(BuildConfig.LOG_TO_FILE)
+            .setLog2FileSwitch(BuildConfig.USE_FILE_LOGGER)
             .setFilePrefix("new")
             .setFileWriter(LogFileWriter(5 * 1024 * 1024)).isSingleTagSwitch = true
         //数据库初始化
@@ -146,7 +105,7 @@ class App : Application(), StatusCallback {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         //初始化上报的工具
-        if (BuildConfig.IS_INTRANET) { //内网的保存在本地文件中
+        if (BuildConfig.USE_FILE_LOGGER) { //内网的保存在本地文件中
             ReportUtils.getInstance().init(this)
         } else { //外网的使用BUGLY
             CrashReport.initCrashReport(applicationContext)
@@ -156,7 +115,7 @@ class App : Application(), StatusCallback {
     /**
      * 数据库初始化
      */
-    fun initDatabase() {
+   private fun initDatabase() {
         //使用加密数据库
         val factory = SupportFactory(getBytes("sjkmm".toCharArray()))
         database = Room.databaseBuilder(this, AppDatabase::class.java, "$TAG.db")
@@ -167,17 +126,6 @@ class App : Application(), StatusCallback {
             .build()
     }
 
-    fun <Temp> setTempObject(tempObject: Temp) {
-        this.tempObject = tempObject
-    }
-
-    fun <Temp> getTempObject(): Temp? {
-        return tempObject as? Temp
-    }
-
-    fun releaseTempObject() {
-        tempObject = null
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 修改app的数据库指向位置, 保存在SD上面

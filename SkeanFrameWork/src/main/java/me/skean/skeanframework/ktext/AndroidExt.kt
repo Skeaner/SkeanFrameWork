@@ -1,3 +1,5 @@
+@file:JvmName("AndroidExt")
+
 package me.skean.skeanframework.ktext
 
 import android.app.Activity

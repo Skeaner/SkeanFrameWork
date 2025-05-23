@@ -21,7 +21,7 @@ import me.skean.skeanframework.ktext.injectLauncher
  * 描述　: ViewModelFragment基类，自动把ViewModel注入Fragment
  */
 
-abstract class BaseVmFragment<VM : BaseViewModel> : BaseFragment() {
+abstract class BaseVmFragment<VM : BaseVm> : BaseFragment() {
 
     private val handler = Handler()
 

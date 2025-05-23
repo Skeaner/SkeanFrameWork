@@ -1,12 +1,9 @@
 @file:JvmName("RxExt")
-
 package me.skean.skeanframework.ktext
 
 import android.content.Context
-import androidx.lifecycle.Lifecycle
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.trello.rxlifecycle4.LifecycleProvider
-import io.reactivex.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
@@ -15,7 +12,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import me.skean.skeanframework.model.LoadingStatus
 import me.skean.skeanframework.rx.*
-import me.skean.skeanframework.widget.LoadingDialog2
+import me.skean.skeanframework.component.function.LoadingDialog2
 
 /**
  * Created by Skean on 21/4/8.
@@ -264,4 +261,24 @@ fun <T : Any> Observable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>)
 
 fun <T : Any> Flowable<T>.bindToVmLifecycle(lifecycle: LifecycleProvider<Any>): Flowable<T> {
     return compose<T>(lifecycle.bindToLifecycle())
+}
+
+/**
+ * 自动重试
+ * @param maxRetries Int  最大重试次数, 0为无限重试
+ * @param retryDelayMillis Int 每次重试的延迟毫秒数
+ * @return Observable<T>
+ */
+fun <T : Any> Observable<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMillis: Int): Observable<T> {
+    return this.retryWhen(RetryWithDelay(maxRetries, retryDelayMillis))
+}
+
+/**
+ *
+ * @param maxRetries Int 最大重试次数, 0为无限重试
+ * @param retryDelayMillis Int Int 每次重试的延迟毫秒数
+ * @return Single<T>
+ */
+fun <T : Any> Single<T>.retryWhenWithTimesAndDelay(maxRetries: Int, retryDelayMillis: Int): Single<T> {
+    return this.retryWhen(RetryWithDelaySingle(maxRetries, retryDelayMillis))
 }

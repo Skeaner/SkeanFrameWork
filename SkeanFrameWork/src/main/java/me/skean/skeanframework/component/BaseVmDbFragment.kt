@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import me.hgj.jetpackmvvm.base.viewmodel.BaseViewModel
 import me.hgj.jetpackmvvm.ext.inflateBindingWithGeneric
 
 /**
@@ -14,7 +13,7 @@ import me.hgj.jetpackmvvm.ext.inflateBindingWithGeneric
  * 描述　: ViewModelFragment基类，自动把ViewModel注入Fragment和Databind注入进来了
  * 需要使用Databind的清继承它
  */
-abstract class BaseVmDbFragment<VM : BaseViewModel, DB : ViewDataBinding> : BaseVmFragment<VM>() {
+abstract class BaseVmDbFragment<VM : BaseVm, DB : ViewDataBinding> : BaseVmFragment<VM>() {
 
     override fun layoutId() = 0
 

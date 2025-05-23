@@ -25,7 +25,7 @@ import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.SingleSource;
 import io.reactivex.rxjava3.core.SingleTransformer;
-import me.skean.skeanframework.widget.LoadingDialog2;
+import me.skean.skeanframework.component.function.LoadingDialog2;
 
 import static kotlin.jvm.internal.Intrinsics.checkNotNull;
 
