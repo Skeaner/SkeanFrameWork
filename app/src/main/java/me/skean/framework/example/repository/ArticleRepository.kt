@@ -6,12 +6,14 @@ import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.skeanframework.utils.NetworkUtil
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * Created by Skean on 2022/4/21.
  */
-object ArticleRepository : KoinComponent {
-    private val api by inject<ArticleApi>()
+ class ArticleRepository()  {
+
+    private val api  = NetworkUtil.createService<ArticleApi>()
 
 
     fun getArticle() = api.listArticle()

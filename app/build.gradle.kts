@@ -136,7 +136,7 @@ android {
             manifestPlaceholders["AMAP_API_KEY"] = "b46c4981b8e07d4d613867e03c753f4b"
             manifestPlaceholders["BUGLY_APPID"] = "47b7b8213f"
             manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "false"
-            manifestPlaceholders["PGYER_API_KEY"] = "8c9438bcab1415568aa14299358af9f7"
+            manifestPlaceholders["PGYER_API_KEY"] = "45de93e56eb3c62c53289ac52e8524c4"
             manifestPlaceholders["PGYER_APP_KEY"] = "88470f142b1734c12f5bf9f9b3303cea"
 
         }

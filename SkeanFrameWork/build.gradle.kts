@@ -23,11 +23,11 @@ android {
 
     defaultConfig {
         minSdk = 21
-        manifestPlaceholders["AMAP_API_KEY"] = ""
-        manifestPlaceholders["BUGLY_APPID"] = ""
-        manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = ""
-        manifestPlaceholders["PGYER_API_KEY"] = ""
-        manifestPlaceholders["PGYER_APP_KEY"] = ""
+        manifestPlaceholders["AMAP_API_KEY"] = "\${PGYER_API_KEY}"
+        manifestPlaceholders["BUGLY_APPID"] = "\${BUGLY_APPID}"
+        manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "\${BUGLY_ENABLE_DEBUG}"
+        manifestPlaceholders["PGYER_API_KEY"] = "\${PGYER_API_KEY}"
+        manifestPlaceholders["PGYER_APP_KEY"] = "\${PGYER_APP_KEY}"
     }
 
     kapt {
@@ -144,8 +144,8 @@ dependencies {
     //EVENT
     api("com.github.michaellee123:LiveEventBus:1.8.14")
     //高德地图
-    api("com.amap.api:map2d:6.0.0")
-    api("com.amap.api:location:6.1.0")
+    api("com.amap.api:map2d:latest.integration")
+    api("com.amap.api:location:latest.integration")
     // sql-cipher支持
     api("net.zetetic:android-database-sqlcipher:4.5.4")
     //json解析器
@@ -214,7 +214,6 @@ dependencies {
     api("io.insert-koin:koin-core:$koinVer")
     api("io.insert-koin:koin-android:$koinVer")// Koin main features for Android
     api("io.insert-koin:koin-android-compat:$koinVer")// Java Compatibility
-    api("io.insert-koin:koin-androidx-workmanager:$koinVer")// Jetpack WorkManager
     api("io.insert-koin:koin-androidx-navigation:$koinVer")// Navigation Graph
     api("io.insert-koin:koin-androidx-compose:$koinVer")// Jetpack Compose
     //viewBinding快速库

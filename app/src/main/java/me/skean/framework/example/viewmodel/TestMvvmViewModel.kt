@@ -12,7 +12,12 @@ import me.skean.framework.example.repository.DouBanRepository
 import me.skean.skeanframework.component.BaseVm
 import me.skean.skeanframework.model.RefreshFinishEvent
 import me.skean.skeanframework.utils.SingleLiveEvent
+import org.koin.androidx.compose.get
+import org.koin.compose.currentKoinScope
+import org.koin.compose.koinInject
+import org.koin.core.Koin
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 
 /**
@@ -20,7 +25,7 @@ import org.koin.core.component.KoinComponent
  */
 class TestMvvmViewModel() : BaseVm(), KoinComponent {
 
-    private val repository = DouBanRepository()
+    private val repository = get<DouBanRepository>()
 
     val refreshCompleteEvent: SingleLiveEvent<RefreshFinishEvent> = SingleLiveEvent()
 

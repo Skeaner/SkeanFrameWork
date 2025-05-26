@@ -18,10 +18,7 @@ import me.skean.framework.example.BuildConfig
 import me.skean.framework.example.db.AppDatabase
 import me.skean.framework.example.db.Migrations
 import me.skean.framework.example.constant.Events
-import me.skean.framework.example.net.ArticleApi
-import me.skean.framework.example.net.DouBanApi
 import me.skean.skeanframework.component.SkeanFrameWork
-import me.skean.skeanframework.component.SkeanFrameworkModules
 import me.skean.skeanframework.ktext.checkUpdateByPgyerApi
 import me.skean.skeanframework.utils.AppStatusTracker
 import me.skean.skeanframework.utils.AppStatusTracker.StatusCallback
@@ -32,9 +29,9 @@ import net.sqlcipher.database.SQLiteDatabase.getBytes
 import net.sqlcipher.database.SupportFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.fragment.koin.fragmentFactory
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-import org.koin.dsl.module
 import java.io.File
 
 
@@ -90,14 +87,9 @@ class App : Application(), StatusCallback {
         //初始化Koin
         startKoin {
             androidContext(this@App) //注入context
+            fragmentFactory()  //注入fragment
             androidLogger(Level.ERROR) //使用Android的Log
-            modules(SkeanFrameworkModules.module, //传入框架的注入对象模块
-                module {//传入App的注入对象模块
-                    single { database!!.dummyDao }
-                    single { NetworkUtil.createService<DouBanApi>() }
-                    single { NetworkUtil.createService<ArticleApi>() }
-
-                })
+            modules(AppModules.all)
         }
         checkUpdateByPgyerApi()
     }
@@ -115,7 +107,7 @@ class App : Application(), StatusCallback {
     /**
      * 数据库初始化
      */
-   private fun initDatabase() {
+    private fun initDatabase() {
         //使用加密数据库
         val factory = SupportFactory(getBytes("sjkmm".toCharArray()))
         database = Room.databaseBuilder(this, AppDatabase::class.java, "$TAG.db")
