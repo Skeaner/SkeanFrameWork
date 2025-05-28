@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="me.skean.framework.example.viewmodel.TestMvvmViewModel" />
+            type="me.skean.framework.example.view.TestMvvmViewModel" />
     </data>
     <RelativeLayout
         android:layout_width="match_parent"

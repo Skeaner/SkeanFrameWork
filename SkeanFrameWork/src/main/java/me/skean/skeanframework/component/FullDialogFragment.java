@@ -1,5 +1,6 @@
 package me.skean.skeanframework.component;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -7,7 +8,9 @@ import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 /**
  * 全屏DialogFragment
@@ -19,22 +22,24 @@ public class FullDialogFragment extends BaseDialogFragment {
     private int width = WindowManager.LayoutParams.MATCH_PARENT;
     private int height = WindowManager.LayoutParams.MATCH_PARENT;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        setStyle(STYLE_NO_TITLE, 0);
-        super.onCreate(savedInstanceState);
+    public FullDialogFragment() {
+        setCustomStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
+    @NonNull
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Window window = getDialog().getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.dimAmount = dimAmount;
-        params.gravity = gravity;
-        window.setAttributes(params);
-        window.setLayout(width, height);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.dimAmount = dimAmount;
+            params.gravity = gravity;
+            window.setAttributes(params);
+            window.setLayout(width, height);
+        }
+        return dialog;
     }
 
     public BaseDialogFragment setDimAmount(float dimAmount) {

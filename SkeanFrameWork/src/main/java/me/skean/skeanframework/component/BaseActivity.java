@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.snackbar.Snackbar;
 import com.trello.rxlifecycle4.LifecycleProvider;
 import com.trello.rxlifecycle4.LifecycleTransformer;
@@ -20,9 +19,7 @@ import com.trello.rxlifecycle4.RxLifecycle;
 import com.trello.rxlifecycle4.android.ActivityEvent;
 import com.trello.rxlifecycle4.android.RxLifecycleAndroid;
 
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.CheckResult;
@@ -34,12 +31,15 @@ import androidx.appcompat.widget.Toolbar;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import kotlin.jvm.functions.Function0;
 import me.skean.skeanframework.R;
 
-import me.skean.skeanframework.component.function.LoadingDialog;
+import me.skean.skeanframework.component.function.LoadingDialog3;
+import me.skean.skeanframework.rx.DefaultSingleObserver;
 
 /**
  * App的Activity基类 <p/>
@@ -50,15 +50,11 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
     protected Bundle savedInstanceStateCache;
     protected Context context = null;
     protected ActionBar actionBar;
-    protected LoadingDialog loadingDialog;
-
-    private Handler mainHandler;
+    protected LoadingDialog3 loadingDialog;
 
     protected boolean useHomeAsBack = true;
     protected boolean useHomeShowTitle = true;
     protected boolean isMenuCreated = false;
-
-    private final Set<Handler.Callback> callbacks = new HashSet<>();
 
     private Function0<Boolean> onBackPressedListener;
 
@@ -75,23 +71,12 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
         savedInstanceStateCache = savedInstanceState;
         context = this;
         initActionBar();
-        mainHandler = new Handler() {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                super.handleMessage(msg);
-                for (Callback callback : callbacks) {
-                    callback.handleMessage(msg);
-                }
-            }
-        };
     }
 
     @Override
     protected void onDestroy() {
         lifecycleSubject.onNext(ActivityEvent.DESTROY);
-        mainHandler.removeCallbacksAndMessages(null);
-        callbacks.clear();
-        if (loadingDialog != null) {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
             loadingDialog = null;
         }
@@ -218,49 +203,70 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
     }
 
     public void showLoading(String text, boolean cancelable) {
-        getLoadingDialog(text, cancelable).setFinished(false).show();
+        LoadingDialog3 dialog3 = getLoadingDialog(text, cancelable);
+        dialog3.setFinished(false, false);
+        if (!dialog3.isShowing()) {
+            dialog3.show(getSupportFragmentManager());
+        }
     }
 
-    public void setLoaded() {
-        getLoadingDialog().setFinished(true).setLoadingText("");
+    public void showLoaded(boolean success) {
+        showLoaded(success, "");
     }
 
-    public void setLoaded(String text) {
-        getLoadingDialog().setFinished(true).setLoadingText(text);
+    public void showLoaded(boolean success, String text) {
+        showLoaded(success, text, true);
+    }
+
+    public void showLoaded(boolean success, String text, boolean cancelable) {
+        LoadingDialog3 dialog3 = getLoadingDialog(text, cancelable);
+        dialog3.setFinished(true, success);
+        if (!dialog3.isShowing()) {
+            dialog3.show(getSupportFragmentManager());
+        }
     }
 
     public void setLoadingText(String text) {
-        getLoadingDialog().setLoadingText(text);
+        getLoadingDialog().setMessage(text);
     }
 
     public void setLoadingText(int resId) {
-        getLoadingDialog().setLoadingText(getString(resId));
+        getLoadingDialog().setMessage(getString(resId));
     }
 
     public void dismissLoading() {
-        getLoadingDialog().dismiss();
+        LoadingDialog3 dialog3 = getLoadingDialog();
+        if (dialog3.isShowing()) getLoadingDialog().dismiss();
     }
 
     public void dismissLoadingDelayed(long millis) {
-        mainHandler.removeCallbacks(dismissTask);
-        mainHandler.postDelayed(dismissTask, millis);
+        Single.timer(millis, TimeUnit.MILLISECONDS)
+              .observeOn(mainThread())
+              .compose(bindToLifecycle())
+              .subscribe(new DefaultSingleObserver<>() {
+                  @Override
+                  public void onSuccess2(Long aLong) {
+                      dismissLoading();
+                  }
+              });
     }
 
-    public Runnable dismissTask = () -> getLoadingDialog().dismiss();
-
-    private LoadingDialog getLoadingDialog() {
+    private LoadingDialog3 getLoadingDialog() {
         if (loadingDialog == null) {
-            loadingDialog = getLoadingDialog(getString(R.string.loading), true).setFinished(false);
+            loadingDialog = getLoadingDialog(getString(R.string.loading), true);
         }
         return loadingDialog;
     }
 
-    private LoadingDialog getLoadingDialog(String text, boolean cancelable) {
+    private LoadingDialog3 getLoadingDialog(String text, boolean cancelable) {
         if (loadingDialog == null) {
-            loadingDialog = new LoadingDialog(context, text, cancelable);
+            loadingDialog = new LoadingDialog3();
+            loadingDialog.setMessage(text);
+            loadingDialog.setCancelable(cancelable);
         }
         else {
-            loadingDialog.setLoadingText(text).setCancelable(cancelable);
+            loadingDialog.setMessage(text);
+            loadingDialog.setCancelable(cancelable);
         }
         return loadingDialog;
     }
@@ -275,10 +281,6 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
 
     public Context getContext() {
         return context;
-    }
-
-    public Handler getMainHandler() {
-        return mainHandler;
     }
 
     public boolean isMenuCreated() {
@@ -326,57 +328,21 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
     // 便利方法
     ///////////////////////////////////////////////////////////////////////////
 
-    public boolean addMainHandlerCallBack(Handler.Callback callback) {
-        return callbacks.add(callback);
+    public Disposable postInMain(Function0<Void> r) {
+        return Single.just(1L).observeOn(mainThread()).compose(bindToLifecycle()).subscribe((aLong, e) -> {
+            if (e != null) ToastUtils.showShort(e.getMessage());
+            else r.invoke();
+        });
     }
 
-    public boolean removeMainHandlerCallBack(Handler.Callback callback) {
-        return callbacks.remove(callback);
-    }
-
-    public void sendMessage(int what, Object object) {
-        sendMessageDelayed(0, what, object);
-    }
-
-    public void sendMessageDelayed(long delayMills, int what, Object object) {
-        Message m = mainHandler.obtainMessage();
-        m.what = what;
-        m.obj = object;
-        mainHandler.sendMessageDelayed(m, delayMills);
-    }
-
-    private Message obtainMainHandlerMessage(Runnable r, String token) {
-        Message m = mainHandler.obtainMessage();
-        m.obj = token;
-        try {
-            Method method = Message.class.getDeclaredMethod("setCallback", Runnable.class);
-            method.setAccessible(true);
-            method.invoke(m, r);
-        }
-        catch (Exception e) {
-            //
-        }
-        return m;
-    }
-
-    public void postInMain(Runnable r) {
-        mainHandler.post(r);
-    }
-
-    public void postInMainDelayed(long delayMills, Runnable r) {
-        mainHandler.postDelayed(r, delayMills);
-    }
-
-    public void postInMainDelayed(long delayMills, String token, Runnable r) {
-        mainHandler.sendMessageDelayed(obtainMainHandlerMessage(r, token), delayMills);
-    }
-
-    public void removeMainCallbacksAndMessages(String token) {
-        mainHandler.removeCallbacksAndMessages(token);
-    }
-
-    public void removeMainMessages(int what) {
-        mainHandler.removeMessages(what);
+    public Disposable postInMainDelayed(long delayMills, Function0<Void> r) {
+        return Single.timer(delayMills, TimeUnit.MILLISECONDS)
+                     .observeOn(mainThread())
+                     .compose(bindToLifecycle())
+                     .subscribe((aLong, e) -> {
+                         if (e != null) ToastUtils.showShort(e.getMessage());
+                         else r.invoke();
+                     });
     }
 
     ///////////////////////////////////////////////////////////////////////////

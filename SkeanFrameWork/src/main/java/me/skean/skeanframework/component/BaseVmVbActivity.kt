@@ -12,15 +12,18 @@ import me.hgj.jetpackmvvm.ext.inflateBindingWithGeneric
  */
 abstract class BaseVmVbActivity<VM : BaseVm, VB : ViewBinding> : BaseVmActivity<VM>() {
 
-
     lateinit var binding: VB
 
-    /**
-     * 创建DataBinding
-     */
-    override fun initDataBind(): View? {
-        binding = inflateBindingWithGeneric(layoutInflater)
-        return binding.root
 
+    override fun onCreateView() {
+        binding = initDataBind()
+        setContentView(binding.root)
+    }
+
+    /**
+     * 创建ViewBinding
+     */
+    open fun initDataBind(): VB {
+        return inflateBindingWithGeneric(layoutInflater)
     }
 }

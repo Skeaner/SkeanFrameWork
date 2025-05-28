@@ -1,4 +1,4 @@
-package me.skean.framework.example.viewmodel
+package me.skean.framework.example.view
 
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.ToastUtils
@@ -6,16 +6,11 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
-import me.hgj.jetpackmvvm.base.viewmodel.BaseViewModel
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.repository.DouBanRepository
 import me.skean.skeanframework.component.BaseVm
 import me.skean.skeanframework.model.RefreshFinishEvent
 import me.skean.skeanframework.utils.SingleLiveEvent
-import org.koin.androidx.compose.get
-import org.koin.compose.currentKoinScope
-import org.koin.compose.koinInject
-import org.koin.core.Koin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 

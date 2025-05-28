@@ -11,6 +11,8 @@ plugins {
     id("kotlin-allopen")
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization")
+    id("androidx.navigation.safeargs")
 }
 
 allOpen {

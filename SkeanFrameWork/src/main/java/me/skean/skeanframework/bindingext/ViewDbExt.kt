@@ -5,6 +5,7 @@ import android.view.View
 import androidx.databinding.BindingAdapter
 import androidx.databinding.BindingMethods
 import com.jakewharton.rxbinding4.view.clicks
+import me.skean.skeanframework.ktext.defaultObserver
 import java.util.concurrent.TimeUnit
 
 /**
@@ -19,9 +20,9 @@ object ViewDbExt {
     @SuppressLint("CheckResult")
     @BindingAdapter("onClickFilter")
     @JvmStatic
-    fun View.bindClickFilterCallback(onClick: (Any) -> Unit) {
+    fun View.bindClickFilterCallback(onClick: () -> Unit) {
         this.clicks()
             .throttleFirst(300, TimeUnit.MILLISECONDS)
-            .subscribe(onClick)
+            .subscribe { onClick() }
     }
 }

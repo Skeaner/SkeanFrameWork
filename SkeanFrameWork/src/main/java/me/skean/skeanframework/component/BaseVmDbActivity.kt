@@ -15,11 +15,16 @@ abstract class BaseVmDbActivity<VM : BaseVm, DB : ViewDataBinding> : BaseVmActiv
 
     lateinit var binding: DB
 
+
+    override fun onCreateView() {
+        binding = initDataBind()
+        setContentView(binding.root)
+    }
+
     /**
      * 创建DataBinding
      */
-    override fun initDataBind(): View? {
-        binding = inflateBindingWithGeneric(layoutInflater)
-        return binding.root
+    open fun initDataBind(): DB {
+        return inflateBindingWithGeneric(layoutInflater)
     }
 }

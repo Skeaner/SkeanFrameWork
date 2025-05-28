@@ -1,3 +1,4 @@
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
@@ -15,6 +16,8 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
         classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.0.20-1.0.25")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.0")
+        classpath ("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
     }
 }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    app:startDestination="@id/aboutFragment">
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="me.skean.framework.example.view.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/about_fragment">
+        <action
+            android:id="@+id/actionAboutToHome"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_right_in"
+            app:popExitAnim="@anim/slide_right_out"
+            app:popUpTo="@id/aboutFragment"
+            app:popUpToInclusive="true">
+
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="me.skean.framework.example.view.TestMvvmFragment"
+        android:label="Home"
+        tools:layout="@layout/test_mvvm_activity">
+
+    </fragment>
+</navigation>

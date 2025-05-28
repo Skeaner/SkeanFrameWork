@@ -132,7 +132,6 @@ class TestActivity : BaseActivity() {
     private inner class TestRunnable : Runnable {
         override fun run() {
             ToastUtils.showShort("测试第${count++}次")
-            postInMainDelayed(3000, "MSG", TestRunnable())
         }
     }
 
@@ -159,7 +158,6 @@ class TestActivity : BaseActivity() {
 
 
     private fun txvSelectClicked() {
-        removeMainCallbacksAndMessages("MSG")
 //        val item = Dummy().apply { fullName = "测试" }
 //        dummyDao?.let {
 //            it.saveAll(item)

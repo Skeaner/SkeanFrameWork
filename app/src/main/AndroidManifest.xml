@@ -21,7 +21,8 @@
 
         <!--主页-->
 
-        <activity android:name=".view.TestActivity"
+        <activity
+            android:name=".view.TestActivity"
             android:exported="true">
 
         </activity>
@@ -29,6 +30,12 @@
             android:name=".view.TestMvvmActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        </activity>
+        <activity
+            android:name="me.skean.framework.example.view.MainActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

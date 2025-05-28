@@ -15,23 +15,27 @@ import me.hgj.jetpackmvvm.ext.inflateBindingWithGeneric
  */
 abstract class BaseVmDbFragment<VM : BaseVm, DB : ViewDataBinding> : BaseVmFragment<VM>() {
 
-    override fun layoutId() = 0
 
     //该类绑定的ViewDataBinding
-    private var _db: DB? = null
-    val binding: DB get() = _db!!
+    lateinit var binding: DB
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _db  = inflateBindingWithGeneric(inflater,container,false)
+        binding = initDataBind(inflater, container, savedInstanceState)
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _db = null
+    /**
+     * 创建DataBinding
+     */
+    open fun initDataBind(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): DB {
+        return inflateBindingWithGeneric(layoutInflater, container, false)
     }
 }

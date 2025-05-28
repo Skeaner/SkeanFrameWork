@@ -1,10 +1,12 @@
 package me.skean.skeanframework.component
 
 import android.os.Bundle
-import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import me.hgj.jetpackmvvm.base.viewmodel.BaseViewModel
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.ext.getVmClazz
 import me.hgj.jetpackmvvm.ext.util.notNull
 import me.hgj.jetpackmvvm.network.manager.NetState
@@ -20,45 +22,83 @@ abstract class BaseVmActivity<VM : BaseVm> : BaseActivity() {
 
     lateinit var viewModel: VM
     val launcher: ActivityLauncher by injectLauncher()
+    private var isFirst: Boolean = true
 
+    protected open val layoutId: Int? = null
 
-    open fun layoutId(): Int = 0
+    /**
+     * 延迟加载 防止 切换动画还没执行完毕时数据就已经加载好了，这时页面会有渲染卡顿  bug
+     * 这里传入你想要延迟的时间，延迟时间可以设置比转场动画时间长一点 单位： 毫秒
+     * 不传默认 300毫秒
+     * @return Long
+     */
+    protected open val lazyLoadTime = 300L
 
-    open fun initView(savedInstanceState: Bundle?) {}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onCreateView()
+        init(savedInstanceState)
+    }
 
-    open fun createObserver() {}
+    open fun onCreateView() {
+        layoutId.notNull({
+            setContentView(it)
+        }, {
+            throw RuntimeException("layoutId不能为空")
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onVisible()
+    }
+
+    private fun init(savedInstanceState: Bundle?) {
+        viewModel = createViewModel()
+        initView(savedInstanceState)
+        registerUiChange()
+        NetworkStateManager.instance.mNetworkStateCallback.observe(this, Observer {
+            onNetworkStateChanged(it)
+        })
+        setUpObserver()
+        initData()
+    }
 
     /**
      * 网络变化监听 子类重写
      */
     open fun onNetworkStateChanged(netState: NetState) {}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initDataBind().notNull({
-            setContentView(it)
-        }, {
-            setContentView(layoutId())
-        })
-        init(savedInstanceState)
-    }
+    open fun initView(savedInstanceState: Bundle?) {}
 
-    private fun init(savedInstanceState: Bundle?) {
-        viewModel = createViewModel()
-        registerUiChange()
-        initView(savedInstanceState)
-        createObserver()
-        NetworkStateManager.instance.mNetworkStateCallback.observe(this, Observer {
-            onNetworkStateChanged(it)
-        })
-    }
+    open fun setUpObserver() {}
 
+    /**
+     * Fragment执行onCreate后触发的方法
+     */
+    open fun initData() {}
+
+    /**
+     * 懒加载
+     */
+    open fun lazyLoadData() {}
 
     /**
      * 创建viewModel
      */
-    private fun createViewModel(): VM {
+    open fun createViewModel(): VM {
         return ViewModelProvider(this).get(getVmClazz(this) as Class<VM>)
+    }
+
+    private fun onVisible() {
+        if (lifecycle.currentState == Lifecycle.State.STARTED && isFirst) {
+            // 延迟加载 防止 切换动画还没执行完毕时数据就已经加载好了，这时页面会有渲染卡顿.
+            lifecycleScope.launch {
+                delay(lazyLoadTime)
+                isFirst = false
+                lazyLoadData()
+            }
+        }
     }
 
 
@@ -67,12 +107,8 @@ abstract class BaseVmActivity<VM : BaseVm> : BaseActivity() {
      */
     private fun registerUiChange() {
         //显示弹窗
-        viewModel.loadingChange.showDialog.observe(this, Observer {
-            showLoading(it, false)
-        })
-        //关闭弹窗
-        viewModel.loadingChange.dismissDialog.observe(this, Observer {
-            dismissLoading()
+        viewModel.uiChange.loading.observe(this, Observer {
+            handleLoadingEvent(it)
         })
     }
 
@@ -80,23 +116,35 @@ abstract class BaseVmActivity<VM : BaseVm> : BaseActivity() {
      * 将非该Activity绑定的ViewModel添加 loading回调 防止出现请求时不显示 loading 弹窗bug
      * @param viewModels Array<out BaseViewModel>
      */
-    protected fun addLoadingObserve(vararg viewModels: BaseViewModel) {
+    protected fun addLoadingObserve(vararg viewModels: BaseVm) {
         viewModels.forEach { viewModel ->
-            //显示弹窗
-            viewModel.loadingChange.showDialog.observe(this, Observer {
-                showLoading(it, false)
-            })
-            //关闭弹窗
-            viewModel.loadingChange.dismissDialog.observe(this, Observer {
-                dismissLoading()
+            viewModel.uiChange.loading.observe(this, Observer {
+                handleLoadingEvent(it)
             })
         }
     }
 
-    /**
-     * 供子类BaseVmDbActivity 初始化Databinding操作
-     */
-    open fun initDataBind(): View? {
-        return null
+    private fun handleLoadingEvent(ev: BaseVm.LoadingEvent) {
+        if (ev.showing) {
+            when (ev.state) {
+                BaseVm.LoadingEvent.State.PROGRESSING -> {
+                    showLoading(ev.msg ?: "请稍后", ev.cancelable)
+                }
+
+                BaseVm.LoadingEvent.State.SUCCESS -> {
+                    showLoaded(true, ev.msg ?: "成功", ev.cancelable)
+                }
+
+                BaseVm.LoadingEvent.State.FAIl -> {
+                    showLoaded(false, ev.msg ?: "失败", ev.cancelable)
+                }
+            }
+            if (ev.autoDismissMillis > 0) {
+                dismissLoadingDelayed(ev.autoDismissMillis)
+            }
+        } else {
+            dismissLoading()
+        }
     }
+
 }
