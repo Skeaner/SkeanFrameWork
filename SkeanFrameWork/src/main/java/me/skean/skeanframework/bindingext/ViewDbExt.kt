@@ -25,4 +25,14 @@ object ViewDbExt {
             .throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribe { onClick() }
     }
+
+
+    @BindingAdapter("backgroundRes")
+    @JvmStatic
+    fun View.bindBackgroundRes(resId: Int) {
+        if (resId == 0) {
+            return
+        }
+        setBackgroundResource(resId)
+    }
 }

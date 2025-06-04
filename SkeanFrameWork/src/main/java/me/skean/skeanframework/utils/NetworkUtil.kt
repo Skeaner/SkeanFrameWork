@@ -9,6 +9,7 @@ import cn.numeron.okhttp.log.TextLogInterceptor
 import com.blankj.utilcode.util.FileUtils.getFileExtension
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
@@ -159,6 +160,7 @@ object NetworkUtil {
     @JvmStatic
     fun newObjectMapper(): ObjectMapper {
         return ObjectMapper().registerModule(KotlinModule.Builder().build())
+            .registerModule(JavaTimeModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
     }

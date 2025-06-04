@@ -13,6 +13,8 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import com.chibatching.kotpref.Kotpref
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.kongzue.dialogx.DialogX
+import com.kongzue.dialogx.style.MaterialStyle
 import com.tencent.bugly.crashreport.CrashReport
 import me.skean.framework.example.BuildConfig
 import me.skean.framework.example.db.AppDatabase
@@ -84,6 +86,9 @@ class App : Application(), StatusCallback {
         initDatabase()
         //初始化Kotpref
         Kotpref.init(this)
+        //初始化DialogX
+        DialogX.init(this)
+        DialogX.implIMPLMode = DialogX.IMPL_MODE.DIALOG_FRAGMENT
         //初始化Koin
         startKoin {
             androidContext(this@App) //注入context

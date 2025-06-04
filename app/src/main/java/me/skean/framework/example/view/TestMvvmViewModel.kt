@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.repository.DouBanRepository
 import me.skean.skeanframework.component.BaseVm
+import me.skean.skeanframework.ktext.toMutableListAndAll
 import me.skean.skeanframework.model.RefreshFinishEvent
 import me.skean.skeanframework.utils.SingleLiveEvent
 import org.koin.core.component.KoinComponent
@@ -42,13 +43,13 @@ class TestMvvmViewModel() : BaseVm(), KoinComponent {
         if (refresh) currentPage = 0
         viewModelScope.launch(CoroutineExceptionHandler { _, e ->
             ToastUtils.showShort(e.localizedMessage)
-            refreshCompleteEvent.value = RefreshFinishEvent(isRefresh = refresh, success = false, noMore = true)
+            refreshCompleteEvent.value = RefreshFinishEvent(success = false, noMore = true)
         }) {
             val list = repository.listMovie(currentPage).map { it.data?.firstOrNull()!! }
             currentPage++
             val noMore = list.size < 10
-            refreshCompleteEvent.value = RefreshFinishEvent(isRefresh = refresh, success = true, noMore = noMore)
-            if (refresh) movieList = list.toMutableList() else movieList.addAll(list)
+            refreshCompleteEvent.value = RefreshFinishEvent(success = true, noMore = noMore)
+            movieList = if (refresh) list.toMutableList() else movieList.toMutableListAndAll(list)
             data.value = movieList
         }
     }

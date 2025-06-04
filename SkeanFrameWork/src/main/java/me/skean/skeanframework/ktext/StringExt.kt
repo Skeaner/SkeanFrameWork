@@ -6,6 +6,9 @@ package me.skean.skeanframework.ktext
 import android.util.Log
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Created by Skean on 21/6/11.
@@ -60,3 +63,14 @@ fun String.subStringByKey(
     val appendText = if (includeKey) "" else key
     return substring(startIndex, indexOf(key, keySearchStartIndex, ignoreCase)) + appendText
 }
+
+fun String.parseLocalDate(pattern: String = "yyyy-MM-dd"): LocalDate {
+    val localDate = LocalDate.now()
+    return LocalDate.parse(this, DateTimeFormatter.ofPattern(pattern))
+}
+
+fun String.parseLocalDateTime(pattern: String = "yyyy-MM-dd HH:mm:ss"): LocalDateTime {
+    return LocalDateTime.parse(this, DateTimeFormatter.ofPattern(pattern))
+}
+
+

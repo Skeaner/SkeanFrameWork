@@ -1,6 +1,7 @@
 package me.skean.skeanframework.ktext
 
 import android.content.Context
+import android.graphics.Color
 import android.text.Editable
 import android.view.View
 import android.widget.Checkable
@@ -102,6 +103,23 @@ fun RecyclerView.addDividerItemDecoration(
     @ColorInt color: Int = ContextCompat.getColor(context, R.color.dividerGray),
     sizeInDp: Float = 1f,
     showAtLast: Boolean = false,
+    action: FlexibleDividerDecoration.Builder<*>.() -> Unit = {}
+) {
+    if (layoutManager is LinearLayoutManager) {
+        if ((layoutManager as LinearLayoutManager).orientation == RecyclerView.VERTICAL) {
+            this.addItemDecoration(horizontalDividerItemDecoration(context, color, sizeInDp, showAtLast, action))
+        }
+        if ((layoutManager as LinearLayoutManager).orientation == RecyclerView.HORIZONTAL) {
+            this.addItemDecoration(verticalDividerItemDecoration(context, color, sizeInDp, showAtLast, action))
+        }
+    }
+}
+
+@JvmOverloads
+fun RecyclerView.addMarginItemDecoration(
+    @ColorInt color: Int = Color.TRANSPARENT,
+    sizeInDp: Float = 5f,
+    showAtLast: Boolean = true,
     action: FlexibleDividerDecoration.Builder<*>.() -> Unit = {}
 ) {
     if (layoutManager is LinearLayoutManager) {

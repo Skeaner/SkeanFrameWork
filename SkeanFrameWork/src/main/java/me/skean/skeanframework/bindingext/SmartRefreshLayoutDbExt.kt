@@ -1,5 +1,3 @@
-@file:JvmName("BindingExt")
-
 package me.skean.skeanframework.bindingext
 
 import androidx.databinding.BindingAdapter
@@ -18,9 +16,12 @@ import me.skean.skeanframework.model.RefreshFinishEvent
 )
 object SmartRefreshLayoutDbExt {
 
-    @BindingAdapter(value = ["refreshListener", "loadMoreListener"])
+    @BindingAdapter(value = ["refreshListener", "loadMoreListener"], requireAll = false)
     @JvmStatic
-    fun SmartRefreshLayout.bindRefreshListener(refreshListener: OnRefreshListener?, loadMoreListener: OnLoadMoreListener?) {
+    fun SmartRefreshLayout.bindRefreshListener(
+        refreshListener: OnRefreshListener? = null,
+        loadMoreListener: OnLoadMoreListener? = null
+    ) {
         refreshListener?.let { this.setOnRefreshListener(refreshListener) }
         loadMoreListener?.let { this.setOnLoadMoreListener(loadMoreListener) }
     }
@@ -30,9 +31,9 @@ object SmartRefreshLayoutDbExt {
     @JvmStatic
     fun SmartRefreshLayout.bindRefreshFinishEvent(status: RefreshFinishEvent?) {
         if (status != null) {
-            if (status.isRefresh) {
+            if (isRefreshing) {
                 this.finishRefresh(0, status.success, status.noMore)
-            } else {
+            } else if (isLoading) {
                 this.finishLoadMore(0, status.success, status.noMore)
             }
         }

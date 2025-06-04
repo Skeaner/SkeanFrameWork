@@ -5,14 +5,22 @@ package me.skean.skeanframework.ktext
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.view.View
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.MetaDataUtils
 import com.blankj.utilcode.util.ToastUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import me.skean.skeanframework.R
 import me.skean.skeanframework.component.function.UpdateDialog
 import me.skean.skeanframework.net.pgy.PgyerApi
 import me.skean.skeanframework.utils.NetworkUtil
@@ -58,14 +66,14 @@ fun Context.checkUpdateByPgyerApi() {
         .map {
             if (it.code == 0) {
                 if (it.data == null) {
-                    throw  RuntimeException("PGYER返回APP信息为空");
+                    throw RuntimeException("PGYER返回APP信息为空");
                 } else {
                     if (appId != it.data.buildIdentifier) {
-                        throw  RuntimeException("PGYER配置的信息跟APP不一致!")
+                        throw RuntimeException("PGYER配置的信息跟APP不一致!")
                     }
                 }
             } else {
-                throw  RuntimeException(it.message)
+                throw RuntimeException(it.message)
             }
         }
         .flatMap { NetworkUtil.createService<PgyerApi>().checkUpdate(appKey, apiKey, appVersionName, appVersionCode) }
@@ -90,3 +98,16 @@ fun Context.checkUpdateByPgyerApi() {
             }
         })
 }
+
+fun Fragment.findParentNavController() = NavHostFragment.findNavController(requireParentFragment().requireParentFragment())
+
+fun Fragment.findChildNavController(@IdRes navHostFragmentId: Int) =
+    (childFragmentManager.findFragmentById(navHostFragmentId) as NavHostFragment).navController
+
+
+fun AppCompatActivity.findNavController(@IdRes navHostFragmentId: Int) =
+    (supportFragmentManager.findFragmentById(navHostFragmentId) as NavHostFragment).navController
+
+fun AppCompatActivity.findNavController(v: FragmentContainerView) = v.getFragment<NavHostFragment>().navController
+
+

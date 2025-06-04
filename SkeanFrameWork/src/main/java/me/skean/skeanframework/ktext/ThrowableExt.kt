@@ -3,6 +3,7 @@
 package me.skean.skeanframework.ktext
 
 import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.ToastUtils
 import org.json.JSONObject
 import retrofit2.HttpException
 import kotlin.reflect.KProperty1
@@ -47,4 +48,9 @@ inline fun <reified T> Throwable.parseHttpErrorBody(property: KProperty1<T, Stri
 @JvmOverloads
 fun Throwable.log(tag: String = LogUtils.getConfig().globalTag, msg: String? = null) {
     LogUtils.eTag(tag, msg ?: "${this.message}", this);
+}
+
+@JvmOverloads
+fun Throwable.showToast(short: Boolean = true) {
+    if (short) ToastUtils.showShort(this.message) else ToastUtils.showLong(this.message)
 }

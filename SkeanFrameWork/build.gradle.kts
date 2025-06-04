@@ -15,6 +15,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -92,6 +93,7 @@ val coroutinesVer = "1.8.1"
 val kotlinVersion = rootProject.extra["kotlinVersion"]
 
 dependencies {
+    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.1.5")
     api(fileTree("libs") { include("*.jar") })
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer")
@@ -154,6 +156,7 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVer")
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVer")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVer")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVer")
     //Apache的常用库
     api("commons-codec:commons-codec:1.15")
     api("commons-net:commons-net:3.9.0")
@@ -200,13 +203,8 @@ dependencies {
 
     //Permission
     api("com.github.Skeaner:XXPermissions:21.3")
-    //旧款 MaterialDialog
-    api("com.github.Skeaner.OldMaterialDialogs:core:1.0.2")
-    api("com.github.Skeaner.OldMaterialDialogs:commons:1.0.2")
-    //MaterialDialog
-    api("com.afollestad.material-dialogs:core:3.3.0")
-    api("com.afollestad.material-dialogs:input:3.3.0")
-    api("com.afollestad.material-dialogs:bottomsheets:3.3.0")
+    //Dialog
+    api("com.github.kongzue.DialogX:DialogX:0.0.50.beta37")
     //刷新库
     api("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha")
     api("io.github.scwang90:refresh-header-classics:3.0.0-alpha")  //经典刷新头
