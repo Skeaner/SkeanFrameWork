@@ -18,7 +18,7 @@ object SmartRefreshLayoutDbExt {
 
     @BindingAdapter(value = ["refreshListener", "loadMoreListener"], requireAll = false)
     @JvmStatic
-    fun SmartRefreshLayout.bindRefreshListener(
+    fun SmartRefreshLayout.setRefreshListener(
         refreshListener: OnRefreshListener? = null,
         loadMoreListener: OnLoadMoreListener? = null
     ) {
@@ -29,7 +29,7 @@ object SmartRefreshLayoutDbExt {
 
     @BindingAdapter("bindRefreshFinishEvent")
     @JvmStatic
-    fun SmartRefreshLayout.bindRefreshFinishEvent(status: RefreshFinishEvent?) {
+    fun SmartRefreshLayout.setRefreshFinishEvent(status: RefreshFinishEvent?) {
         if (status != null) {
             if (isRefreshing) {
                 this.finishRefresh(0, status.success, status.noMore)

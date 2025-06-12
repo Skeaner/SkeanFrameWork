@@ -20,7 +20,7 @@ object ImageViewDbExt {
 
     @BindingAdapter(value = ["image", "placeHolder", "errHolder"], requireAll =false)
     @JvmStatic
-    fun ImageView.bindLoadImage(image: Any?, placeHolder: Drawable? = null, errHolder: Drawable? = null) {
+    fun ImageView.setLoadImage(image: Any?, placeHolder: Drawable? = null, errHolder: Drawable? = null) {
         this.load(image) {
             placeHolder?.let { placeholder(it) }
             errHolder?.let { error(errHolder) }

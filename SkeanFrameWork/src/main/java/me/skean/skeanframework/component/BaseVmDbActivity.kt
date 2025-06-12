@@ -14,7 +14,7 @@ abstract class BaseVmDbActivity<VM : BaseVm, DB : ViewDataBinding> : BaseVmActiv
 
 
     lateinit var binding: DB
-
+    val isBindingInitialized get() = ::binding.isInitialized
 
     override fun onCreateView() {
         binding = initDataBind()

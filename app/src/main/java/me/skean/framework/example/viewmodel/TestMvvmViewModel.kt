@@ -1,4 +1,4 @@
-package me.skean.framework.example.view
+package me.skean.framework.example.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.ToastUtils

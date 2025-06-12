@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="me.skean.framework.example.view.AboutViewModel" />
+            type="me.skean.framework.example.viewmodel.AboutViewModel" />
 
     </data>
     <RelativeLayout

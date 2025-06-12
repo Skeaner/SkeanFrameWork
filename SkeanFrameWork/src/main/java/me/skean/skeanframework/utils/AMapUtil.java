@@ -5,13 +5,15 @@ import android.content.Context;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.amap.api.maps2d.CoordinateConverter;
-import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps.CoordinateConverter;
+import com.amap.api.maps.model.LatLng;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
+import kotlin.Pair;
+import me.skean.skeanframework.component.SkeanFrameWork;
 
 import static me.skean.skeanframework.utils.AMapUtil.LType.*;
 
@@ -235,7 +237,7 @@ public class AMapUtil {
      */
     public static double[] gcjToBaiduCoordinate(double latitude, double longitude) {
         LatLng sourceLatLng = new LatLng(latitude, longitude);
-        CoordinateConverter converter = new CoordinateConverter();
+        CoordinateConverter converter = new CoordinateConverter(SkeanFrameWork.getContext());
         converter.from(CoordinateConverter.CoordType.BAIDU);
         converter.coord(sourceLatLng);
         LatLng desLatLng = converter.convert();
@@ -340,6 +342,28 @@ public class AMapUtil {
         ret += (20.0 * Math.sin(x * pi) + 40.0 * Math.sin(x / 3.0 * pi)) * 2.0 / 3.0;
         ret += (150.0 * Math.sin(x / 12.0 * pi) + 300.0 * Math.sin(x / 30.0 * pi)) * 2.0 / 3.0;
         return ret;
+    }
+
+    public static Pair<LatLng, LatLng> calculateSWPointAndNEPoint(Iterable<LatLng> ponits) {
+        Double s = null;
+        Double w = null;
+        Double n = null;
+        Double e = null;
+        for (LatLng ponit : ponits) {
+            if (s == null || ponit.latitude < s) {
+                s = ponit.latitude;
+            }
+            if (w == null || ponit.longitude < w) {
+                w = ponit.longitude;
+            }
+            if (n == null || ponit.latitude > n) {
+                n = ponit.latitude;
+            }
+            if (e == null || ponit.longitude > e) {
+                e = ponit.longitude;
+            }
+        }
+        return new Pair<>(new LatLng(s, w), new LatLng(n, e));
     }
 
 }

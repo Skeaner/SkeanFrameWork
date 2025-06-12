@@ -13,6 +13,7 @@ import me.hgj.jetpackmvvm.ext.inflateBindingWithGeneric
 abstract class BaseVmVbActivity<VM : BaseVm, VB : ViewBinding> : BaseVmActivity<VM>() {
 
     lateinit var binding: VB
+    val isBindingInitialized get() = ::binding.isInitialized
 
 
     override fun onCreateView() {

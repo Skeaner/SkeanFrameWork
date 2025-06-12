@@ -1,12 +1,8 @@
 package me.skean.framework.example.view
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil.setContentView
-import me.skean.framework.example.R
 import me.skean.framework.example.databinding.MainActivityBinding
-import me.skean.skeanframework.component.BaseActivity
-import me.skean.skeanframework.component.BaseHostActivity
+import me.skean.framework.example.viewmodel.MainViewModel
 import me.skean.skeanframework.component.BaseVmVbActivity
 
 /**

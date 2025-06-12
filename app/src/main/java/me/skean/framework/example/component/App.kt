@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import cn.numeron.okhttp.log.LogLevel
+import com.amap.api.location.AMapLocationClient
+import com.amap.apis.utils.core.api.AMapUtilCoreApi
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
@@ -96,6 +98,7 @@ class App : Application(), StatusCallback {
             androidLogger(Level.ERROR) //使用Android的Log
             modules(AppModules.all)
         }
+        checkAMapPrivacy()
         checkUpdateByPgyerApi()
     }
 
@@ -121,6 +124,15 @@ class App : Application(), StatusCallback {
             // .allowMainThreadQueries() //是否允许在主线程进行操作
             .addMigrations(*Migrations.COLLECTIONS)
             .build()
+    }
+
+    private fun checkAMapPrivacy() {
+        //第一个是隐私权政策是否包含高德开平隐私权政策  true是包含, 第二个隐私权政策是否弹窗展示告知用户 true是展示
+        AMapLocationClient.updatePrivacyShow(this, true, true)
+        //隐私权政策是否取得用户同意  true是用户同意
+        AMapLocationClient.updatePrivacyAgree(this, true)
+        //基础库设置是否允许采集个人及设备信息
+        AMapUtilCoreApi.setCollectInfoEnable(true);
     }
 
 

@@ -47,7 +47,7 @@ import me.skean.skeanframework.rx.DefaultSingleObserver;
 @SuppressWarnings("unused")
 @SuppressLint("HandlerLeak")
 public class BaseActivity extends AppCompatActivity implements LifecycleProvider<ActivityEvent> {
-    protected Bundle savedInstanceStateCache;
+    public Bundle savedInstanceStateCache;
     protected Context context = null;
     protected ActionBar actionBar;
     protected LoadingDialog3 loadingDialog;
@@ -66,9 +66,9 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        savedInstanceStateCache = savedInstanceState;
         super.onCreate(savedInstanceState);
         lifecycleSubject.onNext(ActivityEvent.CREATE);
-        savedInstanceStateCache = savedInstanceState;
         context = this;
         initActionBar();
     }

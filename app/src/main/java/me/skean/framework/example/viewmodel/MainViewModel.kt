@@ -1,4 +1,4 @@
-package me.skean.framework.example.view
+package me.skean.framework.example.viewmodel
 
 import me.skean.skeanframework.component.BaseVm
 

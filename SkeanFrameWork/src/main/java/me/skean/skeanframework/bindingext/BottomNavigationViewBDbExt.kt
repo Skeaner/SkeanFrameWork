@@ -20,7 +20,7 @@ object BottomNavigationViewBDbExt {
 
     @BindingAdapter(value = ["itemIconTintList"])
     @JvmStatic
-    fun BottomNavigationView.bindItemIconTintList(itemIconTintList: ColorStateList?) {
+    fun BottomNavigationView.setItemIconTintList2(itemIconTintList: ColorStateList?) {
         this.itemIconTintList = itemIconTintList
     }
 

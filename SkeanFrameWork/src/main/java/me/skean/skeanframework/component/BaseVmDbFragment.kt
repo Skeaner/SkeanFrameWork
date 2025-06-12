@@ -18,13 +18,22 @@ abstract class BaseVmDbFragment<VM : BaseVm, DB : ViewDataBinding> : BaseVmFragm
 
     //该类绑定的ViewDataBinding
     lateinit var binding: DB
+    open val reUseView: Boolean = false
+    private var _isViewReUsing: Boolean = false
+    val isViewReUsing get() = _isViewReUsing
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = initDataBind(inflater, container, savedInstanceState)
+        if (reUseView && ::binding.isInitialized) {
+            _isViewReUsing = true
+            (binding.root.parent as ViewGroup?)?.removeView(binding.root)
+        } else {
+            _isViewReUsing = false
+            binding = initDataBind(inflater, container, savedInstanceState)
+        }
         return binding.root
     }
 

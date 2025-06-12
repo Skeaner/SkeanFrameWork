@@ -46,7 +46,7 @@ import me.skean.skeanframework.rx.DefaultSingleObserver;
  */
 @SuppressWarnings("unused")
 public abstract class BaseFragment extends Fragment implements LifecycleProvider<FragmentEvent> {
-    protected Bundle savedInstanceStateCache;
+    public Bundle savedInstanceStateCache;
     protected BaseActivity hostActivity;
     private Context context;
     protected LoadingDialog3 loadingDialog;
@@ -73,9 +73,9 @@ public abstract class BaseFragment extends Fragment implements LifecycleProvider
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        savedInstanceStateCache = savedInstanceState;
         super.onCreate(savedInstanceState);
         lifecycleSubject.onNext(FragmentEvent.CREATE);
-        savedInstanceStateCache = savedInstanceState;
     }
 
     @Override

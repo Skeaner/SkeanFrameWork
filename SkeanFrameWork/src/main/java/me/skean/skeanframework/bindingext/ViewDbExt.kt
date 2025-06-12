@@ -20,7 +20,7 @@ object ViewDbExt {
     @SuppressLint("CheckResult")
     @BindingAdapter("onClickFilter")
     @JvmStatic
-    fun View.bindClickFilterCallback(onClick: () -> Unit) {
+    fun View.setClickFilterCallback(onClick: () -> Unit) {
         this.clicks()
             .throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribe { onClick() }
@@ -29,7 +29,7 @@ object ViewDbExt {
 
     @BindingAdapter("backgroundRes")
     @JvmStatic
-    fun View.bindBackgroundRes(resId: Int) {
+    fun View.setBackgroundRes(resId: Int) {
         if (resId == 0) {
             return
         }

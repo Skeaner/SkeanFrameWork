@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment3Graph"
+    app:startDestination="@id/fragment3">
+
+
+    <fragment
+        android:id="@+id/fragment3"
+        android:name="me.skean.framework.example.view.Fragment3"
+        android:label="Fragment3">
+        <action
+            android:id="@+id/navToFragment31"
+            app:destination="@id/fragment31" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragment31"
+        android:name="me.skean.framework.example.view.Fragment31"
+        android:label="Fragment31" />
+
+
+</navigation>

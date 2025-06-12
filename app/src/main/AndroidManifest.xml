@@ -36,16 +36,26 @@
             android:name="me.skean.framework.example.view.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name="me.skean.framework.example.view.TestBnvActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <!--App后台-->
         <service
             android:name=".component.AppService"
             android:exported="false" />
+
+
+        <!--高德的定位后台-->
+        <service android:name="com.amap.api.location.APSService" />
 
         <!--App的文件Provider-->
         <provider

@@ -2,14 +2,10 @@ package me.skean.framework.example.view
 
 import android.os.Bundle
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import me.skean.framework.example.R
 import me.skean.framework.example.databinding.AboutFragmentBinding
+import me.skean.framework.example.viewmodel.AboutViewModel
+import me.skean.framework.example.viewmodel.MainViewModel
 import me.skean.skeanframework.component.BaseVmDbFragment
-import me.skean.skeanframework.component.function.LoadingDialog3
 import me.skean.skeanframework.ktext.setOnClickFilterListener
 
 /**

@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         minSdk = 21
-        manifestPlaceholders["AMAP_API_KEY"] = "\${PGYER_API_KEY}"
+        manifestPlaceholders["AMAP_API_KEY"] = "\${AMAP_API_KEY}"
         manifestPlaceholders["BUGLY_APPID"] = "\${BUGLY_APPID}"
         manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "\${BUGLY_ENABLE_DEBUG}"
         manifestPlaceholders["PGYER_API_KEY"] = "\${PGYER_API_KEY}"
@@ -147,8 +147,7 @@ dependencies {
     //EVENT
     api("com.github.michaellee123:LiveEventBus:1.8.14")
     //高德地图
-    api("com.amap.api:map2d:latest.integration")
-    api("com.amap.api:location:latest.integration")
+    api("com.amap.api:3dmap-location-search:latest.integration")
     // sql-cipher支持
     api("net.zetetic:android-database-sqlcipher:4.5.4")
     //json解析器
@@ -187,7 +186,7 @@ dependencies {
     //material design日期加时间选择器
     api("com.github.Skeaner:SublimePicker:2.1.4")
     //权限提示
-    api("com.github.Skeaner:EasyPermissionDialog:1.9")
+    api("com.github.Skeaner:EasyPermissionDialog:2.0")
     //BUGLY
     api("com.tencent.bugly:crashreport:4.1.9.3")
     //数字进度条

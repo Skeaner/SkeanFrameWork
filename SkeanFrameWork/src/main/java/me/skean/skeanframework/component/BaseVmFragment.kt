@@ -58,6 +58,7 @@ abstract class BaseVmFragment<VM : BaseVm> : BaseFragment() {
         return layoutId?.let { inflater.inflate(it, container, false) }
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isFirst = true

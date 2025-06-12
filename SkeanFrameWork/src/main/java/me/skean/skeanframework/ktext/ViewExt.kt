@@ -11,6 +11,7 @@ import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -22,20 +23,41 @@ import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.bundle.Bundle
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.ActivityNavigator
+import androidx.navigation.FloatingWindow
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavOptions
 import androidx.viewpager.widget.ViewPager
+import com.amap.api.maps.MapView
+import com.blankj.utilcode.util.ReflectUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.jakewharton.rxbinding4.view.clicks
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.scwang.smart.refresh.layout.api.RefreshLayout
+import com.scwang.smart.refresh.layout.constant.RefreshState
+import com.scwang.smart.refresh.layout.listener.OnMultiListener
+import com.scwang.smart.refresh.layout.simple.SimpleMultiListener
 import me.skean.skeanframework.component.SkeanFrameWork
 import me.skean.skeanframework.delegate.DefaultTextWatcher
+import me.skean.skeanframework.delegate.OnMultiListenerWrapper
 import me.skean.skeanframework.model.AppResponse
 import okhttp3.HttpUrl
 import org.apache.commons.collections4.map.ListOrderedMap
 import java.io.File
+import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KMutableProperty
 
@@ -387,6 +409,35 @@ fun SmartRefreshLayout.finishLoad(res: AppResponse<*>) {
     }
 }
 
+fun SmartRefreshLayout.postToAutoRefresh(cancelImmediately: Boolean = true) {
+    if (state == RefreshState.None) {
+        autoRefresh()
+    } else {
+        val oldListener: OnMultiListener? = ReflectUtils.reflect(this).field("mOnMultiListener").get()
+        val wrapper = if (oldListener is OnMultiListenerWrapper) {
+            oldListener
+        } else {
+            OnMultiListenerWrapper(oldListener)
+        }
+        wrapper.tempListener = object : SimpleMultiListener() {
+            override fun onStateChanged(refreshLayout: RefreshLayout, oldState: RefreshState, newState: RefreshState) {
+                if (newState == RefreshState.None) {
+                    autoRefresh()
+                    this@postToAutoRefresh.setOnMultiListener(wrapper.originalListener)
+                }
+            }
+        }
+        this.setOnMultiListener(wrapper)
+        if (cancelImmediately) {
+            if (this.state == RefreshState.Refreshing) {
+                finishRefresh(0, false, null)
+            } else if (this.state == RefreshState.Loading) {
+                finishLoadMore(0, false, false)
+            }
+        }
+    }
+}
+
 inline fun ImageView.load(
     uri: String?,
     action: RequestBuilder<*>.() -> Unit = {}
@@ -450,3 +501,95 @@ fun SearchView.setOnCloseBtnClickListener(
     val searchCloseButton = findViewById<View>(R.id.search_close_btn)
     searchCloseButton.setOnClickListener(listener)
 }
+
+fun MapView.bindToLifecycle(lifecycle: Lifecycle, savedInstanceSate: Bundle?) {
+    this@bindToLifecycle.onCreate(savedInstanceSate)
+    lifecycle.addObserver(object : DefaultLifecycleObserver {
+
+        override fun onResume(owner: LifecycleOwner) {
+            this@bindToLifecycle.onResume()
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+            this@bindToLifecycle.onPause()
+        }
+
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            this@bindToLifecycle.onDestroy()
+        }
+    })
+}
+
+
+fun BottomNavigationView.setupWithNavController2(navController: NavController, noPopBack: Boolean = true) {
+    val navigationBarView = this
+    navigationBarView.setOnItemSelectedListener { item ->
+        val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
+        if (navController.currentDestination!!.parent!!.findNode(item.itemId) is ActivityNavigator.Destination) {
+            builder.setEnterAnim(androidx.navigation.ui.R.anim.nav_default_enter_anim)
+                .setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
+                .setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
+                .setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_pop_exit_anim)
+        } else {
+            builder.setEnterAnim(androidx.navigation.ui.R.animator.nav_default_enter_anim)
+                .setExitAnim(androidx.navigation.ui.R.animator.nav_default_exit_anim)
+                .setPopEnterAnim(androidx.navigation.ui.R.animator.nav_default_pop_enter_anim)
+                .setPopExitAnim(androidx.navigation.ui.R.animator.nav_default_pop_exit_anim)
+        }
+        //这里是修改的地方
+        if (noPopBack) {
+            builder.setPopUpTo(selectedItemId, inclusive = true, saveState = true)
+        } else {
+            if (item.order and Menu.CATEGORY_SECONDARY == 0) {
+                builder.setPopUpTo(
+                    navController.graph.findStartDestination().id,
+                    inclusive = false,
+                    saveState = true
+                )
+            }
+        }
+        val options = builder.build()
+        return@setOnItemSelectedListener try {
+            // TODO provide proper API instead of using Exceptions as Control-Flow.
+            navController.navigate(item.itemId, null, options)
+            navController.currentDestination?.hierarchy?.any { it.id == item.itemId } == true
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+            false
+        }
+    }
+    val weakReference = WeakReference(navigationBarView)
+    navController.addOnDestinationChangedListener(
+        object : NavController.OnDestinationChangedListener {
+            override fun onDestinationChanged(
+                controller: NavController,
+                destination: NavDestination,
+                arguments: android.os.Bundle?
+            ) {
+                val view = weakReference.get()
+                if (view == null) {
+                    navController.removeOnDestinationChangedListener(this)
+                    return
+                }
+                if (destination is FloatingWindow) {
+                    return
+                }
+                view.menu.forEach { item ->
+                    if (destination.hierarchy.any { it.id == item.itemId }) {
+                        item.isChecked = true
+                    }
+                }
+            }
+        }
+    )
+    // Add your own reselected listener
+//    navigationBarView.setOnItemReselectedListener { item ->
+//        // Pop everything up to the reselected item
+//        val reselectedDestinationId = item.itemId
+//        navController.popBackStack(reselectedDestinationId, false)
+//    }
+}
+
+
+
