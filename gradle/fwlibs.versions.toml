@@ -14,7 +14,7 @@ roomVer = "2.7.1"
 jacksonVer = "2.17.0"
 rxLifecycleVer = "4.0.2"
 rxbindingVer = "4.0.0"
-coilVer = "2.7.0"
+coilVer = "3.0.4"
 coroutinesVer = "1.8.1"
 
 [libraries]
@@ -56,6 +56,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+guavaListenablefuture-avoidConflict = { group = "com.google.guava", name = "listenablefuture", version = "9999.0-empty-to-avoid-conflict-with-guava" }
 # retrofit2
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofitVer" }
 retrofit-converter-jackson = { group = "com.squareup.retrofit2", name = "converter-jackson", version.ref = "retrofitVer" }
@@ -95,10 +96,8 @@ commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version 
 # 软引用的handler
 androidWeakHandler = { group = "com.github.badoo", name = "android-weak-handler", version = "1.3" }
 # 图片加载
-coil = { group = "io.coil-kt", name = "coil", version.ref = "coilVer" }
-coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coilVer" }
-coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coilVer" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilVer" }
+coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilVer" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coilVer" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version = "4.16.0" }
 # 图片显示PhotoView
 photoView = { group = "com.github.chrisbanes", name = "PhotoView", version = "2.3.0" }
@@ -154,8 +153,5 @@ flexibleDivider = { group = "com.github.mazenrashed", name = "RecyclerView-Flexi
 activityResultLauncher = { group = "com.github.DylanCaiCoding", name = "ActivityResultLauncher", version = "1.1.2" }
 # mvvm框架
 jetpackMvvm = { group = "com.github.hegaojian", name = "JetpackMvvm", version = "1.2.7" }
-unpeekLivedata = { group = "com.kunminx.arch", name = "unpeek-livedata", version = "7.8.0" }
-retrofitUrlManager = { group = "com.github.JessYanCoding", name = "RetrofitUrlManager", version = "v1.4.0" }
-guavaListenablefuture = { group = "com.google.guava", name = "listenablefuture", version = "9999.0-empty-to-avoid-conflict-with-guava" }
 
 [plugins]

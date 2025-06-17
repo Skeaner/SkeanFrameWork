@@ -7,7 +7,9 @@ import android.widget.ImageView
 import androidx.annotation.IdRes
 import androidx.databinding.BindingAdapter
 import androidx.databinding.BindingMethods
-import coil.load
+import coil3.load
+import coil3.request.error
+import coil3.request.placeholder
 
 /**
  * Created by Skean on 2025/05/22.
@@ -22,8 +24,8 @@ object ImageViewDbExt {
     @JvmStatic
     fun ImageView.setLoadImage(image: Any?, placeHolder: Drawable? = null, errHolder: Drawable? = null) {
         this.load(image) {
-            placeHolder?.let { placeholder(it) }
-            errHolder?.let { error(errHolder) }
+            placeholder(placeHolder)
+            error(errHolder)
         }
     }
 

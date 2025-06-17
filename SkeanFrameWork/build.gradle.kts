@@ -107,6 +107,7 @@ dependencies {
     api(fwlibs.androidx.ui.graphics)
     api(fwlibs.androidx.material3)
     api(fwlibs.androidx.ui.tooling.preview)
+    api(fwlibs.guavaListenablefuture.avoidConflict)
     debugApi(fwlibs.androidx.ui.tooling)
     debugApi(fwlibs.androidx.ui.test.manifest)
 
@@ -150,9 +151,7 @@ dependencies {
     //软引用的handler
     api(fwlibs.androidWeakHandler)
     //图片加载
-    api(fwlibs.coil)
-    api(fwlibs.coil.gif)
-    api(fwlibs.coil.video)
+    api(fwlibs.coil.network)
     api(fwlibs.coil.compose)
     api(fwlibs.glide)
     //图片显示PhotoView
@@ -207,12 +206,6 @@ dependencies {
     //快速ActivityLauncher
     api(fwlibs.activityResultLauncher)
     //mvvm框架
-    api(fwlibs.jetpackMvvm) {
-        exclude(group = "com.kunminx.archi")
-        exclude(group = "me.jessyan")
-    }
-    api(fwlibs.unpeekLivedata)
-    api(fwlibs.retrofitUrlManager)
-    api(fwlibs.guavaListenablefuture)
+    api(fwlibs.jetpackMvvm)
 
 }
