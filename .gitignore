@@ -7,6 +7,5 @@
 /captures
 .externalNativeBuild
 *.apk
-/freeline
-freeline*
 *.log
+.kotlin

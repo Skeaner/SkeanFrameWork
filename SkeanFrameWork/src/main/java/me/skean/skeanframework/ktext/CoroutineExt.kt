@@ -4,6 +4,7 @@ package me.skean.skeanframework.ktext
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
+import me.skean.skeanframework.utils.NetworkUtil
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
@@ -22,11 +23,14 @@ suspend inline fun <reified R> launchMinElapsed(minElapsedMillis: Long = 500, ac
 
 inline fun defaultExceptionHandler(
     showToast: Boolean = true,
+    parseHttpBody: Boolean = true,
     crossinline onError: (Throwable) -> Unit = {}
 ): CoroutineExceptionHandler {
     return CoroutineExceptionHandler { coroutineContext, throwable ->
         throwable.printStackTrace()
-        if (showToast) throwable.showToast()
+        if (showToast) {
+            if (!parseHttpBody) throwable.showToast() else NetworkUtil.parseErrorBodyMsg(throwable).showToast()
+        }
         onError(throwable)
     }
 }

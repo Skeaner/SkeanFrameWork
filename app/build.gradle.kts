@@ -2,17 +2,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.tag
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("kotlin-allopen")
-    id("kotlin-kapt")
-    id("com.google.devtools.ksp")
-    kotlin("plugin.serialization")
-    id("androidx.navigation.safeargs")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.allopen)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.safeargs)
+    alias(libs.plugins.compose.compiler)
 }
 
 allOpen {
@@ -20,7 +20,7 @@ allOpen {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = libs.versions.comileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -40,8 +40,8 @@ android {
         }
     }
 
-    var vCode = 1
-    var vName = "1.0.0"
+    var vCode = libs.versions.appVerCode.get().toInt()
+    var vName = libs.versions.appVerName.get()
     //判断是否发布任务
     val isRelease = gradle.startParameter.taskRequests.any {
         it.args.any { s ->
@@ -50,27 +50,23 @@ android {
     }
     //发布的环境自动增加版本号
     if (isRelease) {
-        val oldVCode = vCode
-        val oldVName = vName
         vCode += 1
         val vNameParts = vName.split(".")
-        var vNamePart1 = Integer.parseInt(vNameParts[0])
-        var vNamePart2 = Integer.parseInt(vNameParts[1])
-        var vNamePart3 = Integer.parseInt(vNameParts[2])
-        vNamePart3 += 1
-        if (vNamePart3 > 9) {
+        var vNamePart1 = vNameParts[0].toInt()
+        var vNamePart2 = vNameParts[1].toInt()
+        var vNamePart3 = vNameParts[2].toInt()
+        if (++vNamePart3 > 9) {
             vNamePart3 = 0
-            vNamePart2 += 1
-            if (vNamePart2 > 9) {
+            if (++vNamePart2 > 9) {
                 vNamePart2 = 0
-                vNamePart1 += 1
+                ++vNamePart1
             }
         }
         vName = "$vNamePart1.$vNamePart2.$vNamePart3"
-        val file = project.rootProject.file("/app/build.gradle.kts")
+        val file = project.rootProject.file("/gradle/libs.versions.toml")
         var text = file.readText()
-        text = text.replace("var vCode = $oldVCode", "var vCode = $vCode")
-        text = text.replace("var vName = \"${oldVName}\"", "var vName = \"$vName\"")
+        text = text.replace(Regex("appVerCode.*"), "appVerCode = \"$vCode\"")
+        text = text.replace(Regex("appVerName.*"), "appVerName = \"$vName\"")
         file.writeText(text)
     }
 
@@ -79,14 +75,13 @@ android {
         val tag = "FrameworkExample"
         namespace = "me.skean.framework.example"
         applicationId = "me.skean.framework.example"
-        minSdk = 21
-        targetSdk = 33
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = vCode
         versionName = vName
         ndk {
             abiFilters.add("armeabi-v7a")
             abiFilters.add("arm64-v8a")
-            abiFilters.add("x86")
         }
 
         kapt {
@@ -114,16 +109,17 @@ android {
         buildConfigField("String", "APP_TAG", "\"$tag\"")
         buildConfigField("boolean", "EXTERNAL_DB", "true")
         buildConfigField("boolean", "USE_FILE_LOGGER", "false")
-        signingConfig = signingConfigs.getByName("config")
     }
     buildTypes {
         //todo 发布与开发的配置
         release {
+            signingConfig = signingConfigs.getByName("config")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         debug {
+            signingConfig = signingConfigs.getByName("config")
             isMinifyEnabled = false
             isShrinkResources = false
         }
@@ -178,33 +174,24 @@ android {
     lint.abortOnError = false
     viewBinding.isEnabled = true
     dataBinding.enable = true
-    packagingOptions {
-        resources.excludes.apply {
-            add("META-INF/DEPENDENCIES")
-            add("META-INF/NOTICE")
-            add("META-INF/LICENSE")
-            add("META-INF/LICENSE.txt")
-            add("META-INF/NOTICE.txt")
-            add("META-INF/rxjava.properties")
-            add("META-INF/androidx.exifinterface_exifinterface.version")
-            add("META-INF/proguard/androidx-annotations.pro")
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1,DEPENDENCIES,NOTICE,LICENSE,LICENSE.txt,NOTICE.txt,rxjava.properties,androidx.exifinterface_exifinterface.version}"
+            excludes += "META-INF/proguard/androidx-annotations.pro"
         }
-
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
 
-repositories {
-    flatDir { dirs("libs") }
-    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
-    mavenLocal()
-}
-
-
 dependencies {
-    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.1.5")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 //    implementation("com.github.Skeaner:SkeanFrameWork:2.3.6")
     implementation(project(":SkeanFrameWork"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
-    implementation(fileTree("libs") { include("*.jar") })
-    ksp("androidx.room:room-compiler:2.7.1")
+    implementation(fileTree("libs") { include("*.jar", "*.aar") })
+    ksp(libs.room.compiler)
 }

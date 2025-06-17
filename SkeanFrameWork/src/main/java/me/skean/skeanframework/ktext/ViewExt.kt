@@ -522,9 +522,13 @@ fun MapView.bindToLifecycle(lifecycle: Lifecycle, savedInstanceSate: Bundle?) {
 }
 
 
-fun BottomNavigationView.setupWithNavController2(navController: NavController, noPopBack: Boolean = true) {
+fun BottomNavigationView.setupWithNavController2(
+    navController: NavController, noPopBack: Boolean = true, ignoreDuplicateItemClick: Boolean = true
+) {
     val navigationBarView = this
     navigationBarView.setOnItemSelectedListener { item ->
+        // 在这里增加了点击同一页不刷新
+        if (ignoreDuplicateItemClick && item.itemId == selectedItemId) return@setOnItemSelectedListener true
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
         if (navController.currentDestination!!.parent!!.findNode(item.itemId) is ActivityNavigator.Destination) {
             builder.setEnterAnim(androidx.navigation.ui.R.anim.nav_default_enter_anim)
@@ -537,9 +541,9 @@ fun BottomNavigationView.setupWithNavController2(navController: NavController, n
                 .setPopEnterAnim(androidx.navigation.ui.R.animator.nav_default_pop_enter_anim)
                 .setPopExitAnim(androidx.navigation.ui.R.animator.nav_default_pop_exit_anim)
         }
-        //这里是修改的地方
+        // 这里增加了不回退直接退出的功能
         if (noPopBack) {
-            builder.setPopUpTo(selectedItemId, inclusive = true, saveState = true)
+            builder.setPopUpTo(selectedItemId, inclusive = true, saveState = false)
         } else {
             if (item.order and Menu.CATEGORY_SECONDARY == 0) {
                 builder.setPopUpTo(
@@ -551,7 +555,6 @@ fun BottomNavigationView.setupWithNavController2(navController: NavController, n
         }
         val options = builder.build()
         return@setOnItemSelectedListener try {
-            // TODO provide proper API instead of using Exceptions as Control-Flow.
             navController.navigate(item.itemId, null, options)
             navController.currentDestination?.hierarchy?.any { it.id == item.itemId } == true
         } catch (e: IllegalArgumentException) {
@@ -583,12 +586,6 @@ fun BottomNavigationView.setupWithNavController2(navController: NavController, n
             }
         }
     )
-    // Add your own reselected listener
-//    navigationBarView.setOnItemReselectedListener { item ->
-//        // Pop everything up to the reselected item
-//        val reselectedDestinationId = item.itemId
-//        navController.popBackStack(reselectedDestinationId, false)
-//    }
 }
 
 

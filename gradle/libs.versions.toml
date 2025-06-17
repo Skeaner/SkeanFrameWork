@@ -1,0 +1,23 @@
+[versions]
+appVerCode = "3"
+appVerName = "1.0.2"
+comileSdk = "34"
+minSdk = "21"
+targetSdk="33"
+agp = "8.5.2"
+kotlin = "2.0.20"
+[libraries]
+desugar_jdk_libs = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.1.5" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version = "2.7.1" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version = "2.0.20-1.0.25" }
+safeargs = { id = "androidx.navigation.safeargs", version = "2.9.0" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

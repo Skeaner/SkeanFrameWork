@@ -1,17 +1,15 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
-
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("kotlin-allopen")
-    id("kotlin-kapt")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.allopen)
+    alias(libs.plugins.kotlin.kapt)
     id("maven-publish")
 }
 
 android {
-    namespace = "me.skean.skeanframework"
-    compileSdk = 34
+    namespace = fwlibs.versions.fwNameSpace.get()
+    compileSdk = fwlibs.versions.comileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -23,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 21
+        minSdk = fwlibs.versions.minSdk.get().toInt()
         manifestPlaceholders["AMAP_API_KEY"] = "\${AMAP_API_KEY}"
         manifestPlaceholders["BUGLY_APPID"] = "\${BUGLY_APPID}"
         manifestPlaceholders["BUGLY_ENABLE_DEBUG"] = "\${BUGLY_ENABLE_DEBUG}"
@@ -60,9 +58,9 @@ android {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = "com.github.Skeaner"
-            artifactId = "SkeanFrameWork"
-            version = "2.3.1"
+            groupId = fwlibs.versions.fwGroupId.get()
+            artifactId = fwlibs.versions.fwArtifactId.get()
+            version = fwlibs.versions.fwVer.get()
 
             afterEvaluate {
                 from(components["release"])
@@ -71,163 +69,150 @@ publishing {
     }
 }
 
-repositories {
-    flatDir {
-        dirs("libs")
-    }
-    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
-    maven { url = uri("https://nexus.terrestris.de/repository/public/") }
-}
-
-val retrofitVer = "2.11.0"
-val koinVer = "4.0.4"
-val lifecycleVer = "2.8.7"
-val navigationVer = "2.8.9"
-val roomVer = "2.7.1"
-val jacksonVer = "2.17.0"
-val rxLifecycleVer = "4.0.2"
-val rxbindingVer = "4.0.0"
-val coilVer = "2.7.0"
-val coroutinesVer = "1.8.1"
-
-val kotlinVersion = rootProject.extra["kotlinVersion"]
-
 dependencies {
-    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.1.5")
-    api(fileTree("libs") { include("*.jar") })
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVer")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$coroutinesVer")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-rx3:$coroutinesVer")
+    coreLibraryDesugaring(fwlibs.desugar.jdk.libs)
+    api(fileTree("libs") { include("*.jar", "*.aar") })
+    api(fwlibs.kotlin.stdlib.jdk8)
+    api(fwlibs.kotlinx.coroutines.core)
+    api(fwlibs.kotlinx.coroutines.android)
+    api(fwlibs.kotlinx.coroutines.reactive)
+    api(fwlibs.kotlinx.coroutines.rx3)
 
     //谷歌库
-    api("androidx.core:core-ktx:1.13.1")
-    api("androidx.appcompat:appcompat:1.7.0")
-    api("androidx.recyclerview:recyclerview:1.3.2")
-    api("com.google.android.material:material:1.12.0")
-    api ("androidx.core:core-splashscreen:1.0.1")
-    api("androidx.navigation:navigation-fragment:$navigationVer")
-    api("androidx.navigation:navigation-ui:$navigationVer")
-    api("androidx.navigation:navigation-compose:$navigationVer")
-    api("androidx.navigation:navigation-dynamic-features-fragment:$navigationVer")
-    api("androidx.room:room-runtime:$roomVer")
-    api("androidx.room:room-rxjava3:$roomVer")
-    api("androidx.room:room-ktx:$roomVer")
-    api("androidx.sqlite:sqlite-ktx:2.5.1")
-    api("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-common-java8:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-service:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-process:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVer")
-    api("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVer")
+    api(fwlibs.core.ktx)
+    api(fwlibs.appcompat)
+    api(fwlibs.recyclerview)
+    api(fwlibs.material)
+    api(fwlibs.core.splashscreen)
+    api(fwlibs.navigation.fragment)
+    api(fwlibs.navigation.ui)
+    api(fwlibs.navigation.compose)
+    api(fwlibs.navigation.dynamic.features.fragment)
+    api(fwlibs.room.runtime)
+    api(fwlibs.room.rxjava3)
+    api(fwlibs.room.ktx)
+    api(fwlibs.sqlite.ktx)
+    api(fwlibs.lifecycle.viewmodel.ktx)
+    api(fwlibs.lifecycle.viewmodel.compose)
+    api(fwlibs.lifecycle.livedata.ktx)
+    api(fwlibs.lifecycle.viewmodel.savedstate)
+    api(fwlibs.lifecycle.common.java8)
+    api(fwlibs.lifecycle.service)
+    api(fwlibs.lifecycle.process)
+    api(fwlibs.lifecycle.reactivestreams.ktx)
+    api(fwlibs.lifecycle.runtime.ktx)
+    api(fwlibs.androidx.activity.compose)
+    api(platform(fwlibs.androidx.compose.bom))
+    api(fwlibs.androidx.ui)
+    api(fwlibs.androidx.ui.graphics)
+    api(fwlibs.androidx.material3)
+    api(fwlibs.androidx.ui.tooling.preview)
+    debugApi(fwlibs.androidx.ui.tooling)
+    debugApi(fwlibs.androidx.ui.test.manifest)
+
     //retrofit2
-    api("com.squareup.retrofit2:retrofit:$retrofitVer")
-    api("com.squareup.retrofit2:converter-jackson:$retrofitVer")
-    api("com.squareup.retrofit2:adapter-rxjava3:$retrofitVer")
-    api("com.github.franmontiel:PersistentCookieJar:v1.0.1")
-    api("cn.numeron:http:1.0.10")
+    api(fwlibs.retrofit)
+    api(fwlibs.retrofit.converter.jackson)
+    api(fwlibs.retrofit.adapter.rxjava3)
+    api(fwlibs.persistentCookieJar)
+    api(fwlibs.numeron.http)
     //RxJava的库
-    api("io.reactivex.rxjava3:rxandroid:3.0.2")
-    api("io.reactivex.rxjava3:rxjava:3.1.10")
-    api("com.jakewharton.rxbinding4:rxbinding-core:$rxbindingVer")
-    api("com.jakewharton.rxbinding4:rxbinding-appcompat:$rxbindingVer")
-    api("com.jakewharton.rxbinding4:rxbinding-recyclerview:$rxbindingVer")
-    api("com.jakewharton.rxbinding4:rxbinding-material:$rxbindingVer")
-    api("com.trello.rxlifecycle4:rxlifecycle:$rxLifecycleVer")
-    api("com.trello.rxlifecycle4:rxlifecycle-android:$rxLifecycleVer")
-    api("com.trello.rxlifecycle4:rxlifecycle-components:$rxLifecycleVer")
-    api("com.trello.rxlifecycle4:rxlifecycle-android-lifecycle:$rxLifecycleVer")
-    api("com.trello.rxlifecycle4:rxlifecycle-kotlin:$rxLifecycleVer")
-    api("com.trello.rxlifecycle4:rxlifecycle-android-lifecycle-kotlin:$rxLifecycleVer")
-
+    api(fwlibs.rxandroid)
+    api(fwlibs.rxjava)
+    api(fwlibs.rxbinding.core)
+    api(fwlibs.rxbinding.appcompat)
+    api(fwlibs.rxbinding.recyclerview)
+    api(fwlibs.rxbinding.material)
+    api(fwlibs.rxlifecycle)
+    api(fwlibs.rxlifecycle.android)
+    api(fwlibs.rxlifecycle.components)
+    api(fwlibs.rxlifecycle.kotlin)
+    api(fwlibs.rxlifecycle.android.lifecycle)
+    api(fwlibs.rxlifecycle.android.lifecycle.kotlin)
+    api(fwlibs.gson)
     //EVENT
-    api("com.github.michaellee123:LiveEventBus:1.8.14")
+    api(fwlibs.liveEventBus)
     //高德地图
-    api("com.amap.api:3dmap-location-search:latest.integration")
+    api(fwlibs.amap)
     // sql-cipher支持
-    api("net.zetetic:android-database-sqlcipher:4.5.4")
+    api(fwlibs.androidDatabaseSqlcipher)
     //json解析器
-    api("com.fasterxml.jackson.core:jackson-core:$jacksonVer")
-    api("com.fasterxml.jackson.core:jackson-databind:$jacksonVer")
-    api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVer")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVer")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVer")
+    api(fwlibs.jackson.core)
+    api(fwlibs.jackson.databind)
+    api(fwlibs.jackson.annotations)
+    api(fwlibs.jackson.module.kotlin)
+    api(fwlibs.jackson.datatype.jsr310)
     //Apache的常用库
-    api("commons-codec:commons-codec:1.15")
-    api("commons-net:commons-net:3.9.0")
-    api("org.apache.commons:commons-collections4:4.4")
-    api("org.apache.commons:commons-lang3:3.12.0")
+    api(fwlibs.commons.codec)
+    api(fwlibs.commons.net)
+    api(fwlibs.commons.collections4)
+    api(fwlibs.commons.lang3)
     //软引用的handler
-    api("com.github.badoo:android-weak-handler:1.3")
+    api(fwlibs.androidWeakHandler)
     //图片加载
-    api("io.coil-kt:coil:$coilVer")
-    api("io.coil-kt:coil-gif:$coilVer")
-    api("io.coil-kt:coil-video:$coilVer")
-    api("com.github.bumptech.glide:glide:4.16.0")
+    api(fwlibs.coil)
+    api(fwlibs.coil.gif)
+    api(fwlibs.coil.video)
+    api(fwlibs.coil.compose)
+    api(fwlibs.glide)
     //图片显示PhotoView
-    api("com.github.chrisbanes:PhotoView:2.3.0")
+    api(fwlibs.photoView)
     //图片触摸库
-    api("it.sephiroth.android.library.imagezoom:imagezoom:2.3.0")
+    api(fwlibs.imagezoom)
     //图片显示subsamplingImageView
-    api("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
+    api(fwlibs.subsamplingScaleImageView)
     //图片选择器
-    api("io.github.lucksiege:pictureselector:v3.11.2")
-    api("io.github.lucksiege:compress:v3.11.2")
-    api("io.github.lucksiege:ucrop:v3.11.2")
-    api("io.github.lucksiege:camerax:v3.11.2")
+    api(fwlibs.pictureselector)
+    api(fwlibs.pictureselector.compress)
+    api(fwlibs.pictureselector.ucrop)
+    api(fwlibs.pictureselector.camerax)
     //综合工具库utilcode
-    api("com.blankj:utilcodex:1.31.1")
+    api(fwlibs.utilcodex)
     //RecyclerView综合适配器
-    api("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.7")
+    api(fwlibs.baseRecyclerViewAdapterHelper4)
     //material design日期加时间选择器
-    api("com.github.Skeaner:SublimePicker:2.1.4")
+    api(fwlibs.sublimePicker)
     //权限提示
-    api("com.github.Skeaner:EasyPermissionDialog:2.0")
+    api(fwlibs.easyPermissionDialog)
     //BUGLY
-    api("com.tencent.bugly:crashreport:4.1.9.3")
+    api(fwlibs.crashreport)
     //数字进度条
-    api("com.github.Skeaner:NumberProgressBar:1.4.1")
+    api(fwlibs.numberProgressBar)
     //sharedpreferences
-    api("com.chibatching.kotpref:kotpref:2.13.2")
-    api("com.chibatching.kotpref:enum-support:2.13.2")
-    api("com.chibatching.kotpref:gson-support:2.13.2")
-    api("com.google.code.gson:gson:2.10.1")
-    api("com.chibatching.kotpref:livedata-support:2.13.2")
-    api("com.chibatching.kotpref:preference-screen-dsl:2.13.2")
-    api("com.github.cioccarellia:ksprefs:2.4.1")
-
+    api(fwlibs.kotpref)
+    api(fwlibs.kotpref.enumSupport)
+    api(fwlibs.kotpref.gsonSupport)
+    api(fwlibs.kotpref.livedataSupport)
+    api(fwlibs.kotpref.preferenceScreenDsl)
+    api(fwlibs.ksprefs)
     //Permission
-    api("com.github.Skeaner:XXPermissions:21.3")
+    api(fwlibs.xxPermissions)
     //Dialog
-    api("com.github.kongzue.DialogX:DialogX:0.0.50.beta37")
+    api(fwlibs.dialogX)
     //刷新库
-    api("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha")
-    api("io.github.scwang90:refresh-header-classics:3.0.0-alpha")  //经典刷新头
-    api("io.github.scwang90:refresh-footer-classics:3.0.0-alpha")
+    api(fwlibs.refresh.layoutKernel)
+    api(fwlibs.refresh.headerClassics)
+    api(fwlibs.refresh.footerClassics)
     //koin
-    api("io.insert-koin:koin-core:$koinVer")
-    api("io.insert-koin:koin-android:$koinVer")// Koin main features for Android
-    api("io.insert-koin:koin-android-compat:$koinVer")// Java Compatibility
-    api("io.insert-koin:koin-androidx-navigation:$koinVer")// Navigation Graph
-    api("io.insert-koin:koin-androidx-compose:$koinVer")// Jetpack Compose
+    api(fwlibs.koin.core)
+    api(fwlibs.koin.android)
+    api(fwlibs.koin.android.compat)
+    api(fwlibs.koin.androidx.navigation)
+    api(fwlibs.koin.androidx.compose)
     //viewBinding快速库
-    api("com.hi-dhl:binding:1.2.0")
-    api("com.github.DylanCaiCoding.ViewBindingKTX:viewbinding-ktx:2.1.0")
+    api(fwlibs.binding)
+    api(fwlibs.viewbinding.ktx)
     //FlexibleDivider
-    api("com.github.mazenrashed:RecyclerView-FlexibleDivider:1.5.0")
+    api(fwlibs.flexibleDivider)
     //快速ActivityLauncher
-    api("com.github.DylanCaiCoding:ActivityResultLauncher:1.1.2")
+    api(fwlibs.activityResultLauncher)
     //mvvm框架
-    api("com.github.hegaojian:JetpackMvvm:1.2.7") {
+    api(fwlibs.jetpackMvvm) {
         exclude(group = "com.kunminx.archi")
         exclude(group = "me.jessyan")
     }
-    api("com.kunminx.arch:unpeek-livedata:7.8.0")
-    api("com.github.JessYanCoding:RetrofitUrlManager:v1.4.0")
-    api("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+    api(fwlibs.unpeekLivedata)
+    api(fwlibs.retrofitUrlManager)
+    api(fwlibs.guavaListenablefuture)
 
 }

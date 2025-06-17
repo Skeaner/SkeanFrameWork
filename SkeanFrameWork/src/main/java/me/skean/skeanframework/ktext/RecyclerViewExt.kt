@@ -1,3 +1,5 @@
+@file:JvmName("RecyclerViewExt")
+
 package me.skean.skeanframework.ktext
 
 import android.content.Context
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.chad.library.adapter4.BaseQuickAdapter
 import com.chad.library.adapter4.viewholder.QuickViewHolder
 import com.yqritc.recyclerviewflexibledivider.FlexibleDividerDecoration
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
@@ -41,6 +44,21 @@ fun QuickViewHolder.setChecked(@IdRes viewId: Int, isChecked: Boolean): QuickVie
     return this
 }
 
+inline fun <T : Any, VH : RecyclerView.ViewHolder> BaseQuickAdapter<T, VH>.setOnItemClickListener(
+    crossinline listener: (T, Int) -> Unit
+) {
+    setOnItemClickListener { adapter, v, pos ->
+        adapter.getItem(pos)?.let { listener(it, pos) }
+    }
+}
+
+inline fun <T : Any, VH : RecyclerView.ViewHolder> BaseQuickAdapter<T, VH>.addOnItemChildClickListener(
+    id: Int, crossinline listener: (T, Int) -> Unit
+) {
+    addOnItemChildClickListener(id) { adapter, v, pos ->
+        adapter.getItem(pos)?.let { listener(it, pos) }
+    }
+}
 
 inline fun QuickViewHolder.addTextChangedListener(
     @IdRes viewId: Int,
@@ -133,6 +151,11 @@ fun RecyclerView.addMarginItemDecoration(
 }
 
 
+fun RecyclerView.removeAllItemDecorations() {
+    for (index in 0 until itemDecorationCount) {
+        removeItemDecorationAt(index)
+    }
+}
 
 fun <T : Any> quickDiffCallback(
     isSameComparator: (T, T) -> Boolean = { oldItem, newItem -> oldItem == newItem },
