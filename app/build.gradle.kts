@@ -2,6 +2,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.tag
+import org.jetbrains.kotlin.konan.properties.saveToFile
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -40,8 +43,16 @@ android {
         }
     }
 
-    var vCode = libs.versions.appVerCode.get().toInt()
-    var vName = libs.versions.appVerName.get()
+    //以下是自增的版本号内容
+    val appConfFile = file("app_conf.properties")
+    val appConf = Properties().apply {
+        appConfFile.reader().let {
+            load(it)
+            it.close()
+        }
+    }
+    var vCode = appConf["versionCode"].toString().toInt()
+    var vName = appConf["versionName"].toString()
     //判断是否发布任务
     val isRelease = gradle.startParameter.taskRequests.any {
         it.args.any { s ->
@@ -51,30 +62,28 @@ android {
     //发布的环境自动增加版本号
     if (isRelease) {
         vCode += 1
-        val vNameParts = vName.split(".")
-        var vNamePart1 = vNameParts[0].toInt()
-        var vNamePart2 = vNameParts[1].toInt()
-        var vNamePart3 = vNameParts[2].toInt()
-        if (++vNamePart3 > 9) {
-            vNamePart3 = 0
-            if (++vNamePart2 > 9) {
-                vNamePart2 = 0
-                ++vNamePart1
+        val vNameParts = vName.split(".").map { it.toInt() }.toMutableList()
+        if (++vNameParts[2] > 9) {
+            vNameParts[2] = 0
+            if (++vNameParts[1] > 9) {
+                vNameParts[1] = 0
+                ++vNameParts[0]
             }
         }
-        vName = "$vNamePart1.$vNamePart2.$vNamePart3"
-        val file = project.rootProject.file("/gradle/libs.versions.toml")
-        var text = file.readText()
-        text = text.replace(Regex("appVerCode.*"), "appVerCode = \"$vCode\"")
-        text = text.replace(Regex("appVerName.*"), "appVerName = \"$vName\"")
-        file.writeText(text)
+        vName = "${vNameParts[0]}.${vNameParts[1]}.${vNameParts[2]}"
+        //输出数据
+        appConf["versionCode"] = "$vCode"
+        appConf["versionName"] = vName
+        appConfFile.writer().let {
+            appConf.store(it, null)
+            it.close()
+        }
     }
 
     defaultConfig {
         //todo 修改程序名字相关
-        val tag = "FrameworkExample"
-        namespace = "me.skean.framework.example"
-        applicationId = "me.skean.framework.example"
+        namespace = libs.versions.namespace.get()
+        applicationId = libs.versions.applicationId.get()
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = vCode
@@ -98,7 +107,7 @@ android {
                 val buildTypeName: String = buildType.name
                 val versionTag = buildTypeName.get(0)
                 (this as BaseVariantOutputImpl).outputFileName =
-                    "$tag(${flavorName})-${vName}${versionTag}(b${vCode})-${dateStr}.apk"
+                    "${libs.versions.appTag.get()}(${flavorName})-${vName}${versionTag}(b${vCode})-${dateStr}.apk"
 
             }
 
@@ -106,7 +115,7 @@ android {
         //todo 通用的配置
         manifestPlaceholders["rawApplicationId"] = "$applicationId"
         manifestPlaceholders["applicationIcon"] = "@drawable/ic_launcher"
-        buildConfigField("String", "APP_TAG", "\"$tag\"")
+        buildConfigField("String", "APP_TAG", "\"${libs.versions.appTag.get()}\"")
         buildConfigField("boolean", "EXTERNAL_DB", "true")
         buildConfigField("boolean", "USE_FILE_LOGGER", "false")
     }
