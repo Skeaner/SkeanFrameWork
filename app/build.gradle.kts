@@ -43,42 +43,7 @@ android {
         }
     }
 
-    //以下是自增的版本号内容
-    val appConfFile = file("app_conf.properties")
-    val appConf = Properties().apply {
-        appConfFile.reader().let {
-            load(it)
-            it.close()
-        }
-    }
-    var vCode = appConf["versionCode"].toString().toInt()
-    var vName = appConf["versionName"].toString()
-    //判断是否发布任务
-    val isRelease = gradle.startParameter.taskRequests.any {
-        it.args.any { s ->
-            s.endsWith("Release") && !s.endsWith("BetaRelease") && !s.endsWith("DevelopRelease")
-        }
-    }
-    //发布的环境自动增加版本号
-    if (isRelease) {
-        vCode += 1
-        val vNameParts = vName.split(".").map { it.toInt() }.toMutableList()
-        if (++vNameParts[2] > 9) {
-            vNameParts[2] = 0
-            if (++vNameParts[1] > 9) {
-                vNameParts[1] = 0
-                ++vNameParts[0]
-            }
-        }
-        vName = "${vNameParts[0]}.${vNameParts[1]}.${vNameParts[2]}"
-        //输出数据
-        appConf["versionCode"] = "$vCode"
-        appConf["versionName"] = vName
-        appConfFile.writer().let {
-            appConf.store(it, null)
-            it.close()
-        }
-    }
+    val (vCode, vName) = setupVersions()
 
     defaultConfig {
         //todo 修改程序名字相关
@@ -203,4 +168,47 @@ dependencies {
     implementation(project(":SkeanFrameWork"))
     implementation(fileTree("libs") { include("*.jar", "*.aar") })
     ksp(libs.room.compiler)
+}
+
+/**
+ * 设置app版本号
+ */
+fun setupVersions(): Pair<Int, String> {
+    //以下是自增的版本号内容
+    val appConfFile = file("versions.properties")
+    val appConf = Properties().apply {
+        appConfFile.reader().let {
+            load(it)
+            it.close()
+        }
+    }
+    var vCode = appConf["versionCode"].toString().toInt()
+    var vName = appConf["versionName"].toString()
+    //判断是否发布任务
+    val isRelease = gradle.startParameter.taskRequests.any {
+        it.args.any { s ->
+            s.endsWith("Release") && !s.endsWith("BetaRelease") && !s.endsWith("DevelopRelease")
+        }
+    }
+    //发布的环境自动增加版本号
+    if (isRelease) {
+        vCode += 1
+        val vNames = vName.split(".").map { it.toInt() }.toMutableList()
+        if (++vNames[2] > 9) {
+            vNames[2] = 0
+            if (++vNames[1] > 9) {
+                vNames[1] = 0
+                ++vNames[0]
+            }
+        }
+        vName = "${vNames[0]}.${vNames[1]}.${vNames[2]}"
+        //输出数据
+        appConf["versionCode"] = "$vCode"
+        appConf["versionName"] = vName
+        appConfFile.writer().let {
+            appConf.store(it, null)
+            it.close()
+        }
+    }
+    return vCode to vName
 }
