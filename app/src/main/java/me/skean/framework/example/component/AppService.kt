@@ -1,5 +1,6 @@
 package me.skean.framework.example.component
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -13,6 +14,7 @@ import android.os.Environment
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LifecycleService
 import com.blankj.utilcode.util.FileUtils
@@ -68,12 +70,15 @@ class AppService : LifecycleService() {
         super.onDestroy()
     }
 
+    @Suppress("DEPRECATION")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         onStart(intent, startId)
         return START_NOT_STICKY
     }
 
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onStart(intent: Intent?, startId: Int) {
         super.onStart(intent, startId)
         onHandleIntent(intent)
@@ -108,7 +113,8 @@ class AppService : LifecycleService() {
                 override fun onNext2(percentage: Int) {
                     nManager.notify(
                         1,
-                        Notification.Builder(this@AppService).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                        NotificationCompat.Builder(this@AppService, "downloadApk")
+                            .setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
                             .setContentText(
                                 getString(
                                     me.skean.skeanframework.R.string.downloadProgress,
@@ -122,8 +128,10 @@ class AppService : LifecycleService() {
                     )
                 }
 
+                @SuppressLint("LaunchActivityFromNotification")
                 override fun onError2(e: Throwable) {
-                    val intent = Intent(this@AppService, AppService::class.java).setAction(ACTION_DOWNLOAD_APP)
+                    val intent = Intent(this@AppService, AppService::class.java)
+                        .setAction(ACTION_DOWNLOAD_APP)
                         .putExtra(EXTRA_DOWNLOAD_URL, url)
                     val pi = PendingIntent.getService(
                         this@AppService,
@@ -133,7 +141,8 @@ class AppService : LifecycleService() {
                     )
                     nManager.notify(
                         1,
-                        Notification.Builder(this@AppService).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                        NotificationCompat.Builder(this@AppService, "downloadApk")
+                            .setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
                             .setContentText(getString(me.skean.skeanframework.R.string.downloadFailClickRetry))
                             .setContentIntent(pi)
                             .setSmallIcon(R.drawable.ic_launcher)
@@ -161,7 +170,8 @@ class AppService : LifecycleService() {
                     )
                     nManager.notify(
                         1,
-                        Notification.Builder(this@AppService).setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
+                        NotificationCompat.Builder(this@AppService, "downloadApk")
+                            .setContentTitle(getString(me.skean.skeanframework.R.string.updatingApp))
                             .setContentText(getString(me.skean.skeanframework.R.string.downloadFinishClickInstall))
                             .setContentIntent(pi)
                             .setSmallIcon(R.drawable.ic_launcher)
