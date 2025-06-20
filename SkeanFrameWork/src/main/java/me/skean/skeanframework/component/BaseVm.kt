@@ -12,7 +12,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import me.hgj.jetpackmvvm.callback.livedata.event.EventLiveData
 import me.skean.skeanframework.model.ViewModelEvent
-import me.skean.skeanframework.utils.SingleLiveEvent
 
 /**
  * Created by Skean on 2025/05/23.
@@ -26,7 +25,7 @@ open class BaseVm : ViewModel(), LifecycleProvider<ViewModelEvent> {
      * 内置封装好的可通知Activity/fragment 显示隐藏加载框 因为需要跟网络请求显示隐藏loading配套才加的，不然我加他个鸡儿加
      */
     open class UiChange {
-        val loading by lazy { SingleLiveEvent<LoadingEvent>() }
+        val loading by lazy { EventLiveData<LoadingEvent>() }
     }
 
 

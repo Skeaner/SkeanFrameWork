@@ -207,5 +207,7 @@ dependencies {
     api(fwlibs.activityResultLauncher)
     //mvvm框架
     api(fwlibs.jetpackMvvm)
+    api(fwlibs.unpeekLivedata)
+
 
 }

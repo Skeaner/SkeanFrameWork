@@ -6,12 +6,12 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import me.hgj.jetpackmvvm.callback.livedata.event.EventLiveData
 import me.skean.framework.example.net.bean.MovieInfo
 import me.skean.framework.example.repository.DouBanRepository
 import me.skean.skeanframework.component.BaseVm
 import me.skean.skeanframework.ktext.toMutableListAddAll
 import me.skean.skeanframework.model.RefreshFinishEvent
-import me.skean.skeanframework.utils.SingleLiveEvent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -23,9 +23,9 @@ class TestMvvmViewModel() : BaseVm(), KoinComponent {
 
     private val repository = get<DouBanRepository>()
 
-    val refreshCompleteEvent: SingleLiveEvent<RefreshFinishEvent> = SingleLiveEvent()
+    val refreshCompleteEvent: EventLiveData<RefreshFinishEvent> = EventLiveData()
 
-    val data = SingleLiveEvent<List<MovieInfo.Data>>()
+    val data = EventLiveData<List<MovieInfo.Data>>()
 
     private var movieList: MutableList<MovieInfo.Data> = mutableListOf()
     private var currentPage = 0

@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.material.snackbar.Snackbar;
 import com.trello.rxlifecycle4.LifecycleProvider;
 import com.trello.rxlifecycle4.LifecycleTransformer;
 import com.trello.rxlifecycle4.RxLifecycle;
@@ -291,38 +290,6 @@ public class BaseActivity extends AppCompatActivity implements LifecycleProvider
         return this;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Snack便捷方法
-    ///////////////////////////////////////////////////////////////////////////
-
-    public void snack(View parent, String text) {
-        Snackbar snackbar = Snackbar.make(parent, text, Snackbar.LENGTH_SHORT);
-        snackbar.show();
-    }
-
-    public void snack(View parent, String text, int duration) {
-        Snackbar snackbar = Snackbar.make(parent, text, duration);
-        snackbar.show();
-    }
-
-    public void snackTop(View parent, String text, int duration) {
-        Snackbar snackbar = Snackbar.make(parent, text, duration);
-        final long millis = duration == Snackbar.LENGTH_SHORT ? 1500 : 2750;
-        View view = snackbar.getView();
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-        params.gravity = Gravity.TOP;
-        view.setLayoutParams(params);
-        view.setVisibility(View.INVISIBLE);
-        snackbar.addCallback(new Snackbar.Callback() {
-            @Override
-            public void onShown(final Snackbar sb) {
-                sb.getView().setVisibility(View.VISIBLE);
-                sb.getView().postDelayed(() -> sb.getView().setVisibility(View.GONE), millis);
-            }
-
-        });
-        snackbar.show();
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 便利方法
