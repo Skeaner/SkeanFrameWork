@@ -10,8 +10,8 @@ agp = "8.5.2"
 kotlin = "2.0.20"
 
 [libraries]
-desugar_jdk_libs = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.1.5" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version = "2.7.1" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version = "2.1.5" }
+room-compiler = { module = "androidx.room:room-compiler", version = "2.7.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

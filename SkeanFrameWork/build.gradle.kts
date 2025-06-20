@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.allopen)
     alias(libs.plugins.kotlin.kapt)
     id("maven-publish")
+    id("version-catalog")
 }
 
 android {
