@@ -2,7 +2,7 @@
 fwNameSpace = "me.skean.skeanframework"
 fwGroupId = "com.github.Skeaner"
 fwArtifactId = "SkeanFrameWork"
-fwVer = "3.0.0"
+fwVer = "3.0.1"
 comileSdk = "34"
 minSdk = "21"
 kotlin = "2.0.20"
