@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url=uri("https://jitpack.io") }
-        maven { url = uri("https://raw.githubusercontent.com/Skeaner/MavenStore/main/") }
+        maven { url = uri("https://gitee.com/skean/MavenStore/raw/main/") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
         maven { url = uri("https://nexus.terrestris.de/repository/public/") }
     }

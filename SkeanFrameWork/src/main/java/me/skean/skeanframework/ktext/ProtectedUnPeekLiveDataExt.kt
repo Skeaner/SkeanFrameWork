@@ -1,4 +1,5 @@
 @file:JvmName("ProtectedUnPeekLiveDataExt")
+
 package com.kunminx.architecture.ui.callback
 
 import com.kunminx.architecture.domain.message.MutableResult
@@ -22,3 +23,5 @@ fun <T> MutableResult<T>.setAllowNullValue(isAllowNullValue: Boolean): MutableRe
     this.isAllowNullValue = isAllowNullValue
     return this
 }
+
+typealias UnPeekMutableLiveData<T> = me.hgj.jetpackmvvm.callback.livedata.UnPeekLiveData<T>

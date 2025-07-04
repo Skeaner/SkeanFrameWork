@@ -49,14 +49,19 @@ lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.r
 lifecycle-reactivestreams-ktx = { module = "androidx.lifecycle:lifecycle-reactivestreams-ktx", version.ref = "lifecycleVer" }
 lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleVer" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version = "1.9.3" }
-androidx-compose-bom = { module = "androidx.compose:compose-bom", version = "2024.04.01" }
-androidx-ui = { module = "androidx.compose.ui:ui" }
-androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-androidx-material3 = { module = "androidx.compose.material3:material3" }
-androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
-androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 guavaListenablefuture-avoidConflict = { module = "com.google.guava:listenablefuture", version = "9999.0-empty-to-avoid-conflict-with-guava" }
+compose-bom = { module = "androidx.compose:compose-bom", version = "2025.04.00" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-uiGraphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-material = { module = "androidx.compose.material:material" }
+compose-material-iconsExtended = { module = "androidx.compose.material:material-icons-extended" }
+compose-uiTooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-uiTestManifest = { module = "androidx.compose.ui:ui-test-manifest" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-foundationLayout = { module = "androidx.compose.foundation:foundation-layout" }
+compose-runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata" }
+
 # retrofit2
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVer" }
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofitVer" }

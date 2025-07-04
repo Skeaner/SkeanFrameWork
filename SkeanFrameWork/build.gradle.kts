@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.allopen)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.compose.compiler)
     id("maven-publish")
     id("version-catalog")
 }
@@ -47,7 +48,12 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
+    }
     publishing {
         singleVariant("release") {
             withSourcesJar()
@@ -103,14 +109,18 @@ dependencies {
     api(fwlibs.lifecycle.reactivestreams.ktx)
     api(fwlibs.lifecycle.runtime.ktx)
     api(fwlibs.androidx.activity.compose)
-    api(platform(fwlibs.androidx.compose.bom))
-    api(fwlibs.androidx.ui)
-    api(fwlibs.androidx.ui.graphics)
-    api(fwlibs.androidx.material3)
-    api(fwlibs.androidx.ui.tooling.preview)
     api(fwlibs.guavaListenablefuture.avoidConflict)
-    debugApi(fwlibs.androidx.ui.tooling)
-    debugApi(fwlibs.androidx.ui.test.manifest)
+    api(platform(fwlibs.compose.bom))
+    api(fwlibs.compose.ui)
+    api(fwlibs.compose.uiGraphics)
+    api(fwlibs.compose.material)
+    api(fwlibs.compose.material.iconsExtended)
+    api(fwlibs.compose.uiToolingPreview)
+    debugApi(fwlibs.compose.uiTooling)
+    debugApi(fwlibs.compose.uiTestManifest)
+    api (fwlibs.compose.foundation)
+    api (fwlibs.compose.foundationLayout)
+    api (fwlibs.compose.runtimeLivedata)
 
     //retrofit2
     api(fwlibs.retrofit)
