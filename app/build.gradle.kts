@@ -168,6 +168,8 @@ dependencies {
     implementation(project(":SkeanFrameWork"))
     implementation(fileTree("libs") { include("*.jar", "*.aar") })
     ksp(libs.room.compiler)
+    implementation ("com.github.jenly1314.UltraSwipeRefresh:refresh:1.3.1")
+    implementation ("com.github.jenly1314.UltraSwipeRefresh:refresh-indicator-classic:1.3.1")
 }
 
 /**

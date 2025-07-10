@@ -20,13 +20,4 @@ object ButtonPresets {
         )
     }
 
-    @Composable
-    fun noElevation() = ButtonDefaults.elevation(
-        defaultElevation = 0.dp,
-        pressedElevation = 0.dp,
-        disabledElevation = 0.dp,
-        hoveredElevation = 0.dp,
-        focusedElevation = 0.dp,
-    )
-
 }
